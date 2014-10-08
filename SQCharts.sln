@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting", "SmartQuant.Charting\SmartQuant.Charting.csproj", "{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.FinChart", "SmartQuant.FinChart\SmartQuant.FinChart.csproj", "{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers", "SmartQuant.ChartViewers\SmartQuant.ChartViewers.csproj", "{E6515A7E-2CBC-4823-AB77-E2B747227FA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls", "SmartQuant.Controls\SmartQuant.Controls.csproj", "{3D4EC22C-579F-4464-ABA8-19366DEE11ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = SmartQuant.Charting\SmartQuant.Charting.csproj
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/plain
+		$2.scope = text/plain
+		$0.TextStylePolicy = $3
+		$3.inheritsSet = VisualStudio
+		$3.inheritsScope = text/plain
+		$3.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $4
+		$4.IndentSwitchBody = True
+		$4.IndentBlocksInsideExpressions = True
+		$4.AnonymousMethodBraceStyle = NextLine
+		$4.PropertyBraceStyle = NextLine
+		$4.PropertyGetBraceStyle = NextLine
+		$4.PropertySetBraceStyle = NextLine
+		$4.EventBraceStyle = NextLine
+		$4.EventAddBraceStyle = NextLine
+		$4.EventRemoveBraceStyle = NextLine
+		$4.StatementBraceStyle = NextLine
+		$4.ElseNewLinePlacement = NewLine
+		$4.CatchNewLinePlacement = NewLine
+		$4.FinallyNewLinePlacement = NewLine
+		$4.WhileNewLinePlacement = DoNotCare
+		$4.ArrayInitializerWrapping = DoNotChange
+		$4.ArrayInitializerBraceStyle = NextLine
+		$4.BeforeMethodDeclarationParentheses = False
+		$4.BeforeMethodCallParentheses = False
+		$4.BeforeConstructorDeclarationParentheses = False
+		$4.NewLineBeforeConstructorInitializerColon = NewLine
+		$4.NewLineAfterConstructorInitializerColon = SameLine
+		$4.BeforeDelegateDeclarationParentheses = False
+		$4.NewParentheses = False
+		$4.SpacesBeforeBrackets = False
+		$4.inheritsSet = Mono
+		$4.inheritsScope = text/x-csharp
+		$4.scope = text/x-csharp
+	EndGlobalSection
+EndGlobal
