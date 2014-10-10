@@ -5,5 +5,10 @@ namespace SmartQuant.FinChart
 {
 	public class Pad
 	{
+        public Chart Chart
+        {
+            get;
+            set;
+        }
 	}
 }

@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +62,39 @@
     <Compile Include="PadRange.cs" />
     <Compile Include="Pad.cs" />
     <Compile Include="TDistance.cs" />
+    <Compile Include="Draw3D\EChartLook.cs" />
+    <Compile Include="Draw3D\ESmoothing.cs" />
+    <Compile Include="TTitleItem.cs" />
+    <Compile Include="Colors.cs" />
+    <Compile Include="TTextBoxItem.cs" />
+    <Compile Include="Fonts.cs" />
+    <Compile Include="TLegendItem.cs" />
+    <Compile Include="TTitle.cs" />
+    <Compile Include="Viewer.cs" />
+    <Compile Include="TTextBox.cs" />
+    <Compile Include="TText.cs" />
+    <Compile Include="TPieItem.cs" />
+    <Compile Include="TLine.cs" />
+    <Compile Include="TLabel.cs" />
+    <Compile Include="TMarker.cs" />
+    <Compile Include="TEmptyTransformation.cs" />
+    <Compile Include="TImage.cs" />
+    <Compile Include="Images.cs" />
+    <Compile Include="TIntradayTransformation.cs" />
+    <Compile Include="ZoomEventArgs.cs" />
+    <Compile Include="ZoomEventHandler.cs" />
+    <Compile Include="Draw3D\TColor.cs" />
+    <Compile Include="Draw3D\TSurface.cs" />
+    <Compile Include="Draw3D\TAxisCalc.cs" />
+    <Compile Include="Draw3D\TMat3x3.cs" />
+    <Compile Include="Draw3D\TVec3.cs" />
+    <Compile Include="ColorUtils.cs" />
+    <Compile Include="Draw3D\TLight.cs" />
+    <Compile Include="Draw3D\TView.cs" />
+    <Compile Include="Draw3D\TFunction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Draw3D\" />
+  </ItemGroup>
 </Project>
