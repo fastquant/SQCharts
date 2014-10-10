@@ -30,6 +30,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,6 +93,17 @@
     <Compile Include="Draw3D\TLight.cs" />
     <Compile Include="Draw3D\TView.cs" />
     <Compile Include="Draw3D\TFunction.cs" />
+    <Compile Include="Axis.cs" />
+    <Compile Include="Canvas.cs" />
+    <Compile Include="Chart.cs" />
+    <Compile Include="CanvasList.cs" />
+    <Compile Include="CanvasManager.cs" />
+    <Compile Include="PadList.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Histogram.cs" />
+    <Compile Include="Histogram2D.cs" />
+    <Compile Include="PadProperyForm.cs" />
+    <Compile Include="Pie.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

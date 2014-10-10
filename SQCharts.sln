@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting.WinForm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.FinChart.WinForm", "SmartQuant.FinChart.WinForm\SmartQuant.FinChart.WinForm.csproj", "{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers", "SmartQuant.ChartViewers\SmartQuant.ChartViewers.csproj", "{E6515A7E-2CBC-4823-AB77-E2B747227FA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers.WinForm", "SmartQuant.ChartViewers.WinForm\SmartQuant.ChartViewers.WinForm.csproj", "{E6515A7E-2CBC-4823-AB77-E2B747227FA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls", "SmartQuant.Controls\SmartQuant.Controls.csproj", "{3D4EC22C-579F-4464-ABA8-19366DEE11ED}"
 EndProject
@@ -13,12 +13,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting.Xwt", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.FinChart.Xwt", "SmartQuant.FinChart.Xwt\SmartQuant.FinChart.Xwt.csproj", "{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers.Xwt", "SmartQuant.ChartViewers.Xwt\SmartQuant.ChartViewers.Xwt.csproj", "{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWinForm", "Tests\TestWinForm\TestWinForm.csproj", "{021AA1BA-603D-4207-A089-05BFD66716ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestXwt", "Tests\TestXwt\TestXwt.csproj", "{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{021AA1BA-603D-4207-A089-05BFD66716ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{021AA1BA-603D-4207-A089-05BFD66716ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,6 +47,10 @@ Global
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,8 +64,12 @@ Global
 		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{021AA1BA-603D-4207-A089-05BFD66716ED} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj
+		StartupItem = Tests\TestWinForm\TestWinForm.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

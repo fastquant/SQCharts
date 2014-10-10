@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>SmartQuant.ChartViewers</RootNamespace>
     <AssemblyName>SmartQuant.ChartViewers</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,10 +29,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="SmartQuant">
+      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DrawStyle.cs" />
+    <Compile Include="BarSeriesViewer.cs" />
+    <Compile Include="FillSeriesViewer.cs" />
+    <Compile Include="TickSeriesViewer.cs" />
+    <Compile Include="TimeSeriesViewer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
+      <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
+      <Name>SmartQuant.Charting.WinForm</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 </Project>

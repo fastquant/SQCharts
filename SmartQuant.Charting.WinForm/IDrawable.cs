@@ -11,8 +11,8 @@ namespace SmartQuant.Charting
 
         void Draw();
 
-        void Paint(Pad Pad, double MinX, double MaxX, double MinY, double MaxY);
+        void Paint(Pad pad, double minX, double maxX, double minY, double maxY);
 
-        TDistance Distance(double X, double Y);
+        TDistance Distance(double x, double y);
     }
 }

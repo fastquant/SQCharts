@@ -207,6 +207,33 @@
     <Compile Include="..\SmartQuant.Charting.WinForm\ColorUtils.cs">
       <Link>ColorUtils.cs</Link>
     </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Axis.cs">
+      <Link>Axis.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Canvas.cs">
+      <Link>Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Chart.cs">
+      <Link>Chart.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\CanvasList.cs">
+      <Link>CanvasList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\PadList.cs">
+      <Link>PadList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Pie.cs">
+      <Link>Pie.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Graph.cs">
+      <Link>Graph.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Histogram.cs">
+      <Link>Histogram.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Histogram2D.cs">
+      <Link>Histogram2D.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
