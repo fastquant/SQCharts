@@ -5,7 +5,6 @@ using System;
 
 namespace SmartQuant.Charting
 {
-	[Serializable]
 	public class PadRange
 	{
 		public double Min;
@@ -22,9 +21,9 @@ namespace SmartQuant.Charting
 
 		public PadRange(double min, double max)
 		{
-			this.Min = min;
-			this.Max = max;
-			this.isValid = max - min > double.Epsilon;
+			Min = min;
+			Max = max;
+			isValid = max - min > double.Epsilon;
 		}
 	}
 }

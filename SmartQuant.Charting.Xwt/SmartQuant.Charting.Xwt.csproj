@@ -36,6 +36,7 @@
       <HintPath>C:\Program Files %28x86%29\Xamarin Studio\bin\Xwt.Gtk.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -233,6 +234,13 @@
     </Compile>
     <Compile Include="..\SmartQuant.Charting.WinForm\Histogram2D.cs">
       <Link>Histogram2D.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TLegend.cs">
+      <Link>TLegend.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Graphics.cs" />
+    <Compile Include="..\SmartQuant.Charting.WinForm\PadProperyForm.cs">
+      <Link>PadProperyForm.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

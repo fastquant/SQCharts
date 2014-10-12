@@ -125,8 +125,6 @@ namespace SmartQuant.Charting
                 this.fHeight = value;
             }
         }
-
-
     }
 }
 

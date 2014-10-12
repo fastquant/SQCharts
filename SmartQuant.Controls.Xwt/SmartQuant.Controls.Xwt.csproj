@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}</ProjectGuid>
+    <ProjectGuid>{1579BD48-C741-49B4-8471-B9CFC50389FB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>SmartQuant.ChartViewers</RootNamespace>
-    <AssemblyName>SmartQuant.ChartViewers</AssemblyName>
+    <RootNamespace>SmartQuant.Controls</RootNamespace>
+    <AssemblyName>SmartQuant.Controls</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,32 +35,26 @@
     <Reference Include="Xwt">
       <HintPath>C:\Program Files %28x86%29\Xamarin Studio\bin\Xwt.dll</HintPath>
     </Reference>
-    <Reference Include="Xwt.Gtk">
-      <HintPath>C:\Program Files %28x86%29\Xamarin Studio\bin\Xwt.Gtk.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SmartQuant.Controls.WinForm\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\FrameworkControl.cs">
+      <Link>FrameworkControl.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\ControlSettings.cs">
+      <Link>ControlSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\ShowPropertiesEventArgs.cs">
+      <Link>ShowPropertiesEventArgs.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\SmartQuant.ChartViewers.WinForm\BarSeriesViewer.cs">
-      <Link>BarSeriesViewer.cs</Link>
-    </Compile>
-    <Compile Include="..\SmartQuant.ChartViewers.WinForm\DrawStyle.cs">
-      <Link>DrawStyle.cs</Link>
-    </Compile>
-    <Compile Include="..\SmartQuant.ChartViewers.WinForm\FillSeriesViewer.cs">
-      <Link>FillSeriesViewer.cs</Link>
-    </Compile>
-    <Compile Include="..\SmartQuant.ChartViewers.WinForm\TickSeriesViewer.cs">
-      <Link>TickSeriesViewer.cs</Link>
-    </Compile>
-    <Compile Include="..\SmartQuant.ChartViewers.WinForm\TimeSeriesViewer.cs">
-      <Link>TimeSeriesViewer.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SmartQuant.Charting.Xwt\SmartQuant.Charting.Xwt.csproj">
-      <Project>{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}</Project>
-      <Name>SmartQuant.Charting.Xwt</Name>
+    <ProjectReference Include="..\Compatibility.Xwt\Compatibility.Xwt.csproj">
+      <Project>{952610E1-8750-4476-87BE-C3F915272D21}</Project>
+      <Name>Compatibility.Xwt</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

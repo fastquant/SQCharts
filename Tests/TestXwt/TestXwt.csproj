@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TestXwt</RootNamespace>
     <AssemblyName>TestXwt</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,10 +29,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Xwt">
+      <HintPath>C:\Program Files %28x86%29\Xamarin Studio\bin\Xwt.dll</HintPath>
+    </Reference>
+    <Reference Include="Xwt.Gtk">
+      <HintPath>C:\Program Files %28x86%29\Xamarin Studio\bin\Xwt.Gtk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\SmartQuant.Charting.Xwt\SmartQuant.Charting.Xwt.csproj">
+      <Project>{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}</Project>
+      <Name>SmartQuant.Charting.Xwt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.FinChart.Xwt\SmartQuant.FinChart.Xwt.csproj">
+      <Project>{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}</Project>
+      <Name>SmartQuant.FinChart.Xwt</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

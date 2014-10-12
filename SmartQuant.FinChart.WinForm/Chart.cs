@@ -6,11 +6,12 @@ using System;
 using Xwt.Drawing;
 #else
 using System.Drawing;
+using System.Windows.Forms;
 #endif
 
 namespace SmartQuant.FinChart
 {
-	public class Chart
+    public class Chart : UserControl
 	{
         public int LabelDigitsCount { get; set; }
 

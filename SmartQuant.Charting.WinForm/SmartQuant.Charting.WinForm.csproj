@@ -104,6 +104,7 @@
     <Compile Include="Histogram2D.cs" />
     <Compile Include="PadProperyForm.cs" />
     <Compile Include="Pie.cs" />
+    <Compile Include="TLegend.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

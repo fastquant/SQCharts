@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace SmartQuant.FinChart
 {
-
     public class PropertyForm : Form
     {
         public PropertyForm()

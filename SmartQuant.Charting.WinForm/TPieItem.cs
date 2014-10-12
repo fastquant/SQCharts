@@ -10,7 +10,6 @@ using System.Drawing;
 
 namespace SmartQuant.Charting
 {
-    [Serializable]
     class TPieItem
     {
         public double Weight { get; set; }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using PointF = System.Drawing.PointF;
 #if XWT
 using Xwt;
 #else
@@ -118,10 +119,10 @@ namespace SmartQuant.Charting
             return new Point((int)v.x, (int)v.y);
         }
 
-//        public static implicit operator PointF(TVec3 v)
-//        {
-//            return new PointF((float)v.x, (float)v.y);
-//        }
+        public static implicit operator PointF(TVec3 v)
+        {
+            return new PointF((float)v.x, (float)v.y);
+        }
 
         public static TVec3 operator +(TVec3 a)
         {

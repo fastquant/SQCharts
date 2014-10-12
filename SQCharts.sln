@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.FinChart.WinForm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers.WinForm", "SmartQuant.ChartViewers.WinForm\SmartQuant.ChartViewers.WinForm.csproj", "{E6515A7E-2CBC-4823-AB77-E2B747227FA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls", "SmartQuant.Controls\SmartQuant.Controls.csproj", "{3D4EC22C-579F-4464-ABA8-19366DEE11ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.WinForm", "SmartQuant.Controls.WinForm\SmartQuant.Controls.WinForm.csproj", "{3D4EC22C-579F-4464-ABA8-19366DEE11ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting.Xwt", "SmartQuant.Charting.Xwt\SmartQuant.Charting.Xwt.csproj", "{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}"
 EndProject
@@ -21,6 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWinForm", "Tests\TestWi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestXwt", "Tests\TestXwt\TestXwt.csproj", "{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.Xwt", "SmartQuant.Controls.Xwt\SmartQuant.Controls.Xwt.csproj", "{1579BD48-C741-49B4-8471-B9CFC50389FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.Xwt", "Compatibility.Xwt\Compatibility.Xwt.csproj", "{952610E1-8750-4476-87BE-C3F915272D21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.WinForm", "Compatibility.WinForm\Compatibility.WinForm.csproj", "{1AF26544-F67B-465A-B1CB-C15B090F8232}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +37,18 @@ Global
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1579BD48-C741-49B4-8471-B9CFC50389FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1579BD48-C741-49B4-8471-B9CFC50389FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1579BD48-C741-49B4-8471-B9CFC50389FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1579BD48-C741-49B4-8471-B9CFC50389FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +61,10 @@ Global
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{952610E1-8750-4476-87BE-C3F915272D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{952610E1-8750-4476-87BE-C3F915272D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{952610E1-8750-4476-87BE-C3F915272D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{952610E1-8750-4476-87BE-C3F915272D21}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -110,5 +128,7 @@ Global
 		$4.inheritsSet = Mono
 		$4.inheritsScope = text/x-csharp
 		$4.scope = text/x-csharp
+		$0.VersionControlPolicy = $5
+		$5.inheritsSet = Mono
 	EndGlobalSection
 EndGlobal
