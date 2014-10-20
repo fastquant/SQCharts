@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWinForm", "Tests\TestWi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestXwt", "Tests\TestXwt\TestXwt.csproj", "{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUserControl", "Tests\TestUserControl\TestUserControl.csproj", "{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.Xwt", "SmartQuant.Controls.Xwt\SmartQuant.Controls.Xwt.csproj", "{1579BD48-C741-49B4-8471-B9CFC50389FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.Xwt", "Compatibility.Xwt\Compatibility.Xwt.csproj", "{952610E1-8750-4476-87BE-C3F915272D21}"
@@ -65,6 +67,10 @@ Global
 		{952610E1-8750-4476-87BE-C3F915272D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{952610E1-8750-4476-87BE-C3F915272D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{952610E1-8750-4476-87BE-C3F915272D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,6 +91,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{021AA1BA-603D-4207-A089-05BFD66716ED} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Tests\TestWinForm\TestWinForm.csproj

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
-namespace SmartQuant.FinChart
+namespace Compatibility.WinForm
 {
-    static class Colors
+    public static class Colors
     {
         public static readonly Color Transparent = Color.Transparent;
         public static readonly Color AliceBlue = Color.AliceBlue;

@@ -9,6 +9,7 @@ using System.ComponentModel;
 #if XWT
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 using System.Text;

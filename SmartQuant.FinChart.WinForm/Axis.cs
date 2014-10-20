@@ -536,7 +536,7 @@ namespace SmartQuant.FinChart
             throw new NotImplementedException();
         }
 
-        public static long GetNextMajor(long PrevMajor, EGridSize GridSize)
+        public static long GetNextMajor(long prevMajor, EGridSize gridSize)
         {
             throw new NotImplementedException();
         }

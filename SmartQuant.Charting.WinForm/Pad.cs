@@ -10,6 +10,7 @@ using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using PointF = System.Drawing.PointF;
 #if XWT
+using Compatibility.Xwt;
 using Xwt;
 using Xwt.Drawing;
 #else
@@ -103,67 +104,67 @@ namespace SmartQuant.Charting
         protected IChartTransformation fTransformation;
         protected Color fSessionGridColor;
 
-//        [Browsable(false)]
-//        public bool For3D
-//        {
-//            get
-//            {
-//                return this.Features3D.Active;
-//            }
-//            set
-//            {
-//                this.Features3D.Active = value;
-//            }
-//        }
-//
-//        [Browsable(false)]
-//        public object View3D
-//        {
-//            get
-//            {
-//                return this.Features3D.View;
-//            }
-//            set
-//            {
-//                this.Features3D.View = value;
-//            }
-//        }
-//
-//        [Browsable(false)]
-//        public Axis[] Axes3D
-//        {
-//            get
-//            {
-//                return this.Features3D.Axes;
-//            }
-//        }
-//
-//        [Browsable(false)]
-//        public Axis AxisX3D
-//        {
-//            get
-//            {
-//                return this.Features3D.Axes[0];
-//            }
-//        }
-//
-//        [Browsable(false)]
-//        public Axis AxisY3D
-//        {
-//            get
-//            {
-//                return this.Features3D.Axes[1];
-//            }
-//        }
-//
-//        [Browsable(false)]
-//        public Axis AxisZ3D
-//        {
-//            get
-//            {
-//                return this.Features3D.Axes[2];
-//            }
-//        }
+        [Browsable(false)]
+        public bool For3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Browsable(false)]
+        public object View3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Browsable(false)]
+        public Axis[] Axes3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Browsable(false)]
+        public Axis AxisX3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Browsable(false)]
+        public Axis AxisY3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [Browsable(false)]
+        public Axis AxisZ3D
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         [Browsable(false)]
         public Chart Chart

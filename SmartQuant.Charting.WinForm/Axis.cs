@@ -103,8 +103,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                throw new  NotImplementedException();
-    
+                throw new  NotImplementedException(); 
             }
             set
             {

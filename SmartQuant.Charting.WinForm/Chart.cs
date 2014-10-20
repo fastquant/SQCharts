@@ -3,65 +3,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using EmfType = System.Drawing.Imaging.EmfType;
-using PrintPageEventArgs = System.Drawing.Printing.PrintPageEventArgs;
-using PaintEventArgs = System.Windows.Forms.PaintEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
+
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
 
-namespace SmartQuant.Charting
-{
-    public class UserControl : Xwt.Widget
-    {
-        protected virtual void OnPaint(PaintEventArgs pe)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnPaintBackground(PaintEventArgs e)
-        {
-        }
-
-        protected virtual void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnMouseWheel(MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnMouseDown(MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnMouseUp(MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnDoubleClick(EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ToolTip
-    {
-    }
-
-    public class PrintDocument
-    {
-    }
-}
 #else
 using System.Drawing.Imaging;
 using System.Drawing;
@@ -71,7 +19,7 @@ using System.Windows.Forms;
 
 namespace SmartQuant.Charting
 {
-    public class Chart : UserControl
+    public partial class Chart : UserControl
     {
         protected static Pad fPad;
         protected PadList fPads;
@@ -385,6 +333,11 @@ namespace SmartQuant.Charting
 
         public event EventHandler PadSplitMouseUp;
 
+        public Chart()
+            : this("")
+        {
+        }
+
         public Chart(string name)
         {
             this.InitializeComponent();
@@ -413,24 +366,32 @@ namespace SmartQuant.Charting
             this.fPads.Clear();
         }
 
-        public void SetRangeX(double Min, double Max)
+        public void SetRangeX(double min, double max)
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in this.fPads)
+                pad.SetRangeX(min, max);
         }
 
-        public void SetRangeX(DateTime Min, DateTime Max)
+        public void SetRangeX(DateTime min, DateTime max)
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in this.fPads)
+                pad.SetRangeX(min, max);
         }
 
-        public void SetRangeY(double Min, double Max)
+        public void SetRangeY(double min, double max)
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in this.fPads)
+                pad.SetRangeY(min, max);
         }
 
-        public virtual Pad AddPad(double X1, double Y1, double X2, double Y2)
+        public virtual Pad AddPad(double x1, double y1, double x2, double y2)
         {
-            throw new NotImplementedException();
+            var pad = new Pad(this, x1, y1, x2, y2);
+            pad.Name = string.Format("Pad {0}", this.fPads.Count + 1);
+            pad.ForeColor = this.fPadsForeColor;
+            pad.Zoom += new ZoomEventHandler(this.ZoomChanged);
+            Pads.Add(pad);
+            return Chart.Pad = pad;
         }
 
         public void Connect()
@@ -458,17 +419,27 @@ namespace SmartQuant.Charting
             throw new NotImplementedException();
         }
 
-        public void Divide(int X, int Y)
+        public void Divide(int x, int y)
+        {
+            Pads.Clear();
+            double num1 = 1.0 / x;
+            double num2 = 1.0 / y;
+            Parallel.For(0, y, i => Parallel.For(0, x, j =>
+                    {
+                        double x1 = (double)j * num1;
+                        double x2 = (double)(j + 1) * num1;
+                        double y1 = (double)i * num2;
+                        double y2 = (double)(i + 1) * num2;
+                        this.AddPad(x1, y1, x2, y2);
+                    }));  
+        }
+
+        public void Divide(int x, int y, double[] widths, double[] heights)
         {
             throw new NotImplementedException();
         }
 
-        public void Divide(int X, int Y, double[] Widths, double[] Heights)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdatePads(Graphics PadGraphics, int X, int Y, int Width, int Height)
+        public void UpdatePads(Graphics padGraphics, int x, int y, int width, int height)
         {
             throw new NotImplementedException();
         }
@@ -537,7 +508,7 @@ namespace SmartQuant.Charting
         {
         }
 
-        protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             throw new NotImplementedException();
         }

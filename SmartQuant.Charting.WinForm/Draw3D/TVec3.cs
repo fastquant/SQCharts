@@ -10,7 +10,7 @@ using Xwt;
 using System.Drawing;
 #endif
 
-namespace SmartQuant.Charting
+namespace SmartQuant.Charting.Draw3D
 {
     public class TVec3
     {

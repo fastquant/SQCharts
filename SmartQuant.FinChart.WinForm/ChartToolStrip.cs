@@ -1,21 +1,18 @@
-﻿// Licensed under the Apache License, Version 2.0. 
-// Copyright (c) Alex Lee. All rights reserved.
-
-using System;
+﻿using System;
 using System.ComponentModel;
 #if XWT
-using Compatibility.Xwt;
 #else
 using System.Windows.Forms;
 #endif
 
 namespace SmartQuant.FinChart
 {
-    public class PropertyForm : Form
+    public class ChartToolStrip : UserControl
     {
-        private Container components;
+        private Chart chart;
+        private IContainer components;
 
-        public PropertyForm(object properties)
+        public ChartToolStrip()
         {
             this.InitializeComponent();
         }
@@ -29,6 +26,7 @@ namespace SmartQuant.FinChart
 
         private void InitializeComponent()
         {
+            throw new NotImplementedException();
         }
     }
 }

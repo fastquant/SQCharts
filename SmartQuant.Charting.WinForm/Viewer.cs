@@ -8,7 +8,7 @@ namespace SmartQuant.Charting
 {
     public class Viewer
     {
-        protected Dictionary<object, List<Viewer.Property>> metadata = new Dictionary<object, List<Viewer.Property>>();
+        protected Dictionary<object, List<Property>> metadata = new Dictionary<object, List<Property>>();
         public Type Type;
 
         public virtual bool IsZoomable { get; private set; }
@@ -29,13 +29,13 @@ namespace SmartQuant.Charting
 
         public void Set(object obj, string name, object value)
         {
-            List<Viewer.Property> list;
+            List<Property> list;
             if (!this.metadata.TryGetValue(obj, out list))
             {
-                list = new List<Viewer.Property>();
+                list = new List<Property>();
                 this.metadata[obj] = list;
             }
-            list.Add(new Viewer.Property(name, value));
+            list.Add(new Property(name, value));
         }
 
         protected class Property

@@ -18,6 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -26,6 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -66,7 +68,6 @@
     <Compile Include="Draw3D\EChartLook.cs" />
     <Compile Include="Draw3D\ESmoothing.cs" />
     <Compile Include="TTitleItem.cs" />
-    <Compile Include="Colors.cs" />
     <Compile Include="TTextBoxItem.cs" />
     <Compile Include="Fonts.cs" />
     <Compile Include="TLegendItem.cs" />
@@ -89,7 +90,6 @@
     <Compile Include="Draw3D\TAxisCalc.cs" />
     <Compile Include="Draw3D\TMat3x3.cs" />
     <Compile Include="Draw3D\TVec3.cs" />
-    <Compile Include="ColorUtils.cs" />
     <Compile Include="Draw3D\TLight.cs" />
     <Compile Include="Draw3D\TView.cs" />
     <Compile Include="Draw3D\TFunction.cs" />
@@ -105,9 +105,16 @@
     <Compile Include="PadProperyForm.cs" />
     <Compile Include="Pie.cs" />
     <Compile Include="TLegend.cs" />
+    <Compile Include="Chart.WinForm.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Draw3D\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compatibility.WinForm\Compatibility.WinForm.csproj">
+      <Project>{1AF26544-F67B-465A-B1CB-C15B090F8232}</Project>
+      <Name>Compatibility.WinForm</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

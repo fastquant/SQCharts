@@ -1,9 +1,9 @@
-﻿using Xwt;
-using System;
+﻿using System;
+using Xwt;
 
-namespace SmartQuant.FinChart
+namespace Compatibility.Xwt
 {
-    public class Form : Xwt.Window
+    public class Form : Window
     {
         public string Name { get; set; }
 

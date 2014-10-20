@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 

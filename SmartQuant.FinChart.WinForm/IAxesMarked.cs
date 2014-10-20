@@ -11,7 +11,7 @@ namespace SmartQuant.FinChart
 {
     public interface IAxesMarked
     {
-//        Color Color { get; }
+        Color Color { get; }
         double LastValue { get; }
         bool IsMarkEnable { get; }
         int LabelDigitsCount { get; }

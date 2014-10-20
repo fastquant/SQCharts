@@ -16,6 +16,9 @@ namespace SmartQuant.FinChart
 
         public override PadRange GetPadRangeY(Pad Pad)
         {
+            double max = MainSeries.GetMax(this.firstDate, this.lastDate);
+            double min = MainSeries.GetMin(this.firstDate, this.lastDate);
+
             throw new NotImplementedException();
         }
 

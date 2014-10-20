@@ -2,8 +2,10 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 
@@ -19,7 +21,7 @@ namespace SmartQuant.Charting.Draw3D
         {
             get
             {
-                return ColorUtils.FromArgb((int) ((double) byte.MaxValue * this.r), (int) ((double) byte.MaxValue * this.g), (int) ((double) byte.MaxValue * this.b));
+                return ColorUtils.FromArgb((int)(byte.MaxValue * this.r), (int)(byte.MaxValue * this.g), (int)(byte.MaxValue * this.b));
             }
             set
             {
@@ -50,9 +52,9 @@ namespace SmartQuant.Charting.Draw3D
             double g = c.G;
             double b = c.B;
             #endif
-            this.r = 1.0 / (double) byte.MaxValue * r;
-            this.g = 1.0 / (double) byte.MaxValue * g;
-            this.b = 1.0 / (double) byte.MaxValue * b;
+            this.r = 1.0 / byte.MaxValue * r;
+            this.g = 1.0 / byte.MaxValue * g;
+            this.b = 1.0 / byte.MaxValue * b;
         }
 
         public static implicit operator TColor(Color c)
@@ -82,16 +84,15 @@ namespace SmartQuant.Charting.Draw3D
 
         public int Get888()
         {
-            return ((int) ((double) byte.MaxValue * this.r) << 16) + ((int) ((double) byte.MaxValue * this.g) << 8) + (int) ((double) byte.MaxValue * this.b);
+            return ((int)(byte.MaxValue * this.r) << 16) + ((int)(byte.MaxValue * this.g) << 8) + (int)(byte.MaxValue * this.b);
         }
 
         private void Clip(ref double x)
         {
             if (x < 1.0 / 254.0)
                 x = 1.0 / 254.0;
-            if (x <= 1.0)
-                return;
-            x = 1.0;
+            if (x > 1.0)
+                x = 1.0;
         }
 
         public void Clip()

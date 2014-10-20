@@ -9,12 +9,9 @@ using MouseButtons = System.Windows.Forms.MouseButtons;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
-#if XWT
 using Xwt.Drawing;
-#else
-using System.Drawing;
-#endif
-namespace SmartQuant.Charting
+
+namespace Compatibility.Xwt
 {
     public class Pen
     {
@@ -35,8 +32,15 @@ namespace SmartQuant.Charting
     public class Metafile
     {
     }
+
     public class Graphics
 	{
+        private Context ctx;
+        public Graphics(Context ctx)
+        {
+            this.ctx = ctx;
+        }
+
         public void DrawEllipse(Pen pen, int i, int i2, int width, int height)
         {
             throw new NotImplementedException();

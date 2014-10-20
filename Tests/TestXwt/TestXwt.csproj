@@ -50,5 +50,9 @@
       <Project>{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}</Project>
       <Name>SmartQuant.FinChart.Xwt</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Compatibility.Xwt\Compatibility.Xwt.csproj">
+      <Project>{952610E1-8750-4476-87BE-C3F915272D21}</Project>
+      <Name>Compatibility.Xwt</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

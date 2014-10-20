@@ -6,6 +6,7 @@ using System.Collections;
 #if XWT
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 
@@ -66,14 +67,6 @@ namespace SmartQuant.Charting
         public void Add(string text, Color color)
         {
             Items.Add(new TTitleItem(text, color));
-        }
-
-        private string GetText()
-        {
-            string str = this.Text;
-            foreach (TTitleItem item in Items)
-                str += " " + item.Text;
-            return str;
         }
 
         public void Paint()

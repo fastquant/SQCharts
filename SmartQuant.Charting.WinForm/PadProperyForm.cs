@@ -11,7 +11,7 @@ namespace SmartQuant.Charting
     {
         private object obj;
         private Pad pad;
-        private Container components = null;
+        private Container components;
 
         public PadProperyForm(object obj, Pad pad)
         {

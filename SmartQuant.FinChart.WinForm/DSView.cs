@@ -5,8 +5,10 @@ using System;
 using SmartQuant;
 using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 

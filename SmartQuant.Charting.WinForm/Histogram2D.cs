@@ -3,7 +3,6 @@ using SmartQuant.Charting.Draw3D;
 
 #if XWT
 using Xwt.Drawing;
-
 #else
 using System.Drawing;
 #endif

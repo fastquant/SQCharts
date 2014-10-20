@@ -1,11 +1,12 @@
 ﻿using System;
+
 #if XWT
 using Xwt.Drawing;
 #else
 using System.Drawing;
 #endif
 
-namespace SmartQuant.Charting
+namespace SmartQuant.Charting.Draw3D
 {
     public class TView
     {
@@ -13,17 +14,17 @@ namespace SmartQuant.Charting
 
         public int Left { get; private set; }
 
-        public int Top{ get; private set; }
+        public int Top { get; private set; }
 
-        public int H{ get; private set; }
+        public int H { get; private set; }
 
-        public TVec3 o{ get; private set; }
+        public TVec3 o { get; private set; }
 
-        public TVec3 Lx{ get; private set; }
+        public TVec3 Lx { get; private set; }
 
-        public TVec3 Ly{ get; private set; }
+        public TVec3 Ly { get; private set; }
 
-        public TVec3 Lz{ get; private set; }
+        public TVec3 Lz { get; private set; }
 
         public double ScaleZ
         {
@@ -78,4 +79,3 @@ namespace SmartQuant.Charting
         }
     }
 }
-

@@ -66,7 +66,7 @@ namespace SmartQuant.FinChart
             if (this.list.ContainsKey(item.DateTime))
                 (this.list[item.DateTime] as ArrayList).Add(item);
             else
-                this.list.Add(item.DateTime, new ArrayList()   { item  });
+                this.list.Add(item.DateTime, new ArrayList() { item });
         }
 
         public void Clear()
@@ -80,11 +80,8 @@ namespace SmartQuant.FinChart
                 return this.list.IndexOfKey(dateTime);
             this.list.Add(dateTime, null);
             int num = this.list.IndexOfKey(dateTime);
-            this.list.Remove(dateTime);
-            if (num == this.list.Count)
-                return -1;
-            else
-                return num;
+            this.list.Remove(dateTime); 
+            return num == this.list.Count ? -1 : num;
         }
 
         public int GetPrevIndex(DateTime dateTime)
@@ -94,10 +91,7 @@ namespace SmartQuant.FinChart
             this.list.Add(dateTime, null);
             int num = this.list.IndexOfKey(dateTime);
             this.list.Remove(dateTime);
-            if (num == 0)
-                return -1;
-            else
-                return num - 1;
+            return num == 0 ? -1 : num - 1;
         }
 
         public DateTime GetDateTime(int index)

@@ -6,6 +6,7 @@ using DashStyle = System.Drawing.Drawing2D.DashStyle;
 #if XWT
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 

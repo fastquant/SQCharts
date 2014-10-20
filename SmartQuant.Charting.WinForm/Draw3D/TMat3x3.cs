@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SmartQuant.Charting
+namespace SmartQuant.Charting.Draw3D
 {
     public class TMat3x3
     {
@@ -226,19 +226,19 @@ namespace SmartQuant.Charting
         {
             for (int i = 0; i < 3; ++i)
                 for (int j = 0; j < 3; ++j)
-                    this.m[i, j] = 0.0;
+                    this.m[i, j] = 0;
         }
 
         public void SetNumber(double k)
         {
             this.SetZero();
-            for (int index = 0; index < 3; ++index)
-                this.m[index, index] = k;
+            for (int i = 0; i < 3; ++i)
+                this.m[i, i] = k;
         }
 
         public void SetUnit()
         {
-            this.SetNumber(1.0);
+            this.SetNumber(1);
         }
 
         public void SetDiagonal(double lx, double ly, double lz)

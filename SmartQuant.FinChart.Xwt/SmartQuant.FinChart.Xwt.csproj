@@ -39,6 +39,7 @@
     <Reference Include="SmartQuant">
       <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -169,12 +170,15 @@
     <Compile Include="..\SmartQuant.FinChart.WinForm\ToolBar.cs">
       <Link>ToolBar.cs</Link>
     </Compile>
-    <Compile Include="Form.cs" />
-    <Compile Include="UserControl.cs" />
+    <Compile Include="Chart.Xwt.cs" />
+    <Compile Include="..\SmartQuant.FinChart.WinForm\FillView.cs">
+      <Link>FillView.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\SmartQuant.FinChart.WinForm\SmartQuant.FinChart.WinForm.csproj">
-      <Link>SmartQuant.FinChart.WinForm.csproj</Link>
-    </None>
+    <ProjectReference Include="..\Compatibility.Xwt\Compatibility.Xwt.csproj">
+      <Project>{952610E1-8750-4476-87BE-C3F915272D21}</Project>
+      <Name>Compatibility.Xwt</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

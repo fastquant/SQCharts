@@ -60,7 +60,6 @@
     <Compile Include="BSView.cs" />
     <Compile Include="ColorSeries.cs" />
     <Compile Include="DSView.cs" />
-    <Compile Include="Colors.cs" />
     <Compile Include="PadList.cs" />
     <Compile Include="PropertyForm.cs" />
     <Compile Include="SortedRangeList.cs" />
@@ -78,9 +77,18 @@
     <Compile Include="Objects\PathView.cs" />
     <Compile Include="Objects\RayView.cs" />
     <Compile Include="Objects\RectangleView.cs" />
+    <Compile Include="ChartToolStrip.cs" />
+    <Compile Include="Chart.WinForm.cs" />
+    <Compile Include="FillView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Objects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compatibility.WinForm\Compatibility.WinForm.csproj">
+      <Project>{1AF26544-F67B-465A-B1CB-C15B090F8232}</Project>
+      <Name>Compatibility.WinForm</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
