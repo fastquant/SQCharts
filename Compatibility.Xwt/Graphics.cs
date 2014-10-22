@@ -15,10 +15,29 @@ namespace Compatibility.Xwt
 {
     public class Pen
     {
+        public Color Color { get; set; }
+
+        public float Width { get; set; }
+
+        public Pen(Color color, float width)
+        {
+            Color = color;
+            Width = width;
+        }
     }
 
     public class Brush
     {
+    }
+
+    public class SolidBrush:Brush
+    {
+        public Color Color { get; set; }
+
+        public SolidBrush(Color color)
+        {
+            Color = color;
+        }
     }
 
     public class Bitmap
@@ -34,8 +53,9 @@ namespace Compatibility.Xwt
     }
 
     public class Graphics
-	{
+    {
         private Context ctx;
+
         public Graphics(Context ctx)
         {
             this.ctx = ctx;
@@ -60,5 +80,10 @@ namespace Compatibility.Xwt
         {
             throw new NotImplementedException();
         }
-	}
+
+        public void FillEllipse (Brush brush, int x, int y, int width, int height)
+        {
+              throw new NotImplementedException();
+        }
+    }
 }

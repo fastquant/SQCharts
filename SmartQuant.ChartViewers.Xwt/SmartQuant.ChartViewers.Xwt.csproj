@@ -62,5 +62,9 @@
       <Project>{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}</Project>
       <Name>SmartQuant.Charting.Xwt</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Compatibility.Xwt\Compatibility.Xwt.csproj">
+      <Project>{952610E1-8750-4476-87BE-C3F915272D21}</Project>
+      <Name>Compatibility.Xwt</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

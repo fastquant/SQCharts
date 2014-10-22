@@ -2,8 +2,10 @@
 using SmartQuant;
 using SmartQuant.Charting;
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 
@@ -47,17 +49,36 @@ namespace SmartQuant.ChartViewers
 
         public BarSeriesViewer()
         {
-            this.Type = typeof(BarSeries);
+            Type = typeof (BarSeries);
+            Color = Colors.Black;
+            DrawWidth = 1;
+            ChartStyle = ChartStyle.Candle;
+            BarWidthStyle = EWidthStyle.Auto;
+            CandleWidthStyle = EWidthStyle.Auto;
+            CandleBlackColor = Colors.Black;
+            CandleWhiteColor = Colors.White;
+            CandleBorderColor = Colors.Black;
+            CandleColor = Colors.Black;
+            BarColor = Colors.Black;
         }
 
         public override PadRange GetPadRangeX(object obj, Pad pad)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override PadRange GetPadRangeY(object obj, Pad pad)
         {
-            throw new NotImplementedException();
+            var bs = obj as BarSeries;
+            if (bs == null || bs.Count == 0)
+                return null;
+            var dt1 = new DateTime((long) pad.XMin);
+            var dt2 = new DateTime((long) pad.XMax);
+            var lowest = bs.LowestLowBar(dt1, dt2);
+            double min = lowest != null ? lowest.Low : 0;
+            var highest = bs.HighestHighBar(dt1, dt2);
+            double max = highest != null ? highest.High : 0;
+            return new PadRange(min, max);
         }
 
         public override void Paint(object obj, Pad pad)

@@ -7,20 +7,20 @@ using System.ComponentModel;
 using System;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using PointF = System.Drawing.PointF;
+
 #if XWT
 using Compatibility.Xwt;
 using Xwt;
 using Xwt.Drawing;
 #else
 using System.Drawing;
+using System.Windows.Forms;
 #endif
 namespace SmartQuant.Charting
 {
     public class Pad
     {
-        [Browsable(false)]
         public bool Grid3D;
         protected int fX1;
         protected int fX2;
@@ -44,9 +44,7 @@ namespace SmartQuant.Charting
         protected int fMarginBottom;
         protected int fWidth;
         protected int fHeight;
-        [NonSerialized]
         protected Chart fChart;
-        [NonSerialized]
         protected Graphics fGraphics;
         protected ArrayList fPrimitives;
         protected Color fBackColor;
@@ -75,7 +73,6 @@ namespace SmartQuant.Charting
         protected bool fMouseDown;
         protected int fMouseDownX;
         protected int fMouseDownY;
-        [NonSerialized]
         protected MouseButtons fMouseDownButton;
         protected bool fOutlineEnabled;
         protected Rectangle fOutlineRectangle;
@@ -104,7 +101,6 @@ namespace SmartQuant.Charting
         protected IChartTransformation fTransformation;
         protected Color fSessionGridColor;
 
-        [Browsable(false)]
         public bool For3D
         {
             get
@@ -117,7 +113,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public object View3D
         {
             get
@@ -130,7 +125,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis[] Axes3D
         {
             get
@@ -139,7 +133,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisX3D
         {
             get
@@ -148,7 +141,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisY3D
         {
             get
@@ -157,7 +149,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisZ3D
         {
             get
@@ -166,7 +157,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Chart Chart
         {
             get
@@ -277,7 +267,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double CanvasWidth
         {
             get
@@ -286,7 +275,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double CanvasHeight
         {
             get
@@ -295,7 +283,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public virtual int X1
         {
             get
@@ -309,7 +296,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public virtual int X2
         {
             get
@@ -323,7 +309,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int Y1
         {
             get
@@ -337,7 +322,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int Y2
         {
             get
@@ -351,7 +335,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int Width
         {
             get
@@ -365,7 +348,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int Height
         {
             get
@@ -379,7 +361,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double XMin
         {
             get
@@ -392,12 +373,11 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double XMax
         {
             get
             {
-                return this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed ?  this.fAxisBottom.Max : this.fXMax; 
+                return this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed ? this.fAxisBottom.Max : this.fXMax; 
             }
             set
             {
@@ -405,12 +385,11 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double YMin
         {
             get
             {
-                return this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed ? this.fAxisLeft.Min :  this.fYMin;
+                return this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed ? this.fAxisLeft.Min : this.fYMin;
             }
             set
             {
@@ -418,7 +397,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double YMax
         {
             get
@@ -431,7 +409,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double XRangeMin
         {
             get
@@ -444,7 +421,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double XRangeMax
         {
             get
@@ -457,7 +433,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double YRangeMin
         {
             get
@@ -470,7 +445,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public double YRangeMax
         {
             get
@@ -551,7 +525,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public TTitle Title
         {
             get
@@ -728,7 +701,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public ArrayList Primitives
         {
             get
@@ -741,7 +713,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Graphics Graphics
         {
             get
@@ -754,7 +725,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisLeft
         {
             get
@@ -763,7 +733,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisRight
         {
             get
@@ -772,7 +741,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisTop
         {
             get
@@ -781,7 +749,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public Axis AxisBottom
         {
             get
@@ -1752,7 +1719,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return ((TIntradayTransformation) this.Transformation).SessionGridEnabled;
+                    return ((TIntradayTransformation)this.Transformation).SessionGridEnabled;
                 else
                     return false;
             }
@@ -1760,7 +1727,7 @@ namespace SmartQuant.Charting
             {
                 if (this.fTransformationType != ETransformationType.Intraday)
                     return;
-                ((TIntradayTransformation) this.Transformation).SessionGridEnabled = value;
+                ((TIntradayTransformation)this.Transformation).SessionGridEnabled = value;
             }
         }
 
@@ -1785,7 +1752,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).FirstSessionTick);
+                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).FirstSessionTick);
                 else
                     return new TimeSpan(0, 0, 0, 0);
             }
@@ -1802,7 +1769,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).LastSessionTick);
+                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).LastSessionTick);
                 else
                     return new TimeSpan(0, 24, 0, 0);
             }
@@ -1812,7 +1779,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public bool Monitored
         {
             get
@@ -1825,7 +1791,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int WindowSize
         {
             get
@@ -1838,7 +1803,6 @@ namespace SmartQuant.Charting
             }
         }
 
-        [Browsable(false)]
         public int UpdateInterval
         {
             get
@@ -1860,19 +1824,19 @@ namespace SmartQuant.Charting
             this.Init();
         }
 
-        public Pad(Chart Chart)
+        public Pad(Chart chart)
         {
-            this.fChart = Chart;
+            this.fChart = chart;
             this.Init();
         }
 
-        public Pad(Chart Chart, double X1, double Y1, double X2, double Y2)
+        public Pad(Chart chart, double x1, double y1, double x2, double y2)
         {
-            this.fChart = Chart;
-            this.fCanvasX1 = X1;
-            this.fCanvasX2 = X2;
-            this.fCanvasY1 = Y1;
-            this.fCanvasY2 = Y2;
+            this.fChart = chart;
+            this.fCanvasX1 = x1;
+            this.fCanvasX2 = x2;
+            this.fCanvasY1 = y1;
+            this.fCanvasY2 = y2;
             this.Init();
         }
 
@@ -1902,11 +1866,6 @@ namespace SmartQuant.Charting
 
         }
 
-        private void InitContextMenu()
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual void SetCanvas(double x1, double y1, double x2, double y2, int width, int height)
         {
             this.SetCanvas(x1, y1, x2, y2);
@@ -1923,7 +1882,12 @@ namespace SmartQuant.Charting
 
         public virtual void SetCanvas(int width, int height)
         {
-            throw new NotImplementedException();
+            this.fX1 = (int)(width * this.fCanvasX1);
+            this.fX2 = (int)(width * this.fCanvasX2);
+            this.fY1 = (int)(height * this.fCanvasY1);
+            this.fY2 = (int)(height * this.fCanvasY2);
+            this.fWidth = this.fX2 - this.fX1;
+            this.fHeight = this.fY2 - this.fY1;    
         }
 
         public void SetRangeX(double xMin, double xMax)
@@ -1933,7 +1897,7 @@ namespace SmartQuant.Charting
 
         public void SetRangeX(DateTime xMin, DateTime xMax)
         {
-            this.SetRangeX(xMin.Ticks, xMax.Ticks);
+            SetRangeX(xMin.Ticks, xMax.Ticks);
         }
 
         public void SetRangeY(double yMin, double yMax)
@@ -1948,27 +1912,29 @@ namespace SmartQuant.Charting
 
         public void SetRange(DateTime xMin, DateTime xMax, double yMin, double yMax)
         {
-            this.SetRange(xMin.Ticks, xMax.Ticks, yMin, yMax);
+            SetRange(xMin.Ticks, xMax.Ticks, yMin, yMax);
         }
 
         public void SetRange(string xMin, string xMax, double yMin, double yMax)
         {
-            this.SetRange(DateTime.Parse(xMin).Ticks, DateTime.Parse(xMax).Ticks, yMin, yMax);
+            SetRange(DateTime.Parse(xMin).Ticks, DateTime.Parse(xMax).Ticks, yMin, yMax);
         }
 
         public bool IsInRange(double x, double y)
         {
-            return x >= this.XMin && x <= this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax) && (y >= this.YMin && y <= this.YMax);
+            return this.XMin <= x && x <= this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax) && this.YMin <= y && y <= this.YMax;
         }
 
         public void UnZoomX()
         {
-            throw new NotImplementedException();
+            AxisBottom.UnZoom();
+            AxisTop.UnZoom();
         }
 
         public void UnZoomY()
         {
-            throw new NotImplementedException();
+            AxisLeft.UnZoom();
+            AxisRight.UnZoom(); 
         }
 
         public void UnZoom()
@@ -2003,12 +1969,12 @@ namespace SmartQuant.Charting
 
         public int ClientX(double worldX)
         {
-            return (int) ((double) this.fClientX + (worldX - this.XMin - this.CalculateNotInSessionTicks(this.XMin, worldX)) * ((double) this.fClientWidth / (this.XMax - this.XMin)));
+            return (int)((double)this.fClientX + (worldX - this.XMin - this.CalculateNotInSessionTicks(this.XMin, worldX)) * ((double)this.fClientWidth / (this.XMax - this.XMin)));
         }
 
         public int ClientY(double worldY)
         {
-            return (int) ((double) this.fClientY + (double) this.fClientHeight * (1.0 - (worldY - this.YMin) / (this.YMax - this.YMin)));
+            return (int)((double)this.fClientY + (double)this.fClientHeight * (1.0 - (worldY - this.YMin) / (this.YMax - this.YMin)));
         }
 
         public int ClientX()
@@ -2033,12 +1999,12 @@ namespace SmartQuant.Charting
 
         public double WorldX(int clientX)
         {
-            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.XMin + (double) (clientX - this.fClientX) / (double) this.fClientWidth * (this.XMax - this.XMin));
+            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.XMin + (double)(clientX - this.fClientX) / (double)this.fClientWidth * (this.XMax - this.XMin));
         }
 
         public double WorldY(int clientY)
         {
-            return this.YMin + (1.0 - (double) (clientY - this.fClientY) / (double) this.fClientHeight) * (this.YMax - this.YMin);
+            return this.YMin + (1.0 - (double)(clientY - this.fClientY) / (double)this.fClientHeight) * (this.YMax - this.YMin);
         }
 
         public Viewer Add(object obj)
@@ -2097,12 +2063,12 @@ namespace SmartQuant.Charting
 
         public void DrawVerticalGrid(Pen pen, double x)
         {
-            this.fGraphics.DrawLine(pen, this.ClientX(x), this.fClientY, this.ClientX(x), this.fClientY + this.fClientHeight);
+            this.Graphics.DrawLine(pen, this.ClientX(x), this.fClientY, this.ClientX(x), this.fClientY + this.fClientHeight);
         }
 
         public void DrawHorizontalGrid(Pen pen, double y)
         {
-            this.fGraphics.DrawLine(pen, this.fClientX, this.ClientY(y), this.fClientX + this.fClientWidth, this.ClientY(y));
+            this.Graphics.DrawLine(pen, this.fClientX, this.ClientY(y), this.fClientX + this.fClientWidth, this.ClientY(y));
         }
 
         public void DrawLine(Pen pen, double x1, double y1, double x2, double y2)
@@ -2112,12 +2078,12 @@ namespace SmartQuant.Charting
 
         public void DrawRectangle(Pen pen, double x, double y, int width, int height)
         {
-            this.fGraphics.DrawRectangle(pen, this.ClientX(x), this.ClientY(y), width, height);
+            this.Graphics.DrawRectangle(pen, this.ClientX(x), this.ClientY(y), width, height);
         }
 
         public void DrawEllipse(Pen pen, double x, double y, int width, int height)
         {
-            this.fGraphics.DrawEllipse(pen, this.ClientX(x), this.ClientY(y), width, height);
+            this.Graphics.DrawEllipse(pen, this.ClientX(x), this.ClientY(y), width, height);
         }
 
         public void DrawBeziers(Pen pen, PointF[] points)
@@ -2127,7 +2093,7 @@ namespace SmartQuant.Charting
 
         public void DrawText(string text, Font font, Brush brush, int x, int y)
         {
-            this.fGraphics.DrawString(text, font, brush, x, y);
+            this.Graphics.DrawString(text, font, brush, x, y);
         }
 
         private bool IsInsideClient(int x, int y)
@@ -2165,11 +2131,11 @@ namespace SmartQuant.Charting
             if (NewTick != null)
                 NewTick(null, new NewTickEventArgs(datetime));
         }
-            
+
         public void EmitZoom(bool zoom)
         {
-            if (this.Zoom != null)
-            this.Zoom(null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
+            if (Zoom != null)
+                Zoom(null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
         }
     }
 }

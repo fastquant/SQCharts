@@ -1,11 +1,11 @@
 ﻿using System;
 using SmartQuant;
 using SmartQuant.Charting;
-
 #if XWT
+using Compatibility.Xwt;
 using Xwt.Drawing;
-
 #else
+using Compatibility.WinForm;
 using System.Drawing;
 #endif
 
@@ -30,16 +30,27 @@ namespace SmartQuant.ChartViewers
         public TickSeriesViewer()
         {
             Type = typeof(TickSeries);
+            Color = Colors.Black;
+            DrawWidth = 1;
         }
 
         public override PadRange GetPadRangeX(object obj, Pad pad)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override PadRange GetPadRangeY(object obj, Pad pad)
         {
-            throw new NotImplementedException();
+            var ts = obj as TickSeries;
+            if (ts == null || ts.Count == 0)
+                return null;
+            var dt1 = new DateTime((long) pad.XMin);
+            var dt2 = new DateTime((long) pad.XMax);
+            var min = ts.GetMin(dt1, dt2);
+            var minPx = min == null ? 0.0 : min.Price;
+            var max = ts.GetMax(dt1, dt2);
+            var maxPx = max == null ? 0.0 : max.Price;
+            return new PadRange(minPx, maxPx);   
         }
 
         public override void Paint(object obj, Pad pad)

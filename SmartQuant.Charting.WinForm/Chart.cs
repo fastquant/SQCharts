@@ -356,39 +356,39 @@ namespace SmartQuant.Charting
         public Pad cd(int padIndex)
         {
             padIndex = padIndex < 1 ? 1 : padIndex;
-            padIndex = padIndex > fPads.Count ? fPads.Count : padIndex;
-            Chart.fPad = fPads[padIndex - 1];
-            return Chart.fPad;
+            padIndex = padIndex > Pads.Count ? Pads.Count : padIndex;
+            Chart.Pad = Pads[padIndex - 1];
+            return Chart.Pad;
         }
 
         public void Clear()
         {
-            this.fPads.Clear();
+            Pads.Clear();
         }
 
         public void SetRangeX(double min, double max)
         {
-            foreach (Pad pad in this.fPads)
+            foreach (Pad pad in Pads)
                 pad.SetRangeX(min, max);
         }
 
         public void SetRangeX(DateTime min, DateTime max)
         {
-            foreach (Pad pad in this.fPads)
+            foreach (Pad pad in Pads)
                 pad.SetRangeX(min, max);
         }
 
         public void SetRangeY(double min, double max)
         {
-            foreach (Pad pad in this.fPads)
+            foreach (Pad pad in Pads)
                 pad.SetRangeY(min, max);
         }
 
         public virtual Pad AddPad(double x1, double y1, double x2, double y2)
         {
             var pad = new Pad(this, x1, y1, x2, y2);
-            pad.Name = string.Format("Pad {0}", this.fPads.Count + 1);
-            pad.ForeColor = this.fPadsForeColor;
+            pad.Name = string.Format("Pad {0}", Pads.Count + 1);
+            pad.ForeColor = this.PadsForeColor;
             pad.Zoom += new ZoomEventHandler(this.ZoomChanged);
             Pads.Add(pad);
             return Chart.Pad = pad;
@@ -396,28 +396,20 @@ namespace SmartQuant.Charting
 
         public void Connect()
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in Pads)
+                pad.Zoom += new ZoomEventHandler(this.ZoomChanged);
         }
 
         public void Disconnect()
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in Pads)
+                pad.Zoom -= new ZoomEventHandler(this.ZoomChanged);
         }
 
         protected void ZoomChanged(object sender, ZoomEventArgs e)
         {
             throw new NotImplementedException();
-        }
-
-        private void AdaptLeftMargin()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void AdaptRightMargin()
-        {
-            throw new NotImplementedException();
-        }
+        }            
 
         public void Divide(int x, int y)
         {
@@ -466,7 +458,8 @@ namespace SmartQuant.Charting
 
         public void UpdatePads()
         {
-            throw new NotImplementedException();
+            this.Invalidate();
+//            Application.DoEvents();
         }
 
         public void UpdatePads(Graphics g)
@@ -476,7 +469,7 @@ namespace SmartQuant.Charting
 
         public virtual void Print()
         {
-            throw new NotImplementedException();
+            PrintDocument.Print();
         }
 
         public virtual void PrintPreview()
@@ -494,11 +487,6 @@ namespace SmartQuant.Charting
             throw new NotImplementedException();
         }
 
-        private void OnPrintPage(object sender, PrintPageEventArgs Args)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void OnPaint(PaintEventArgs pe)
         {
             throw new NotImplementedException();
@@ -510,17 +498,17 @@ namespace SmartQuant.Charting
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            base.OnMouseMove(e);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            base.OnMouseWheel(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -530,12 +518,14 @@ namespace SmartQuant.Charting
 
         protected override void OnDoubleClick(EventArgs e)
         {
-            throw new NotImplementedException();
+            base.OnDoubleClick(e);
         }
 
         protected override void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            foreach (Pad pad in Pads)
+                pad.Monitored = false;
+            base.Dispose(disposing);   
         }
     }
 }

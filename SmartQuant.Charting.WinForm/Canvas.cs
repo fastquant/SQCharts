@@ -18,7 +18,6 @@ namespace SmartQuant.Charting
     public partial class Canvas : Form
     {
         private Container components;
-        private Chart fChart;
 
         public Chart Chart { get; private set; }
 
@@ -215,11 +214,7 @@ namespace SmartQuant.Charting
             
         private void InitializeComponent()
         {
-            #if XWT
             Chart = new Chart();
-            #else
-            Chart = new Chart();
-            #endif
         }
 
         public Canvas(string name, string title, string fileName, int width, int height)
