@@ -1,16 +1,7 @@
 ﻿// Licensed under the Apache License, Version 2.0. 
 // Copyright (c) Alex Lee. All rights reserved.
 
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting.Draw3D
 {
@@ -24,7 +15,7 @@ namespace SmartQuant.Charting.Draw3D
         {
             get
             {
-                return ColorUtils.FromArgb((int)(byte.MaxValue * this.r), (int)(byte.MaxValue * this.g), (int)(byte.MaxValue * this.b));
+                return Color.FromArgb((int)(byte.MaxValue * this.r), (int)(byte.MaxValue * this.g), (int)(byte.MaxValue * this.b));
             }
             set
             {
@@ -46,18 +37,9 @@ namespace SmartQuant.Charting.Draw3D
 
         public TColor(Color c)
         {
-            #if XWT || GTK
-            double r = c.Red;
-            double g = c.Green;
-            double b = c.Blue;
-            #else
-            double r = c.R;
-            double g = c.G;
-            double b = c.B;
-            #endif
-            this.r = 1.0 / byte.MaxValue * r;
-            this.g = 1.0 / byte.MaxValue * g;
-            this.b = 1.0 / byte.MaxValue * b;
+            this.r = 1.0 / byte.MaxValue * c.R;
+            this.g = 1.0 / byte.MaxValue * c.G;
+            this.b = 1.0 / byte.MaxValue * c.B;
         }
 
         public static implicit operator TColor(Color c)

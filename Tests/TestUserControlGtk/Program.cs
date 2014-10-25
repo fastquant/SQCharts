@@ -1,6 +1,7 @@
 ﻿using System;
 using Gtk;
 using Compatibility.Gtk;
+using System.Drawing;
 
 namespace TestUserControlGtk
 {
@@ -8,7 +9,7 @@ namespace TestUserControlGtk
     {
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.Clear(Colors.Maroon);
+            pe.Graphics.Clear(Color.Blue);
         }
     }
 

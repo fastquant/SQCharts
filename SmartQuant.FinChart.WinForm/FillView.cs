@@ -2,18 +2,12 @@
 using System.ComponentModel;
 using System.Text;
 
-#if XWT
-using Xwt;
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
+using System.Drawing;
 
 namespace SmartQuant.FinChart
 {
@@ -99,9 +93,9 @@ namespace SmartQuant.FinChart
             TextEnabled = true;
             ToolTipEnabled = true;
             ToolTipFormat = "{0} {2} {1} @ {3} {4} {5}";
-            BuyColor = Colors.Blue;
-            SellColor = Colors.Red;
-            SellShortColor = Colors.Yellow;
+            BuyColor = Color.Blue;
+            SellColor = Color.Red;
+            SellShortColor = Color.Yellow;
         }
 
         public void Paint()
@@ -132,8 +126,8 @@ namespace SmartQuant.FinChart
                         (PointF) new Point((int) ((double) x - (double) num3 / 2.0), (int) ((double) y + (double) num3 / 2.0)),
                         (PointF) new Point((int) ((double) x + (double) num3 / 2.0), (int) ((double) y + (double) num3 / 2.0))
                     };
-                    this.pad.Graphics.DrawPolygon(new Pen(Colors.LightGray), points1);
-                    this.pad.Graphics.DrawRectangle(new Pen(Colors.LightGray), (float) x - num3 / 4f, (float) y + num3 / 2f, num3 / 2f, num3 / 2f);
+                    this.pad.Graphics.DrawPolygon(new Pen(Color.LightGray), points1);
+                    this.pad.Graphics.DrawRectangle(new Pen(Color.LightGray), (float) x - num3 / 4f, (float) y + num3 / 2f, num3 / 2f, num3 / 2f);
                     this.pad.Graphics.FillPolygon((Brush) new SolidBrush(color1), points1);
                     this.pad.Graphics.FillRectangle((Brush) new SolidBrush(color1), (float) x - num3 / 4f, (float) ((double) y + (double) num3 / 2.0 - 1.0), num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
                     break;
@@ -145,8 +139,8 @@ namespace SmartQuant.FinChart
                         new Point((int) ((double) x - (double) num3 / 2.0), (int) ((double) y - (double) num3 / 2.0)),
                         new Point((int) ((double) x + (double) num3 / 2.0), (int) ((double) y - (double) num3 / 2.0))
                     };
-                    this.pad.Graphics.DrawPolygon(new Pen(Colors.LightGray), points2);
-                    this.pad.Graphics.DrawRectangle(new Pen(Colors.LightGray), (float) x - num3 / 4f, (float) y - num3, num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
+                    this.pad.Graphics.DrawPolygon(new Pen(Color.LightGray), points2);
+                    this.pad.Graphics.DrawRectangle(new Pen(Color.LightGray), (float) x - num3 / 4f, (float) y - num3, num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
                     this.pad.Graphics.FillPolygon((Brush) new SolidBrush(color2), points2);
                     this.pad.Graphics.FillRectangle((Brush) new SolidBrush(color2), (float) x - num3 / 4f, (float) y - num3, num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
                     break;

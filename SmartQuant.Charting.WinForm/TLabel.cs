@@ -3,16 +3,11 @@
 
 using System;
 using System.ComponentModel;
-#if XWT
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
+using System.Drawing;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
 
 namespace SmartQuant.Charting
@@ -46,12 +41,12 @@ namespace SmartQuant.Charting
         public int TextOffsetY { get; set; }
 
         public TLabel(string text, double x, double y)
-            : this(text, x, y, default(Color), Colors.Black)
+            : this(text, x, y, default(Color), Color.Black)
         {
         }
 
         public TLabel(string text, double x, double y, Color markerColor)
-            : this(text, x, y, markerColor, Colors.Black)
+            : this(text, x, y, markerColor, Color.Black)
         {
         }
 
@@ -61,7 +56,7 @@ namespace SmartQuant.Charting
             Text = text;
             TextFont = Fonts.SystemFont();
             TextPosition = ETextPosition.RightBottom;
-            TextColor = Colors.Black;
+            TextColor = Color.Black;
             TextOffsetX = 0;
             TextOffsetY = 2;
             TextColor = textColor;

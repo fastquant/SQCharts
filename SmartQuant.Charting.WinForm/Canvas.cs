@@ -4,14 +4,11 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-#if XWT
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
-using Gtk;
+using System.Drawing.Printing;
+
+#if GTK
 using Compatibility.Gtk;
 #else
-using System.Drawing.Printing;
 using System.Windows.Forms;
 #endif
 

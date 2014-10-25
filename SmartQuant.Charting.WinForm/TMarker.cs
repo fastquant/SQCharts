@@ -6,17 +6,12 @@
 
 using System;
 using System.ComponentModel;
-#if XWT
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
+using System.Drawing;
 using System.Text;
 
 namespace SmartQuant.Charting
@@ -24,10 +19,10 @@ namespace SmartQuant.Charting
     [Serializable]
     public class TMarker : IDrawable, IMovable
     {
-        protected Color fBuyColor = Colors.Blue;
-        protected Color fSellColor = Colors.Red;
-        protected Color fSellShortColor = Colors.Yellow;
-        protected Color fBuyShortColor = Colors.Green;
+        protected Color fBuyColor = Color.Blue;
+        protected Color fSellColor = Color.Red;
+        protected Color fSellShortColor = Color.Yellow;
+        protected Color fBuyShortColor = Color.Green;
         protected double fX;
         protected double fY;
         protected double fZ;
@@ -469,14 +464,14 @@ namespace SmartQuant.Charting
         private void InitMarker()
         {
             this.fStyle = EMarkerStyle.Rectangle;
-            this.fColor = Colors.Black;
+            this.fColor = Color.Black;
             this.fSize = 5;
             this.fFilled = true;
             this.fTextEnabled = true;
             this.fTextOffset = 2;
             this.fTextPosition = EMarkerTextPosition.Bottom;
             this.fTextFont = Fonts.SystemFont();
-            this.fTextColor = Colors.Black;
+            this.fTextColor = Color.Black;
             this.fToolTipEnabled = true;
             this.fToolTipFormat = "X = {0:F2} Y = {1:F2}";
         }

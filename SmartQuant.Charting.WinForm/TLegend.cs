@@ -3,16 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -63,8 +54,8 @@ namespace SmartQuant.Charting
         {
             Pad = pad;
             BorderEnabled = true;
-            BorderColor = Colors.Black;
-            BackColor = Colors.LightYellow;
+            BorderColor = Color.Black;
+            BackColor = Color.LightYellow;
             Items = new ArrayList();
         }
 

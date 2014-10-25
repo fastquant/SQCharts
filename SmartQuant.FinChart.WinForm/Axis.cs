@@ -2,15 +2,15 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-using DashStyle = System.Drawing.Drawing2D.DashStyle;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Font = Compatibility.Gtk.Font;
+using System.Drawing.Drawing2D;
+
+
+#if GTK
+using Compatibility.Gtk;
 #else
-using System.Drawing;
+using Compatibility.WinForm;
 #endif
+using System.Drawing;
 
 namespace SmartQuant.FinChart
 {

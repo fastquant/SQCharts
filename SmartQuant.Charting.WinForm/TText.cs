@@ -4,18 +4,11 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-
-
-#if XWT
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
+using System.Drawing;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
 
 namespace SmartQuant.Charting
@@ -137,7 +130,7 @@ namespace SmartQuant.Charting
         }
 
         public TText(string text, double x, double y)
-            : this(text, x, y, Colors.Black)
+            : this(text, x, y, Color.Black)
         {
         }
 
@@ -153,7 +146,7 @@ namespace SmartQuant.Charting
         }
 
         public TText(string text, DateTime x, double y)
-            : this(text, x.Ticks, y, Colors.Black)
+            : this(text, x.Ticks, y, Color.Black)
         {
         }
 

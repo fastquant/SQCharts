@@ -4,15 +4,11 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
+using System.Drawing;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
 
 namespace SmartQuant.Charting
@@ -55,8 +51,8 @@ namespace SmartQuant.Charting
             Height = -1;
             Position = ETextBoxPosition.TopRight;
             BorderEnabled = true;
-            BorderColor = Colors.Black;
-            BackColor = Colors.LightYellow;
+            BorderColor = Color.Black;
+            BackColor = Color.LightYellow;
             Items = new ArrayList();
         }
 

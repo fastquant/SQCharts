@@ -2,17 +2,12 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-using DashStyle = System.Drawing.Drawing2D.DashStyle;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using System.Windows.Forms;
-using System.Drawing;
 #endif
 
 namespace SmartQuant.Charting
@@ -154,39 +149,39 @@ namespace SmartQuant.Charting
             this.height = -1;
             Enabled = true;
             Zoomed = false;
-            Color = Colors.Black;
+            Color = Color.Black;
 
             // title
             TitleEnabled = true;
             Title = "";
             TitlePosition = EAxisTitlePosition.Centre;
             TitleFont = new Font("Arial", 8f);
-            TitleColor = Colors.Black;
+            TitleColor = Color.Black;
             TitleOffset = 2;
 
             // label
             LabelEnabled = true;
             LabelFont = new Font("Arial", 8f);
-            LabelColor = Colors.Black;
+            LabelColor = Color.Black;
             LabelFormat =  null;
             LabelOffset = 2;
             LabelAlignment = EAxisLabelAlignment.Centre;
 
             // grid
             GridEnabled = true;
-            GridColor = Colors.Gray;
+            GridColor = Color.Gray;
             GridDashStyle = DashStyle.Solid;
             GridWidth = 0.5f;
             MinorGridEnabled = false;
-            MinorGridColor = Colors.Gray;
+            MinorGridColor = Color.Gray;
             MinorGridDashStyle = DashStyle.Solid;
             MinorGridWidth = 0.5f;
             MajorTicksEnabled = true;
-            MajorTicksColor = Colors.Black;
+            MajorTicksColor = Color.Black;
             MajorTicksWidth = 0.5f;
             MajorTicksLength = 4;
             MinorTicksEnabled = true;
-            MinorTicksColor = Colors.Black;
+            MinorTicksColor = Color.Black;
             MinorTicksWidth = 0.5f;
             MinorTicksLength = 1;
             Type = EAxisType.Numeric;

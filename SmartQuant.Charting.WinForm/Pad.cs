@@ -5,24 +5,15 @@ using System.Collections.Generic;
 using System.Collections;
 using System.ComponentModel;
 using System;
-using MouseButtons = System.Windows.Forms.MouseButtons;
-using DashStyle = System.Drawing.Drawing2D.DashStyle;
-using PointF = System.Drawing.PointF;
-
-#if XWT
-using Compatibility.Xwt;
-using Xwt;
-using Xwt.Drawing;
-
-#elif GTK
-using Gdk;
-using Gtk;
-using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
-#else
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using MouseButtons = System.Windows.Forms.MouseButtons;
+#if GTK
+using Compatibility.Gtk;
+#else
 using System.Windows.Forms;
 #endif
+
 namespace SmartQuant.Charting
 {
     class ViewerList
@@ -1904,8 +1895,8 @@ namespace SmartQuant.Charting
             this.fClientY = 10;
             this.fClientWidth = 0;
             this.fClientHeight = 0;
-            BackColor = Colors.LightGray;
-            ForeColor = Colors.White;
+            BackColor = Color.LightGray;
+            ForeColor = Color.White;
             MarginLeft = 10;
             MarginRight = 20;
             MarginTop = 10;
@@ -1915,7 +1906,7 @@ namespace SmartQuant.Charting
             TitleOffsetX = TitleOffsetY = 5;
             Transformation = (IChartTransformation)new TIntradayTransformation();
             this.fTransformationType = ETransformationType.Empty;
-            SessionGridColor = Colors.Blue;
+            SessionGridColor = Color.Blue;
             AxisLeft = new Axis(this, EAxisPosition.Left);
             AxisRight = new Axis(this, EAxisPosition.Right);
             AxisTop = new Axis(this, EAxisPosition.Top);
@@ -1930,7 +1921,7 @@ namespace SmartQuant.Charting
             LegendOffsetX = 5;
             LegendOffsetY = 5;
             BorderEnabled = true;
-            BorderColor = Colors.Black;
+            BorderColor = Color.Black;
             BorderWidth = 1;
             SetRange(0.0, 100.0, 0.0, 100.0);
             Graphics = null;

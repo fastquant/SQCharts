@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Drawing;
 
-#if XWT
-using Compatibility.Xwt;
-#elif GTK
+
+#if GTK
 using Compatibility.Gtk;
 #else
-using System.Drawing;
+using Compatibility.WinForm;
 #endif
 
 namespace SmartQuant.Charting.Draw3D

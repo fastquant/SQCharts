@@ -1,15 +1,6 @@
 ﻿using System;
 using System.Collections;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -51,7 +42,7 @@ namespace SmartQuant.Charting
             Title = title;
             Pieces = new ArrayList();
             EnableContour = true;
-            ContourColor = Colors.Gray;
+            ContourColor = Color.Gray;
             Gap = 0;
             Format = "F1";
             palette = new Color[0];
@@ -60,7 +51,7 @@ namespace SmartQuant.Charting
 
         public void Add(double weight)
         {
-            Pieces.Add(new TPieItem(weight, "", ColorUtils.Empty()));
+            Pieces.Add(new TPieItem(weight, "", Color.Empty));
         }
 
         public void Add(double weight, string text, Color color)
@@ -70,7 +61,7 @@ namespace SmartQuant.Charting
 
         public void Add(double weight, string text)
         {
-            Pieces.Add(new TPieItem(weight, text, ColorUtils.Empty()));
+            Pieces.Add(new TPieItem(weight, text, Color.Empty));
         }
 
         public virtual void Draw(string option)

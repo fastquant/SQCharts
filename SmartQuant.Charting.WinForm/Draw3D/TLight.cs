@@ -2,16 +2,7 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gtk;
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting.Draw3D
 {
@@ -35,10 +26,10 @@ namespace SmartQuant.Charting.Draw3D
 
         public TLight()
         {
-            Ambient = new TColor(Colors.PaleTurquoise);
+            Ambient = new TColor(Color.PaleTurquoise);
             ParallelBeams = new TSource[1]
             {
-                new TSource(new TVec3(3.0, -2.0, 2.0), (TColor)Colors.LightYellow)
+                new TSource(new TVec3(3.0, -2.0, 2.0), (TColor)Color.LightYellow)
             };
             NearSources = new TSource[0];
 

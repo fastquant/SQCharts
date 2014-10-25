@@ -2,16 +2,8 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-using DashStyle = System.Drawing.Drawing2D.DashStyle;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
+using System.Drawing.Drawing2D;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -42,7 +34,7 @@ namespace SmartQuant.Charting
             Y1 = y1;
             X2 = x2;
             Y2 = y2;
-            Color = Colors.Black;
+            Color = Color.Black;
             DashStyle = DashStyle.Solid;
             Width = 1;
         }

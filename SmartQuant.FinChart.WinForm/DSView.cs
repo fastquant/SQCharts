@@ -3,17 +3,8 @@
 
 using System;
 using SmartQuant;
-using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
+using System.Drawing.Drawing2D;
 
 namespace SmartQuant.FinChart
 {
@@ -59,7 +50,7 @@ namespace SmartQuant.FinChart
         }
 
         public DSView(Pad pad, TimeSeries series, SearchOption option)
-            : this(pad, series, Colors.White, option, SmoothingMode.AntiAlias)
+            : this(pad, series, Color.White, option, SmoothingMode.AntiAlias)
         {
         }
 

@@ -2,79 +2,31 @@
 
 using Gdk;
 using Gtk;
-using Point = Gdk.Point;
-using EmfType = System.Drawing.Imaging.EmfType;
 using MouseButtons = System.Windows.Forms.MouseButtons;
-using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
-using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
-using TextRenderingHint = System.Drawing.Text.TextRenderingHint;
 using Image = Gdk.Image;
+using Gtk.DotNet;
+using System.Drawing;
 
 namespace Compatibility.Gtk
 {
-    public sealed class ImageFormat
+    public static class GraphicsExtention
     {
-    }
-
-    public class Pen
-    {
-        public Pen() : this(Color.Zero, 1)
+        public static System.Drawing.Rectangle ToStandardRectangle(this Gdk.Rectangle rect)
         {
-        }
-        public Pen(Color color) : this(color, 1)
-        {
+            return new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        public Color Color { get; set; }
-
-        public float Width { get; set; }
-
-        public Pen(Color color, float width)
+        public static System.Drawing.Size ToStandardSize(this Gdk.Size size)
         {
-            Color = color;
-            Width = width;
+            return new System.Drawing.Size(size.Width, size.Height);
         }
-    }
-
-    public class Brush
-    {
-        public Color Color { get; set; }
-    }
-
-    public class SolidBrush : Brush
-    {
-
-        public SolidBrush(Color color)
-        {
-            Color = color;
-        }
-    }
-
-    public class Bitmap
-    {
-        public Bitmap(Metafile metafile)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class Metafile
-    {
     }
 
     public class ToolTip
     {
     }
-
-    public class PrintDocument
-    {
-        public void Print()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
+        
     public class Form : Gdk.Window
     {
         public Form()
@@ -107,7 +59,7 @@ namespace Compatibility.Gtk
 
         public int Delta { get; private set; }
 
-        public Point Location { get; private set; }
+        public System.Drawing.Point Location { get; private set; }
 
         public int X { get { return (int)Location.X; } }
 
@@ -118,7 +70,7 @@ namespace Compatibility.Gtk
             Button = MouseButtons.None;
             Clicks = 1;
             Delta = 1;
-            Location = new Point(x, y);
+            Location = new System.Drawing.Point(x, y);
         }
 
         //        public static implicit operator MouseEventArgs(MouseMovedEventArgs args)
@@ -143,139 +95,12 @@ namespace Compatibility.Gtk
     {
     }
 
-        public class KeyPressEventArgs : EventArgs
-        {
-//            public static implicit operator KeyPressEventArgs(KeyEventArgs args)
-//            {
-//                throw new NotImplementedException();
-//            }
-        }
-
-    public sealed class GraphicsPath
+    public class KeyPressEventArgs : EventArgs
     {
-        public void AddLine(Point pt1, Point pt2)
-        {
-            this.AddLine(pt1.X, pt1.Y, pt2.X, pt2.Y);
-        }
-
-        public void AddLine(int x1, int y1, int x2, int y2)
-        {
-        }
-    }
-
-    public struct PointF
-    {
-        public static implicit operator PointF(Point p)
-        {
-            return new PointF();
-        }
-    }
-    public struct SizeF
-    {
-        public float Width
-        {
-            get;
-            set;
-        }
-
-        public float Height
-        {
-            get;
-            set;
-        }
-    }
-
-    public class Graphics
-    {
-        private Rectangle rect;
-        private Widget widget;
-        private Cairo.Context ctx;
-
-        public Graphics(Widget widget, Cairo.Context ctx, Rectangle rect)
-        {
-            this.widget = widget;
-            this.ctx = ctx;
-            this.rect = rect;
-        }
-
-        public TextRenderingHint TextRenderingHint
-        {
-            get;
-            set;
-        }
-
-        public SmoothingMode SmoothingMode
-        {
-            get;
-            set;
-        }
-
-        public void Clear(Color color)
-        {
-            ctx.Rectangle (0, 0, rect.Width, rect.Height);
-            CairoHelper.SetSourceColor(ctx, color);
-            ctx.Fill();           
-        }
-
-        public void DrawEllipse(Pen pen, float x, float y, float width, float height)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawString(string s, Font font, Brush brush, float x, float y)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawRectangle(Pen pen, float x, float y, float width, float height)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FillRectangle(Brush brush, float x, float y, float width, float heigth)
-        {
-            this.ctx.Rectangle(x, y, width, heigth);
-            this.ctx.Fill();
-        }
-
-        public void DrawLine(Pen pen, float x1, float y1, float x2, float y2)
-        {
-            this.ctx.LineWidth = pen.Width;
-            this.ctx.Save();
-            this.ctx.MoveTo(x1, y1);
-            this.ctx.LineTo(x2, y2);
-            this.ctx.Restore();
-        }
-
-        public void FillEllipse(Brush brush, float x, float y, float width, float height)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawPath(Pen pen, GraphicsPath path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawImage(Image image, float x, float y)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawPolygon(Pen pen, PointF[] points)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FillPolygon(Brush brush, PointF[] points)
-        {
-            throw new NotImplementedException();
-        }
-
-        public SizeF MeasureString (string text, Font font)
-        {
-            return new SizeF();
-        }
+        //            public static implicit operator KeyPressEventArgs(KeyEventArgs args)
+        //            {
+        //                throw new NotImplementedException();
+        //            }
     }
 
     public class PaintEventArgs : EventArgs, IDisposable
@@ -284,32 +109,30 @@ namespace Compatibility.Gtk
         {
         }
 
-        public Rectangle ClipRectangle { get; private set; }
+        public System.Drawing.Rectangle ClipRectangle { get; private set; }
 
-        public Graphics Graphics { get; private set; }
+        public System.Drawing.Graphics Graphics { get; private set; }
 
-        public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+        public PaintEventArgs(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipRect)
         {
             Graphics = graphics;
             ClipRectangle = clipRect;
         }
     }
-
-    public delegate void PaintEventHandler(object sender,PaintEventArgs e);
-
+        
     public class UserControl : ScrolledWindow
     {
         public string Text { get; set; }
 
-        public Size Size
+        public System.Drawing.Size Size
         { 
             get
             { 
-                return Allocation.Size; 
+                return Allocation.Size.ToStandardSize(); 
             }
         }
 
-        public Size ClientSize 
+        public System.Drawing.Size ClientSize
         {
             get
             {
@@ -317,11 +140,11 @@ namespace Compatibility.Gtk
             }
         }
 
-        public Rectangle ClientRectangle 
+        public System.Drawing.Rectangle ClientRectangle
         { 
             get
             {
-                return Allocation;
+                return Allocation.ToStandardRectangle();
             }
            
         }
@@ -354,109 +177,80 @@ namespace Compatibility.Gtk
 
         public bool InvokeRequired { get; set; }
 
-        public Color BackColor { get; private set; }
+        public System.Drawing.Color BackColor { get; private set; }
 
-        private DrawingArea drawingArea;
         private Tooltip tooltip;
 
         public UserControl()
         {
-            ShadowType = ShadowType.None;
-            Viewport vp = new Viewport();
-            vp.ShadowType = ShadowType.None;
-            this.drawingArea = new DrawingArea();
-            this.drawingArea.Events = EventMask.AllEventsMask;
-            var eventBox = new EventBox();
-            eventBox.Add(this.drawingArea);
-            vp.Add(eventBox);
-            this.Add(vp);
-            if (this.Child != null)
-                this.Child.ShowAll();
-            this.drawingArea.ExposeEvent += HandleExposeEvent;
-//            this.ButtonPressEvent += OnButtonPressed;
-            this.drawingArea.EnterNotifyEvent += HandleEnterNotifyEvent;
-            this.drawingArea.TooltipText = "ddddd";
-//            this.drawingArea..
-            //tooltip = new Tooltip();
             Events = EventMask.AllEventsMask;
-            this.SizeAllocated += HandleSizeAllocated;
-            this.Hide();
         }
 
-        private void HandleSizeAllocated(object o, SizeAllocatedArgs args)
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
-//            Console.WriteLine("HandleSizeAllocated:{0}", args.Allocation);
+            Console.WriteLine("HandleSizeAllocated:{0}", allocation);
+            base.OnSizeAllocated(allocation);
         }
 
-        private void HandleEnterNotifyEvent(object o, EnterNotifyEventArgs args)
+        protected override bool OnExposeEvent(Gdk.EventExpose evnt)
         {
-            //  Console.WriteLine("HandleEnterNotifyEvent");
+            var g = global::Gtk.DotNet.Graphics.FromDrawable(GdkWindow);
+            var pe = new PaintEventArgs(g, evnt.Area.ToStandardRectangle());
+            this.OnPaintBackground(pe);
+            this.OnPaint(pe);
+            return base.OnExposeEvent(evnt);
         }
 
-        private void HandleExposeEvent(object sender, ExposeEventArgs args)
+        protected override bool OnButtonPressEvent(Gdk.EventButton evnt)
         {
-            var obj = sender as DrawingArea;
-            using (var cr = Gdk.CairoHelper.Create(args.Event.Window))
-            {
-                var area = args.Event.Area;
-                var pe = new PaintEventArgs(new Graphics(obj, cr, area), area);
-                this.OnPaintBackground(pe);
-                this.OnPaint(pe);
-            }
-        }
-
-        protected void OnButtonPressed(object sender, ButtonPressEventArgs a)
-        {
-//            Console.WriteLine("OnButtonPressed");
+            Console.WriteLine("OnButtonPressed");
+            return base.OnButtonPressEvent(evnt);
         }
 
         #region Native Events Dispatch
 
-        protected override bool OnEnterNotifyEvent(EventCrossing evnt)
+        protected override bool OnEnterNotifyEvent(Gdk.EventCrossing evnt)
         {
-//            Console.WriteLine("OnEnterNotifyEvent");
+            Console.WriteLine("OnEnterNotifyEvent");
             return true;
         }
 
-        protected override bool OnLeaveNotifyEvent(EventCrossing evnt)
+        protected override bool OnLeaveNotifyEvent(Gdk.EventCrossing evnt)
         {
-//            Console.WriteLine("OnLeaveNotifyEvent");
+            Console.WriteLine("OnLeaveNotifyEvent");
             return base.OnLeaveNotifyEvent(evnt);
         }
 
-        protected override bool OnMotionNotifyEvent(EventMotion evnt)
+        protected override bool OnMotionNotifyEvent(Gdk.EventMotion evnt)
         {
-//            Console.WriteLine("OnMotionNotifyEvent");
-            return true;
+            Console.WriteLine("OnMotionNotifyEvent");
+            return base.OnMotionNotifyEvent(evnt);
         }
 
-        protected override bool OnButtonPressEvent(EventButton evnt)
-        {
+//        protected override bool OnButtonPressEvent(Gdk.EventButton evnt)
+//        {
 //            Console.WriteLine("OnButtonPressEvent");
-            return true;
+//            return base.OnButtonPressEvent(evnt);
+//
+//        }
 
-        }
-
-        protected override bool OnButtonReleaseEvent(EventButton evnt)
+        protected override bool OnButtonReleaseEvent(Gdk.EventButton evnt)
         {
 //            Console.WriteLine("OnButtonReleaseEvent");
-            return true;
-
+            return base.OnButtonReleaseEvent(evnt);
         }
 
-        protected override bool OnScrollEvent(EventScroll evnt)
+        protected override bool OnScrollEvent(Gdk.EventScroll evnt)
         {
-//            Console.WriteLine("OnScrollEvent");
-            return true;
+            Console.WriteLine("OnScrollEvent");
+            return base.OnScrollEvent(evnt);
         }
 
-        protected override bool OnKeyPressEvent(EventKey evnt)
+        protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
         {
 //            Console.WriteLine("OnKeyPressEvent");
             return base.OnKeyPressEvent(evnt);
         }
-
-        //     protected override
 
         #endregion
 
@@ -517,7 +311,7 @@ namespace Compatibility.Gtk
 
         protected virtual void OnKeyPress(KeyPressEventArgs e)
         {
-                        Console.WriteLine("OnKeyPress");
+            Console.WriteLine("OnKeyPress");
         }
 
         protected virtual void Dispose(bool disposing)

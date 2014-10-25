@@ -3,15 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-#if XWT
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
+#if GTK
 using Compatibility.Gtk;
 #else
-using System.Drawing;
+using Compatibility.WinForm;
 #endif
+using System.Drawing;
 
 namespace SmartQuant.FinChart.Objects
 {

@@ -5,21 +5,17 @@ using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using EmfType = System.Drawing.Imaging.EmfType;
-using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
-using TextRenderingHint = System.Drawing.Text.TextRenderingHint;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-using Xwt;
-#elif GTK
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Drawing.Printing;
+#if GTK
 using Gdk;
+using Color = System.Drawing.Color;
 using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Drawing.Printing;
 using System.Windows.Forms;
 #endif
 
@@ -372,8 +368,8 @@ namespace SmartQuant.Charting
             Pads = new PadList();
             AddPad(0, 0, 1, 1);
             this.fToolTip = new ToolTip();
-            this.fPadsForeColor = Colors.White;
-            this.fSessionGridColor = Colors.Blue;
+            this.fPadsForeColor = Color.White;
+            this.fSessionGridColor = Color.Blue;
         }
 
         public Chart(DateTime date)
@@ -582,7 +578,7 @@ namespace SmartQuant.Charting
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            e.Graphics.Clear(Colors.Red);
+            e.Graphics.Clear(Color.Red);
             base.OnPaintBackground(e);
         }
 

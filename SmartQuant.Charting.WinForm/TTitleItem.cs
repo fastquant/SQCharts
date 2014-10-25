@@ -1,13 +1,10 @@
 ﻿using System;
-#if XWT
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
+#if GTK
 using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
+using System.Drawing;
 
 namespace SmartQuant.Charting
 {
@@ -17,11 +14,11 @@ namespace SmartQuant.Charting
 
         public Color Color { get; set; }
 
-        public TTitleItem() : this("", Colors.Black)
+        public TTitleItem() : this("", Color.Black)
         {
         }
 
-        public TTitleItem(string text): this(text, Colors.Black)
+        public TTitleItem(string text): this(text, Color.Black)
         {
         }
 

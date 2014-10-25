@@ -1,15 +1,10 @@
 ﻿using System;
 using SmartQuant;
 using SmartQuant.Charting;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
+
+#if GTK
+using Compatibility.Gtk;
 #endif
 
 namespace SmartQuant.ChartViewers
@@ -53,16 +48,16 @@ namespace SmartQuant.ChartViewers
         public BarSeriesViewer()
         {
             Type = typeof (BarSeries);
-            Color = Colors.Black;
+            Color = Color.Black;
             DrawWidth = 1;
             ChartStyle = ChartStyle.Candle;
             BarWidthStyle = EWidthStyle.Auto;
             CandleWidthStyle = EWidthStyle.Auto;
-            CandleBlackColor = Colors.Black;
-            CandleWhiteColor = Colors.White;
-            CandleBorderColor = Colors.Black;
-            CandleColor = Colors.Black;
-            BarColor = Colors.Black;
+            CandleBlackColor = Color.Black;
+            CandleWhiteColor = Color.White;
+            CandleBorderColor = Color.Black;
+            CandleColor = Color.Black;
+            BarColor = Color.Black;
         }
 
         public override PadRange GetPadRangeX(object obj, Pad pad)

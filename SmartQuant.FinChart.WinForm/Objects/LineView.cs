@@ -5,15 +5,12 @@ using SmartQuant;
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
-#if XWT
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
-using Color = Pango.Color;
+#if GTK
 using Compatibility.Gtk;
 #else
-using System.Drawing;
+using Compatibility.WinForm;
 #endif
+using System.Drawing;
 using System.Text;
 
 namespace SmartQuant.FinChart.Objects

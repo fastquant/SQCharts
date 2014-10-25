@@ -4,16 +4,14 @@
 using System.Collections;
 using System;
 
-#if XWT
-using Compatibility.Xwt;
-#elif GTK
-using Compatibility.Gtk;
 
+#if GTK
+using Compatibility.Gtk;
 #else
-using System.Drawing;
+using Compatibility.WinForm;
 using System.Windows.Forms;
-using  System.Drawing.Printing;
 #endif
+using System.Drawing;
 
 namespace SmartQuant.FinChart
 {

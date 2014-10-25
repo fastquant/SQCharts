@@ -1,16 +1,7 @@
 ﻿using System;
 using SmartQuant;
 using SmartQuant.Charting;
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.ChartViewers
 {
@@ -33,7 +24,7 @@ namespace SmartQuant.ChartViewers
         public TickSeriesViewer()
         {
             Type = typeof(TickSeries);
-            Color = Colors.Black;
+            Color = Color.Black;
             DrawWidth = 1;
         }
 

@@ -3,28 +3,18 @@
 
 using System;
 using System.Collections;
-using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
-using PrintPageEventArgs = System.Drawing.Printing.PrintPageEventArgs;
 using System.ComponentModel;
 using SmartQuant.FinChart.Objects;
-
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-using Xwt;
+using System.Drawing.Drawing2D;
 
 
-#elif GTK
-using Gdk;
-using Gtk;
-using Image = Gdk.Image;
+#if GTK
 using Compatibility.Gtk;
-
 #else
-using Compatibility.WinForm;
-using System.Drawing;
 using System.Windows.Forms;
 #endif
+
+using System.Drawing;
 
 namespace SmartQuant.FinChart
 {
@@ -332,7 +322,7 @@ namespace SmartQuant.FinChart
             }
             set
             {
-                this.selectedFillHighlightColor = ColorUtils.FromArgb(100, value);
+                this.selectedFillHighlightColor = Color.FromArgb(100, value);
                 this.contentUpdated = true;
             }
         }
@@ -578,7 +568,7 @@ namespace SmartQuant.FinChart
             this.UpdateStyles();
             #endif
             this.pads = new PadList();
-            this.canvasColor = Colors.MidnightBlue;
+            this.canvasColor = Color.MidnightBlue;
             this.padsHeightArray = new ArrayList();
 
             this.canvasLeftOffset = 40; // 10
@@ -586,7 +576,7 @@ namespace SmartQuant.FinChart
             this.canvasRightOffset = 40;
             this.canvasBottomOffset = 40;
 
-            this.chartBackColor = Colors.MidnightBlue;
+            this.chartBackColor = Color.MidnightBlue;
             bool contentUpdated = true;
             // Should have a default pad.
             AddPad();
@@ -892,7 +882,7 @@ namespace SmartQuant.FinChart
 
         public void SetMainSeries(ISeries mainSeries)
         {
-            SetMainSeries(mainSeries, false, Colors.Black);
+            SetMainSeries(mainSeries, false, Color.Black);
         }
 
         public void SetMainSeries(ISeries mainSeries, bool showVolumePad, Color color)

@@ -4,20 +4,15 @@
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
+using System.Drawing.Drawing2D;
 
-#if XWT
-using Xwt;
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
-using Color = Pango.Color;
+
+#if GTK
 using Compatibility.Gtk;
 #else
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using Compatibility.WinForm;
 #endif
-
+using System.Drawing;
 namespace SmartQuant.FinChart.Objects
 {
     public class PathView : IChartDrawable, IZoomable

@@ -2,17 +2,7 @@
 using SmartQuant;
 using SmartQuant.Charting;
 using System.Collections.Generic;
-
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
 using System.Drawing;
-#endif
 
 namespace SmartQuant.ChartViewers
 {
@@ -37,7 +27,7 @@ namespace SmartQuant.ChartViewers
         public TimeSeriesViewer()
         {
             Type = typeof(TimeSeries);
-            Color = Colors.Black;
+            Color = Color.Black;
             DrawWidth = 1;
             DrawStyle = DrawStyle.Line;
         }

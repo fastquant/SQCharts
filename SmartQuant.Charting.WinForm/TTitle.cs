@@ -3,16 +3,11 @@
 
 using System;
 using System.Collections;
-#if XWT
-using Xwt.Drawing;
-using Compatibility.Xwt;
-#elif GTK
-using Gdk;
+using System.Drawing;
+#if GTK
 using Compatibility.Gtk;
-using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
-using System.Drawing;
 #endif
 
 namespace SmartQuant.Charting
@@ -62,7 +57,7 @@ namespace SmartQuant.Charting
             Items = new ArrayList();
             ItemsEnabled = false;
             Font = Fonts.SystemFont();
-            Color = Colors.Black;
+            Color = Color.Black;
             Position = ETitlePosition.Left;
             Strategy = ETitleStrategy.Smart;
             X = 0;
