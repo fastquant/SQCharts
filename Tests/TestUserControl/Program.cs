@@ -20,7 +20,6 @@ namespace TestUserControl
     }
     class MainClass
     {
-        [STAThread]
         public static void Main(string[] args)
         {
             Application.Initialize(ToolkitType.Gtk);

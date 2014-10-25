@@ -6,6 +6,10 @@ using System.Collections;
 using System.ComponentModel;
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
+using Font = Compatibility.Gtk.Font;
 #else
 using Compatibility.WinForm;
 using System.Drawing;

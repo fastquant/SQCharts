@@ -4,8 +4,19 @@
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
+
+#if XWT
+using Xwt;
+using Xwt.Drawing;
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Color = Pango.Color;
+using Compatibility.Gtk;
+#else
 using System.Drawing;
 using System.Drawing.Drawing2D;
+#endif
 
 namespace SmartQuant.FinChart.Objects
 {
@@ -61,7 +72,23 @@ namespace SmartQuant.FinChart.Objects
 
         public void Paint()
         {
-            throw new NotImplementedException();
+            if (this.path.Points.Count < 2)
+                return;
+
+            GraphicsPath gPath = new GraphicsPath();
+            var point = this.path.Points[0];
+            int x1 = Pad.ClientX(point.X);
+            int y1 = Pad.ClientY(point.Y);
+            for (int i = 1; i < this.path.Points.Count; ++i)
+            {
+                point = this.path.Points[i];
+                int x2 = this.Pad.ClientX(point.X);
+                int y2 = this.Pad.ClientY(point.Y);
+                gPath.AddLine(new Point(x1, y1), new Point(x2, y2));
+                x1 = x2;
+                y1 = y2;
+            }
+            Pad.Graphics.DrawPath(new Pen(this.path.Color, this.path.Width), gPath);
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -82,10 +109,10 @@ namespace SmartQuant.FinChart.Objects
         public void UnSelect()
         {
         }
-            
+
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(0, 0);
         }
     }
 }

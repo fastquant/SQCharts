@@ -5,6 +5,9 @@ using System;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Font = Compatibility.Gtk.Font;
 #else
 using System.Drawing;
 #endif

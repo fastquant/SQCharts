@@ -4,9 +4,10 @@
 using System;
 using SmartQuant;
 using System.ComponentModel;
-
 #if XWT
 using Compatibility.Xwt;
+#elif GTK
+using Compatibility.Gtk;
 #else
 using System.Windows.Forms;
 #endif
@@ -93,7 +94,7 @@ namespace SmartQuant.Controls
 
         protected string GetMessageBoxCaption()
         {
-            #if XWT
+            #if XWT || GTK
             return Parent != null ? Parent.Name : Name;
             #else
             return Parent != null ? Parent.Text : Text;

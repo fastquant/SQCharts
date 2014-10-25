@@ -4,10 +4,12 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-
-
 #if XWT
 using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Gtk;
+using Compatibility.Gtk;
 #else
 using System.Drawing.Printing;
 using System.Windows.Forms;
@@ -17,9 +19,8 @@ namespace SmartQuant.Charting
 {
     public partial class Canvas : Form
     {
-        private Container components;
-
-        public Chart Chart { get; private set; }
+        private System.ComponentModel.Container components;
+        private Chart chart;
 
         public Pad Pad
         {
@@ -41,11 +42,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.GroupZoomEnabled;
+                return this.chart.GroupZoomEnabled;
             }
             set
             {
-                Chart.GroupZoomEnabled = value;
+                this.chart.GroupZoomEnabled = value;
             }
         }
 
@@ -53,11 +54,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.GroupLeftMarginEnabled;
+                return this.chart.GroupLeftMarginEnabled;
             }
             set
             {
-                Chart.GroupLeftMarginEnabled = value;
+                this.chart.GroupLeftMarginEnabled = value;
             }
         }
 
@@ -65,11 +66,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.DoubleBufferingEnabled;
+                return this.chart.DoubleBufferingEnabled;
             }
             set
             {
-                Chart.DoubleBufferingEnabled = value;
+                this.chart.DoubleBufferingEnabled = value;
             }
         }
 
@@ -77,11 +78,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.SmoothingEnabled;
+                return this.chart.SmoothingEnabled;
             }
             set
             {
-                Chart.SmoothingEnabled = value;
+                this.chart.SmoothingEnabled = value;
             }
         }
 
@@ -89,11 +90,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.AntiAliasingEnabled;
+                return this.chart.AntiAliasingEnabled;
             }
             set
             {
-                Chart.AntiAliasingEnabled = value;
+                this.chart.AntiAliasingEnabled = value;
             }
         }
 
@@ -101,11 +102,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintDocument;
+                return this.chart.PrintDocument;
             }
             set
             {
-                Chart.PrintDocument = value;
+                this.chart.PrintDocument = value;
             }
         }
 
@@ -113,11 +114,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintX;
+                return this.chart.PrintX;
             }
             set
             {
-                Chart.PrintX = value;
+                this.chart.PrintX = value;
             }
         }
 
@@ -125,11 +126,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintY;
+                return this.chart.PrintY;
             }
             set
             {
-                Chart.PrintY = value;
+                this.chart.PrintY = value;
             }
         }
 
@@ -137,11 +138,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintWidth;
+                return this.chart.PrintWidth;
             }
             set
             {
-                Chart.PrintWidth = value;
+                this.chart.PrintWidth = value;
             }
         }
 
@@ -149,11 +150,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintHeight;
+                return this.chart.PrintHeight;
             }
             set
             {
-                Chart.PrintHeight = value;
+                this.chart.PrintHeight = value;
             }
         }
 
@@ -161,11 +162,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintAlign;
+                return this.chart.PrintAlign;
             }
             set
             {
-                Chart.PrintAlign = value;
+                this.chart.PrintAlign = value;
             }
         }
 
@@ -173,11 +174,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.PrintLayout;
+                return this.chart.PrintLayout;
             }
             set
             {
-                Chart.PrintLayout = value;
+                this.chart.PrintLayout = value;
             }
         }
 
@@ -214,7 +215,7 @@ namespace SmartQuant.Charting
             
         private void InitializeComponent()
         {
-            Chart = new Chart();
+            this.chart = new Chart();
         }
 
         public Canvas(string name, string title, string fileName, int width, int height)
@@ -226,23 +227,31 @@ namespace SmartQuant.Charting
             Height = height;
             CanvasManager.Add(this);
             // TODO: FileEnabled?
-            Chart.FileName = fileName ?? Path.Combine(FileDir, string.Format("{0}{1}{2}{3}.gif", FileNamePrefix, Name, DateTime.Now.ToString("MMddyyyhhmmss"), FileNameSuffix));
+//            this.chart.FileName = fileName ?? Path.Combine(FileDir, string.Format("{0}{1}{2}{3}.gif", FileNamePrefix, Name, DateTime.Now.ToString("MMddyyyhhmmss"), FileNameSuffix));
             Show();
         }
 
         public Pad cd(int pad)
         {
-            return Chart.cd(pad);
+            return this.chart.cd(pad);
         }
 
+        #if GTK
+        public new void Clear()
+        {
+            this.chart.Clear();
+            base.Clear();
+        }
+        #else
         public void Clear()
         {
-            Chart.Clear();
+            this.chart.Clear();
         }
+        #endif
 
         public void UpdateChart()
         {
-            Chart.UpdatePads();
+            this.chart.UpdatePads();
         }
 
         public new void Update()
@@ -253,17 +262,17 @@ namespace SmartQuant.Charting
 
         public Pad AddPad(double x1, double y1, double x2, double y2)
         {
-            return Chart.AddPad(x1, y1, x2, y2);
+            return this.chart.AddPad(x1, y1, x2, y2);
         }
 
         public void Divide(int x, int y)
         {
-            Chart.Divide(x, y);
+            this.chart.Divide(x, y);
         }
 
         public void Divide(int x, int y, double[] widths, double[] heights)
         {
-            Chart.Divide(x, y, widths, heights);
+            this.chart.Divide(x, y, widths, heights);
         }
 
         protected override void Dispose(bool disposing)
@@ -276,22 +285,22 @@ namespace SmartQuant.Charting
 
         public virtual void Print()
         {
-            Chart.Print();
+            this.chart.Print();
         }
 
         public virtual void PrintPreview()
         {
-            Chart.PrintPreview();
+            this.chart.PrintPreview();
         }
 
         public virtual void PrintSetup()
         {
-            Chart.PrintSetup();
+            this.chart.PrintSetup();
         }
 
         public virtual void PrintPageSetup()
         {
-            Chart.PrintPageSetup();
+            this.chart.PrintPageSetup();
         }
     }
 }

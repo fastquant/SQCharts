@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-
-
 #if XWT
 using Compatibility.Xwt;
+#elif GTK
+using Compatibility.Gtk;
 #else
 using System.Windows.Forms;
 #endif

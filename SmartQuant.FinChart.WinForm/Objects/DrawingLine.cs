@@ -2,7 +2,15 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
+#if XWT
+using Xwt.Drawing;
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
+#else
 using System.Drawing;
+#endif
 
 namespace SmartQuant.FinChart.Objects
 {
@@ -14,8 +22,7 @@ namespace SmartQuant.FinChart.Objects
         private double y1;
         private double y2;
         private Color color;
-
-        public bool rangeY;
+        private bool rangeY;
 
         public bool RangeY
         {

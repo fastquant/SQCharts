@@ -18,13 +18,28 @@ namespace SmartQuant.FinChart
         {
             double max = MainSeries.GetMax(this.firstDate, this.lastDate);
             double min = MainSeries.GetMin(this.firstDate, this.lastDate);
-
-            throw new NotImplementedException();
+            if (max >= min)
+            {
+                double num = max / 10.0;
+                max -= num;
+                min += num;
+            }
+            return new PadRange(max, min);
         }
 
         public override Distance Distance(int x, double y)
         {
-            throw new NotImplementedException();
+            Distance distance = new Distance();
+            Bar bar = (this.MainSeries as BarSeries)[this.pad.GetDateTime(x), IndexOption.Null];
+            distance.DX = 0.0;
+            if (y >= bar.Low && y <= bar.High)
+                distance.DY = 0.0;
+            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
+                return   null;
+
+            distance.ToolTipText = string.Format(this.toolTipFormat, (object) this.MainSeries.Name, (object) this.MainSeries.Description, (object) this.ToolTipDateTimeFormat, (object) bar.High, (object) bar.Low, (object) bar.Open, (object) bar.Close, (object) bar.Volume);
+            return distance;
+
         }
     }
 }

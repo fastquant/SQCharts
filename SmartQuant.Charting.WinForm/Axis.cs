@@ -3,11 +3,13 @@
 
 using System;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
-
 #if XWT
 using Compatibility.Xwt;
 using Xwt.Drawing;
-
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
+using Font = Compatibility.Gtk.Font;
 #else
 using System.Windows.Forms;
 using System.Drawing;
@@ -20,6 +22,7 @@ namespace SmartQuant.Charting
         private int width;
         private int height;
         private Pad pad;
+
         public double X1 { get; set; }
 
         public double Y1 { get; set; }
@@ -146,13 +149,58 @@ namespace SmartQuant.Charting
         {
             this.pad = pad;
             Position = position;
-            X1 = x1;
-            X2 = x2;
-            Y1 = y1;
-            Y2 = y2;
-            //  this.Init();
+            SetLocation(x1, y1, x2, y2);
+            this.width = -1;
+            this.height = -1;
+            Enabled = true;
+            Zoomed = false;
+            Color = Colors.Black;
+
+            // title
+            TitleEnabled = true;
+            Title = "";
+            TitlePosition = EAxisTitlePosition.Centre;
+            TitleFont = new Font("Arial", 8f);
+            TitleColor = Color.Black;
+            TitleOffset = 2;
+
+            // label
+            LabelEnabled = true;
+            LabelFont = new Font("Arial", 8f);
+            LabelColor = Color.Black;
+            LabelFormat =  null;
+            LabelOffset = 2;
+            LabelAlignment = EAxisLabelAlignment.Centre;
+
+            // grid
+            GridEnabled = true;
+            GridColor = Colors.Gray;
+            GridDashStyle = DashStyle.Solid;
+            GridWidth = 0.5f;
+            MinorGridEnabled = false;
+            MinorGridColor = Colors.Gray;
+            MinorGridDashStyle = DashStyle.Solid;
+            MinorGridWidth = 0.5f;
+            MajorTicksEnabled = true;
+            MajorTicksColor = Color.Black;
+            MajorTicksWidth = 0.5f;
+            MajorTicksLength = 4;
+            MinorTicksEnabled = true;
+            MinorTicksColor = Colors.Black;
+            MinorTicksWidth = 0.5f;
+            MinorTicksLength = 1;
+            Type = EAxisType.Numeric;
+            VerticalGridStyle = EVerticalGridStyle.ByDateTime;
+
+            // mouse
+//            this.fMouseDown = false;
+//            this.fMouseDownX = 0;
+//            this.fMouseDownY = 0;
+//            this.fOutlineEnabled = false;
+//            this.fOutline1 = 0;
+//            this.fOutline2 = 0;
         }
-            
+
         public void SetLocation(double x1, double y1, double x2, double y2)
         {
             X1 = x1;
@@ -254,12 +302,12 @@ namespace SmartQuant.Charting
 
         public static EGridSize CalculateSize(double ticks)
         {
-            int num1 = 10;
-            int num2 = 3;
-            double num3 = Math.Floor(ticks / 600000000.0);
-            if (num3 >= (double)num2 && num3 <= (double)num1)
+            double num1 = 10;
+            double num2 = 3;
+            double minutes = Math.Floor(ticks / TimeSpan.TicksPerMinute);
+            if ((double)num2 <= minutes && minutes <= (double)num1)
                 return EGridSize.min1;
-            double num4 = num3 / 2.0;
+            double num4 = minutes / 2.0;
             if (num4 >= (double)num2 && num4 <= (double)num1)
                 return EGridSize.min2;
             double num5 = num4 / 2.5;
@@ -368,7 +416,6 @@ namespace SmartQuant.Charting
 
         public virtual void MouseUp(MouseEventArgs me)
         {
- 
         }
     }
 }

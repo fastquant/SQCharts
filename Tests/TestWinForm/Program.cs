@@ -16,15 +16,14 @@ namespace TestWinForm
         public MainForm()
         {
             InitializeComponent();
+            chart2.AddPad();
+            chart1.AddPad(0, 0.2, 1, 0.6);
         }
-            
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {
-                if (components != null) {
-                    components.Dispose();
-                }
-            }
+            if (disposing && components != null)
+                components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -36,24 +35,24 @@ namespace TestWinForm
             // 
             // chart2
             // 
-            this.chart2.ActionType = SmartQuant.FinChart.ChartActionType.None;
-            this.chart2.AutoScroll = true;
-            this.chart2.BarSeriesStyle = SmartQuant.FinChart.BSStyle.Candle;
-            this.chart2.BorderColor = System.Drawing.Color.Gray;
-            this.chart2.BottomAxisGridColor = System.Drawing.Color.LightGray;
-            this.chart2.BottomAxisLabelColor = System.Drawing.Color.LightGray;
-            this.chart2.CanvasColor = System.Drawing.Color.MidnightBlue;
-            this.chart2.ChartBackColor = System.Drawing.Color.MidnightBlue;
-            this.chart2.ContextMenuEnabled = true;
-            this.chart2.CrossColor = System.Drawing.Color.DarkGray;
-            this.chart2.DateTipRectangleColor = System.Drawing.Color.LightGray;
-            this.chart2.DateTipTextColor = System.Drawing.Color.Black;
-            this.chart2.DrawItems = false;
-            this.chart2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.chart2.ItemTextColor = System.Drawing.Color.LightGray;
-            this.chart2.LabelDigitsCount = 2;
-            this.chart2.Location = new System.Drawing.Point(12, 12);
-            this.chart2.MinNumberOfBars = 125;
+//            this.chart2.ActionType = SmartQuant.FinChart.ChartActionType.None;
+//            this.chart2.AutoScroll = true;
+//            this.chart2.BarSeriesStyle = SmartQuant.FinChart.BSStyle.Candle;
+//            this.chart2.BorderColor = System.Drawing.Color.Gray;
+//            this.chart2.BottomAxisGridColor = System.Drawing.Color.LightGray;
+//            this.chart2.BottomAxisLabelColor = System.Drawing.Color.LightGray;
+//            this.chart2.CanvasColor = System.Drawing.Color.MidnightBlue;
+//            this.chart2.ChartBackColor = System.Drawing.Color.MidnightBlue;
+//            this.chart2.ContextMenuEnabled = true;
+//            this.chart2.CrossColor = System.Drawing.Color.DarkGray;
+//            this.chart2.DateTipRectangleColor = System.Drawing.Color.LightGray;
+//            this.chart2.DateTipTextColor = System.Drawing.Color.Black;
+//            this.chart2.DrawItems = false;
+//            this.chart2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+//            this.chart2.ItemTextColor = System.Drawing.Color.LightGray;
+//            this.chart2.LabelDigitsCount = 2;
+//            this.chart2.Location = new System.Drawing.Point(12, 12);
+//            this.chart2.MinNumberOfBars = 125;
             this.chart2.Name = "chart2";
             this.chart2.PrimitiveDeleteImage = null;
             this.chart2.PrimitivePropertiesImage = null;
@@ -69,6 +68,7 @@ namespace TestWinForm
             this.chart2.SessionGridColor = System.Drawing.Color.Empty;
             this.chart2.SessionGridEnabled = false;
             this.chart2.SessionStart = System.TimeSpan.Parse("00:00:00");
+            this.chart2.Dock = DockStyle.Left;
             this.chart2.Size = new System.Drawing.Size(358, 424);
             this.chart2.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
             this.chart2.SplitterColor = System.Drawing.Color.LightGray;

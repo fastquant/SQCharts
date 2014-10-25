@@ -4,6 +4,10 @@
 using System;
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gtk;
+using Gdk;
+using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
 using System.Drawing;

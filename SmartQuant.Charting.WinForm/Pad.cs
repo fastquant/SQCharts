@@ -13,14 +13,27 @@ using PointF = System.Drawing.PointF;
 using Compatibility.Xwt;
 using Xwt;
 using Xwt.Drawing;
+
+#elif GTK
+using Gdk;
+using Gtk;
+using Compatibility.Gtk;
+using Font = Compatibility.Gtk.Font;
+
 #else
 using System.Drawing;
 using System.Windows.Forms;
 #endif
 namespace SmartQuant.Charting
 {
+    class ViewerList
+    {
+    }
+
     public class Pad
     {
+        private Dictionary<System.Type, Viewer> viewers = new Dictionary<System.Type, Viewer>();
+
         public bool Grid3D;
         protected int fX1;
         protected int fX2;
@@ -49,39 +62,55 @@ namespace SmartQuant.Charting
         protected ArrayList fPrimitives;
         protected Color fBackColor;
         protected Color fForeColor;
+
+        // title
         protected string fName;
-        protected TTitle fTitle;
         protected bool fTitleEnabled;
+        protected TTitle fTitle;
         protected int fTitleOffsetX;
         protected int fTitleOffsetY;
+
+        // axis
         protected Axis fAxisLeft;
         protected Axis fAxisRight;
         protected Axis fAxisTop;
         protected Axis fAxisBottom;
-        protected TLegend fLegend;
         protected bool fLegendEnabled;
+
+        // legend
+        protected TLegend fLegend;
         protected ELegendPosition fLegendPosition;
         protected int fLegendOffsetX;
         protected int fLegendOffsetY;
+
+        // border
         protected bool fBorderEnabled;
         protected Color fBorderColor;
         protected int fBorderWidth;
-        protected IDrawable fSelectedPrimitive;
-        protected TDistance fSelectedPrimitiveDistance;
-        protected bool fOnAxis;
-        protected bool fOnPrimitive;
-        protected bool fMouseDown;
-        protected int fMouseDownX;
-        protected int fMouseDownY;
-        protected MouseButtons fMouseDownButton;
+
+        // outline
         protected bool fOutlineEnabled;
         protected Rectangle fOutlineRectangle;
+
+        // selection
+        protected IDrawable fSelectedPrimitive;
+        protected TDistance fSelectedPrimitiveDistance;
+
+        // zooming
         protected bool fMouseZoomEnabled;
         protected bool fMouseZoomXAxisEnabled;
         protected bool fMouseZoomYAxisEnabled;
         protected bool fMouseUnzoomEnabled;
         protected bool fMouseUnzoomXAxisEnabled;
         protected bool fMouseUnzoomYAxisEnabled;
+
+        // mouse
+        protected bool fOnAxis;
+        protected bool fOnPrimitive;
+        protected bool fMouseDown;
+        protected int fMouseDownX;
+        protected int fMouseDownY;
+        protected MouseButtons fMouseDownButton;
         protected bool fMouseMoveContentEnabled;
         protected bool fMouseMovePrimitiveEnabled;
         protected bool fMouseDeletePrimitiveEnabled;
@@ -91,6 +120,7 @@ namespace SmartQuant.Charting
         protected bool fMouseWheelEnabled;
         protected double fMouseWheelSensitivity;
         protected EMouseWheelMode fMouseWheelMode;
+
         protected int fWindowSize;
         protected bool fMonitored;
         protected bool fUpdating;
@@ -99,6 +129,8 @@ namespace SmartQuant.Charting
         protected DateTime fLastUpdateDateTime;
         protected ETransformationType fTransformationType;
         protected IChartTransformation fTransformation;
+
+        // grid
         protected Color fSessionGridColor;
 
         public bool For3D
@@ -1401,11 +1433,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fLegend.BorderEnabled;
+                return Legend.BorderEnabled;
             }
             set
             {
-                this.fLegend.BorderEnabled = value;
+                Legend.BorderEnabled = value;
             }
         }
 
@@ -1415,11 +1447,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fLegend.BorderColor;
+                return Legend.BorderColor;
             }
             set
             {
-                this.fLegend.BorderColor = value;
+                Legend.BorderColor = value;
             }
         }
 
@@ -1429,11 +1461,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fLegend.BackColor;
+                return Legend.BackColor;
             }
             set
             {
-                this.fLegend.BackColor = value;
+                Legend.BackColor = value;
             }
         }
 
@@ -1718,16 +1750,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                if (this.fTransformationType == ETransformationType.Intraday)
-                    return ((TIntradayTransformation)this.Transformation).SessionGridEnabled;
-                else
-                    return false;
+                return this.fTransformationType == ETransformationType.Intraday ? ((TIntradayTransformation)this.Transformation).SessionGridEnabled : false;
             }
             set
             {
-                if (this.fTransformationType != ETransformationType.Intraday)
-                    return;
-                ((TIntradayTransformation)this.Transformation).SessionGridEnabled = value;
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    ((TIntradayTransformation)this.Transformation).SessionGridEnabled = value;
             }
         }
 
@@ -1751,10 +1779,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).FirstSessionTick);
-                else
-                    return new TimeSpan(0, 0, 0, 0);
+                return this.fTransformationType == ETransformationType.Intraday ? new TimeSpan(((TIntradayTransformation)this.fTransformation).FirstSessionTick) : new TimeSpan(0);
             }
             set
             {
@@ -1768,10 +1793,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).LastSessionTick);
-                else
-                    return new TimeSpan(0, 24, 0, 0);
+                return this.fTransformationType == ETransformationType.Intraday ? new TimeSpan(((TIntradayTransformation)this.fTransformation).LastSessionTick) : new TimeSpan(1, 0, 0, 0);
             }
             set
             {
@@ -1787,7 +1809,11 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fMonitored = value;
+                if (this.fMonitored)
+                    NewTick += new NewTickEventHandler(this.OnNewTick);
+                else
+                    NewTick -= new NewTickEventHandler(this.OnNewTick); 
             }
         }
 
@@ -1820,34 +1846,98 @@ namespace SmartQuant.Charting
         public event ZoomEventHandler Zoom;
 
         public Pad()
+            : this(null)
         {
-            this.Init();
         }
 
         public Pad(Chart chart)
+            : this(chart, 0, 0, 0, 0)
         {
-            this.fChart = chart;
-            this.Init();
         }
 
         public Pad(Chart chart, double x1, double y1, double x2, double y2)
         {
             this.fChart = chart;
-            this.fCanvasX1 = x1;
-            this.fCanvasX2 = x2;
-            this.fCanvasY1 = y1;
-            this.fCanvasY2 = y2;
+            SetCanvas(x1, y1, x2, y2);
             this.Init();
         }
 
-        private Viewer GetViewer(object obj)
+        public void Init()
         {
-            throw new NotImplementedException();
+            this.fPrimitives = new ArrayList();
+            Chart.Pad = this;
+            //            this.Features3D = new Pad.TFeatures3D(this);
+
+            this.fX1 = this.fY1 = 0;
+            this.fX2 = this.fY2 = 1; 
+            this.fWidth = Chart.ClientSize.Width;
+            this.fHeight = Chart.ClientSize.Height;
+            this.fClientX = 10;
+            this.fClientY = 10;
+            this.fClientWidth = 0;
+            this.fClientHeight = 0;
+            BackColor = Colors.LightGray;
+            ForeColor = Colors.White;
+            MarginLeft = 10;
+            MarginRight = 20;
+            MarginTop = 10;
+            MarginBottom = 10;
+//            TitleEnabled = true;
+//            Title = new TTitle(this, "");
+//            TitleOffsetX = TitleOffsetY = 5;
+            this.fTransformation = (IChartTransformation)new TIntradayTransformation();
+            this.fTransformationType = ETransformationType.Empty;
+            SessionGridColor = Colors.Blue;
+            this.fAxisLeft = new Axis(this, EAxisPosition.Left);
+            this.fAxisRight = new Axis(this, EAxisPosition.Right);
+            this.fAxisTop = new Axis(this, EAxisPosition.Top);
+            this.fAxisBottom = new Axis(this, EAxisPosition.Bottom);
+            AxisRight.LabelEnabled = false;
+            AxisRight.TitleEnabled = false;
+            AxisTop.LabelEnabled = false;
+            AxisTop.TitleEnabled = false;
+            this.fLegend = new TLegend(this);
+            LegendEnabled = false;
+            LegendPosition = ELegendPosition.TopRight;
+            LegendOffsetX = 5;
+            LegendOffsetY = 5;
+            BorderEnabled = true;
+            BorderColor = Colors.Black;
+            BorderWidth = 1;
+            SetRange(0.0, 100.0, 0.0, 100.0);
+            Graphics = null;
+            this.fOnAxis = false;
+            this.fOnPrimitive = false;
+            this.fMouseDown = false;
+            this.fMouseDownX = 0;
+            this.fMouseDownY = 0;
+            this.fOutlineEnabled = false;
+            WindowSize = 600;
+            this.fLastTickTime = 0;
+            UpdateInterval = 1;
+            this.fLastUpdateDateTime = DateTime.Now;
+            Monitored = false;
+            this.fUpdating = false;
+            MouseZoomEnabled = true;
+            MouseZoomXAxisEnabled = true;
+            MouseZoomYAxisEnabled = true;
+            MouseUnzoomEnabled = true;
+            MouseUnzoomXAxisEnabled = true;
+            MouseUnzoomYAxisEnabled = true;
+            MouseMoveContentEnabled = true;
+            MouseMovePrimitiveEnabled = true;
+            MouseDeletePrimitiveEnabled = true;
+            MousePadPropertiesEnabled = true;
+            MousePrimitivePropertiesEnabled = true;
+            MouseContextMenuEnabled = true;
+            MouseWheelEnabled = true;
+            MouseWheelSensitivity = 0.1;
+            MouseWheelMode = EMouseWheelMode.ZoomX;
         }
 
         public void RegisterViewer(Viewer viewer)
         {
-            throw new NotImplementedException();
+            this.viewers.Add(viewer.Type, viewer);
         }
 
         public void Set(object obj, string name, object value)
@@ -1859,17 +1949,11 @@ namespace SmartQuant.Charting
         {
             this.fLastTickTime = 0;
         }
-
-        public void Init()
-        {
-            throw new NotImplementedException();
-
-        }
-
+            
         public virtual void SetCanvas(double x1, double y1, double x2, double y2, int width, int height)
         {
-            this.SetCanvas(x1, y1, x2, y2);
-            this.SetCanvas(width, height);
+            SetCanvas(x1, y1, x2, y2);
+            SetCanvas(width, height);
         }
 
         public virtual void SetCanvas(double x1, double y1, double x2, double y2)
@@ -1892,7 +1976,10 @@ namespace SmartQuant.Charting
 
         public void SetRangeX(double xMin, double xMax)
         {
-            throw new NotImplementedException();
+            this.fXMin = xMin;
+            this.fXMax = xMax - CalculateNotInSessionTicks(xMin, xMax);
+            this.fAxisBottom.SetRange(xMin, xMax);
+            this.fAxisTop.SetRange(xMin, xMax);
         }
 
         public void SetRangeX(DateTime xMin, DateTime xMax)
@@ -1902,12 +1989,16 @@ namespace SmartQuant.Charting
 
         public void SetRangeY(double yMin, double yMax)
         {
-            throw new NotImplementedException();
+            this.fYMin = yMin;
+            this.fYMax = yMax;
+            this.fAxisLeft.SetRange(yMin, yMax);
+            this.fAxisRight.SetRange(yMin, yMax);
         }
 
         public void SetRange(double xMin, double xMax, double yMin, double yMax)
         {
-            throw new NotImplementedException();
+            SetRangeX(xMin, xMax);
+            SetRangeY(yMin, yMax);
         }
 
         public void SetRange(DateTime xMin, DateTime xMax, double yMin, double yMax)
@@ -1922,7 +2013,7 @@ namespace SmartQuant.Charting
 
         public bool IsInRange(double x, double y)
         {
-            return this.XMin <= x && x <= this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax) && this.YMin <= y && y <= this.YMax;
+            return XMin <= x && x <= XMin + this.CalculateRealQuantityOfTicks_Right(XMin, XMax) && YMin <= y && y <= YMax;
         }
 
         public void UnZoomX()
@@ -1999,12 +2090,12 @@ namespace SmartQuant.Charting
 
         public double WorldX(int clientX)
         {
-            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.XMin + (double)(clientX - this.fClientX) / (double)this.fClientWidth * (this.XMax - this.XMin));
+            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, XMin + (double)(clientX - this.fClientX) / (double)this.fClientWidth * (XMax - XMin));
         }
 
         public double WorldY(int clientY)
         {
-            return this.YMin + (1.0 - (double)(clientY - this.fClientY) / (double)this.fClientHeight) * (this.YMax - this.YMin);
+            return YMin + (1.0 - (double)(clientY - this.fClientY) / (double)this.fClientHeight) * (YMax - YMin);
         }
 
         public Viewer Add(object obj)
@@ -2039,12 +2130,11 @@ namespace SmartQuant.Charting
 
         public virtual void Update(Graphics graphics)
         {
-            throw new NotImplementedException();
+            this.PaintAll(graphics);
         }
 
         public void PaintAll(Graphics graphics)
         {
-            throw new NotImplementedException();
         }
 
         public void DrawLine(Pen pen, double x1, double y1, double x2, double y2, bool doTransform)
@@ -2093,7 +2183,7 @@ namespace SmartQuant.Charting
 
         public void DrawText(string text, Font font, Brush brush, int x, int y)
         {
-            this.Graphics.DrawString(text, font, brush, x, y);
+            Graphics.DrawString(text, font, brush, x, y);
         }
 
         private bool IsInsideClient(int x, int y)
@@ -2108,7 +2198,7 @@ namespace SmartQuant.Charting
 
         public virtual void MouseWheel(MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public virtual void MouseDown(MouseEventArgs e)
@@ -2136,6 +2226,10 @@ namespace SmartQuant.Charting
         {
             if (Zoom != null)
                 Zoom(null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
+        }
+
+        private void OnNewTick(object sender, NewTickEventArgs args)
+        {
         }
     }
 }

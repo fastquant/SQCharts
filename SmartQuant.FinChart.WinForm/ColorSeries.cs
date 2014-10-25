@@ -4,9 +4,11 @@
 using System;
 using System.Collections;
 #if XWT
-using Xwt.Drawing;
+using Color = Xwt.Drawing.Color;
+#elif GTK
+using Color = Pango.Color;
 #else
-using System.Drawing;
+using Color = System.Drawing.Color;
 #endif
 
 namespace SmartQuant.FinChart
@@ -60,4 +62,3 @@ namespace SmartQuant.FinChart
         }
     }
 }
-

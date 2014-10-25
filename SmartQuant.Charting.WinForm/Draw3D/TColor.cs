@@ -4,6 +4,9 @@
 #if XWT
 using Compatibility.Xwt;
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
 using System.Drawing;
@@ -43,7 +46,7 @@ namespace SmartQuant.Charting.Draw3D
 
         public TColor(Color c)
         {
-            #if XWT
+            #if XWT || GTK
             double r = c.Red;
             double g = c.Green;
             double b = c.Blue;

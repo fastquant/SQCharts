@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{26692FBA-DC22-41DA-838A-7DF6D1420637}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SmartQuant.Controls</RootNamespace>
+    <AssemblyName>SmartQuant.Controls</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;GTK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>GTK</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="SmartQuant">
+      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
+    </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="BarChart\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SmartQuant.Controls.WinForm\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\BarChart.cs">
+      <Link>BarChart\BarChart.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\BarChart2.cs">
+      <Link>BarChart\BarChart2.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem.cs">
+      <Link>BarChart\GroupItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem2.cs">
+      <Link>BarChart\GroupItem2.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\ControlSettings.cs">
+      <Link>ControlSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\FrameworkControl.cs">
+      <Link>FrameworkControl.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\ShowPropertiesEventArgs.cs">
+      <Link>ShowPropertiesEventArgs.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
+      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
+      <Name>SmartQuant.Charting.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.FinChart.Gtk\SmartQuant.FinChart.Gtk.csproj">
+      <Project>{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}</Project>
+      <Name>SmartQuant.FinChart.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.ChartViewers.Gtk\SmartQuant.ChartViewers.Gtk.csproj">
+      <Project>{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}</Project>
+      <Name>SmartQuant.ChartViewers.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
+      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
+      <Name>Compatibility.Gtk</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

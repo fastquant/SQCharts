@@ -43,6 +43,7 @@
     <Compile Include="Form.cs" />
     <Compile Include="ColorUtils.cs" />
     <Compile Include="Graphics.cs" />
+    <Compile Include="Fonts.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

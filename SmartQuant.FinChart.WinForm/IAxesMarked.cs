@@ -3,6 +3,8 @@
 
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
 #else
 using System.Drawing;
 #endif

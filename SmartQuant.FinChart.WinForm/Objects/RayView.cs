@@ -55,7 +55,7 @@ namespace SmartQuant.FinChart.Objects
         public RayView(DrawingRay ray, Pad pad)
         {
             this.ray = ray;
-            this.Pad = pad;
+            Pad = pad;
             this.toolTipEnabled = true;
             this.toolTipFormat = "{0} {1} {2} - {3:F6}";
             this.chartFirstDate =DateTime.MaxValue;
@@ -75,7 +75,22 @@ namespace SmartQuant.FinChart.Objects
 
         public Distance Distance(int x, double y)
         {
-            throw new NotImplementedException();
+            Distance distance = new Distance();
+            DateTime dateTime = this.Pad.GetDateTime(x);
+
+            distance.X = x;
+            distance.Y = this.ray.Y;
+            int num = this.Pad.ClientX(this.chartFirstDate);
+            int x2 = this.Pad.X2;
+            distance.DX = num > x || x2 < x ? double.MaxValue : 0.0;
+            distance.DY = Math.Abs(y - this.ray.Y);
+
+            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
+                return null;
+
+            distance.ToolTipText = string.Format(ToolTipFormat, "Ray", this.ray.Name, dateTime, this.ray.Y);
+
+            return distance;
         }
 
         public void Select()
@@ -88,7 +103,7 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(this.ray.Y * 0.999, this.ray.Y * 1.0001);
         }
     }
 }

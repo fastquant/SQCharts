@@ -6,6 +6,9 @@ using System.Collections.Generic;
 #if XWT
 using Compatibility.Xwt;
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
 using System.Drawing;

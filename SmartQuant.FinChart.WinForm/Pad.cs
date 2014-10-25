@@ -1,75 +1,33 @@
 // Licensed under the Apache License, Version 2.0. 
 // Copyright (c) Alex Lee. All rights reserved.
 
-using System.Drawing;
 using System.Collections;
 using System;
-using PrintPageEventArgs = System.Drawing.Printing.PrintPageEventArgs;
-using PaintEventArgs = System.Windows.Forms.PaintEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
+
+#if XWT
+using Compatibility.Xwt;
+#elif GTK
+using Compatibility.Gtk;
+
+#else
+using System.Drawing;
+using System.Windows.Forms;
+using  System.Drawing.Printing;
+#endif
 
 namespace SmartQuant.FinChart
 {
     public class Pad
     {
-        public Chart Chart
-        {
-            get
-            {
-                return chart;
-            }
-            set
-            {
-            }
-        }
-
-        //        private bool drawGrid = true;
-        private Chart chart;
-        //        private AxisRight axis;
-        //        private ArrayList primitives;
-        //        private ArrayList simplePrimitives;
-        //        private SortedRangeList rangeList;
-        //        private SortedRangeList intervalLeftList;
-        //        private SortedRangeList intervalRightList;
-        //        private int axisGap;
+        private int width;
+        private int height;
         private object selectedObject;
-        //        private int x1;
-        //        private int x2;
-        //        private int y1;
-        //        private int y2;
-        //        private int width;
-        //        private int height;
-        //        private int marginLeft;
-        //        private int marginRight;
-        //        private double maxValue;
-        //        private double minValue;
-        private Graphics graphics;
-        private IChartDrawable selectedPrimitive;
-        //        private bool onPrimitive;
-        //        private bool outlineEnabled;
-        //        private Rectangle outlineRectangle;
-        //        private PadScaleStyle scaleStyle;
-        //        private string axisLabelFormat;
-        //        private bool drawItems;
+
+        internal Chart Chart { get; private set; }
 
         public AxisRight Axis { get; private set; }
 
         public bool DrawItems { get; set; }
-
-        //        public string AxisLabelFormat
-        //        {
-        //            get
-        //            {
-        //                if (this.axisLabelFormat == null)
-        //                    return "F" + this.chart.LabelDigitsCount.ToString();
-        //                else
-        //                    return this.axisLabelFormat;
-        //            }
-        //            set
-        //            {
-        //                this.axisLabelFormat = value;
-        //            }
-        //        }
 
         public bool DrawGrid { get; set; }
 
@@ -91,7 +49,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.chart.Series;
+                return Chart.Series;
             }
         }
 
@@ -99,7 +57,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.chart.MainSeries;
+                return Chart.MainSeries;
             }
         }
 
@@ -107,7 +65,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.chart.IntervalWidth;
+                return Chart.IntervalWidth;
             }
         }
 
@@ -115,7 +73,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.chart.FirstIndex;
+                return Chart.FirstIndex;
             }
         }
 
@@ -123,34 +81,53 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.chart.LastIndex;
+                return Chart.LastIndex;
             }
         }
+
+        public string AxisLabelFormat { get; set; }
 
         public Graphics Graphics { get; private set; }
 
         public ArrayList Primitives { get; private set; }
 
+        internal IChartDrawable SelectedPrimitive { get; set; }
+
+        internal int Width
+        {
+            get
+            {
+                return this.width;
+            }
+            set
+            {
+                this.width = value;
+                X2 = X1 + this.width;
+                Axis.SetBounds(X2, Y1, Y2);
+            }
+        }
+
         public Pad(Chart chart, int x1, int x2, int y1, int y2)
         {
-            this.chart = chart;
-            this.SetCanvas(x1, x2, y1, y2);
-            this.Primitives = ArrayList.Synchronized(new ArrayList());
+            Chart = chart;
+            Axis = new AxisRight(Chart, this, 0, 0, 0);
+            SetCanvas(x1, x2, y1, y2);
+            Primitives = ArrayList.Synchronized(new ArrayList());
+            DrawGrid = true;
         }
 
         public void SetCanvas(int x1, int x2, int y1, int y2)
         {
+            X1 = x1;
+            X2 = x2;
             Y1 = y1;
             Y2 = y2;
-//            X1 = x1 + this.MarginLeft;
-//            this.x2 = x2 - this.marginRight;
-//            this.width = this.x2 - this.x1;
-//            this.height = this.y2 - this.y1;
-//            if (this.axis == null)
-//                this.axis = new AxisRight(this.chart, this, x2, y1, y2);
-//            else
-//                this.axis.SetBounds(x2, y1, y2);
+            this.width = X2 - X1;
+            this.height = Y2 - Y1;
+            Axis.SetBounds(x2, y1, y2);
         }
+
+        #region Primitives Operations
 
         public void AddPrimitive(IChartDrawable primitive)
         {
@@ -167,6 +144,8 @@ namespace SmartQuant.FinChart
             Primitives.Clear();
         }
 
+        #endregion
+
         public void SetSelectedObject(object obj)
         {
             this.selectedObject = obj;
@@ -179,8 +158,7 @@ namespace SmartQuant.FinChart
 
         public int ClientY(double worldY)
         {
-            throw new NotImplementedException(); 
-
+            throw new NotImplementedException();
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -191,43 +169,54 @@ namespace SmartQuant.FinChart
 
         public void DrawHorizontalGrid(Pen pen, double y)
         {
+            var clientY = this.ClientY(y);
+            if (DrawGrid)
+                Graphics.DrawLine(pen, X1, clientY, X2, clientY);
         }
 
         public void DrawHorizontalTick(Pen pen, double x, double y, int length)
         {
-            this.graphics.DrawLine(pen, (int)x, this.ClientY(y), (int)x + length, this.ClientY(y));
+            var clientY = this.ClientY(y);
+            Graphics.DrawLine(pen, (float)x, clientY, (float)x + length, clientY);
         }
 
         public DateTime GetDateTime(int x)
         {
-            return this.chart.GetDateTime(x);
+            return Chart.GetDateTime(x);
         }
 
         public double WorldY(int y)
         {
-            throw new NotImplementedException(); 
-
+            return 0;
+//            if (ScaleStyle == PadScaleStyle.Log)
+//                return Math.Pow(10.0, (double) (Y2 - y) / (Y2 - Y1) * (Math.Log10(this.maxValue) - Math.Log10(this.minValue))) * this.minValue;
+//            else
+//                return this.minValue + (this.maxValue - this.minValue) * (double) (Y2 - y) / (double) (Y2 - Y1);
         }
 
         public virtual void MouseDown(MouseEventArgs Event)
         {
-
         }
 
         public virtual void MouseUp(MouseEventArgs Event)
         {
-            this.chart.ContentUpdated = true;
-            this.chart.Invalidate();
+            Chart.ContentUpdated = true;
+            Chart.Invalidate();
         }
 
         public virtual void MouseMove(MouseEventArgs Event)
         {
-
         }
 
         public bool IsInRange(double x, double y)
         {
-            return  this.X1 <= x && x <= this.X2 && this.Y1 <= y && y <= this.Y2;
+            return  X1 <= x && x <= X2 && Y1 <= y && y <= Y2;
         }
+
+        #region Drawing
+        internal void Update(Graphics graphics)
+        {
+        }
+        #endregion
     }
 }

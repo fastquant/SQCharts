@@ -1,8 +1,14 @@
 ﻿using System;
 #if XWT
 using Xwt.Drawing;
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
+using Font = Compatibility.Gtk.Font;
 #else
 using System.Drawing;
+using Compatibility.WinForm;
 #endif
 
 namespace SmartQuant.Charting

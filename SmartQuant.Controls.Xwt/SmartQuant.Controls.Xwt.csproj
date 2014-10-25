@@ -49,6 +49,18 @@
     <Compile Include="..\SmartQuant.Controls.WinForm\ShowPropertiesEventArgs.cs">
       <Link>ShowPropertiesEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\BarChart.cs">
+      <Link>BarChart\BarChart.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\BarChart2.cs">
+      <Link>BarChart\BarChart2.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem.cs">
+      <Link>BarChart\GroupItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem2.cs">
+      <Link>BarChart\GroupItem2.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -56,5 +68,20 @@
       <Project>{952610E1-8750-4476-87BE-C3F915272D21}</Project>
       <Name>Compatibility.Xwt</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.Charting.Xwt\SmartQuant.Charting.Xwt.csproj">
+      <Project>{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}</Project>
+      <Name>SmartQuant.Charting.Xwt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.ChartViewers.Xwt\SmartQuant.ChartViewers.Xwt.csproj">
+      <Project>{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}</Project>
+      <Name>SmartQuant.ChartViewers.Xwt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.FinChart.Xwt\SmartQuant.FinChart.Xwt.csproj">
+      <Project>{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}</Project>
+      <Name>SmartQuant.FinChart.Xwt</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BarChart\" />
   </ItemGroup>
 </Project>

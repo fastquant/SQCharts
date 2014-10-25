@@ -59,7 +59,7 @@ namespace SmartQuant.FinChart.Objects
 
         public void Paint()
         {
-            throw new NotImplementedException();
+            Pad.Graphics.DrawImage(this.image.Image, this.Pad.ClientX(this.image.X), this.Pad.ClientY(this.image.Y));
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -83,7 +83,7 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(0, 0);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SmartQuant.Charting
     {
         public double CalculateNotInSessionTicks(double x, double y)
         {
-            return 0.0;
+            return 0;
         }
 
         public double CalculateRealQuantityOfTicks_Right(double x, double y)
@@ -25,12 +25,12 @@ namespace SmartQuant.Charting
 
         public void GetFirstGridDivision(ref EGridSize gridSize, ref double min, ref double max, ref DateTime firstDateTime)
         {
-            throw new NotImplementedException();
+            gridSize = Axis.CalculateSize(max - min);
         }
 
         public double GetNextGridDivision(double firstTick, double prevMajor, int majorCount, EGridSize gridSize)
         {
-            throw new NotImplementedException();
+            return majorCount != 0 ? Axis.GetNextMajor((long)prevMajor, gridSize) : firstTick;
         }
     }
 }

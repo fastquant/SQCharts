@@ -2,15 +2,21 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using EmfType = System.Drawing.Imaging.EmfType;
-
+using SmoothingMode = System.Drawing.Drawing2D.SmoothingMode;
+using TextRenderingHint = System.Drawing.Text.TextRenderingHint;
 #if XWT
 using Compatibility.Xwt;
 using Xwt.Drawing;
-
+using Xwt;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
 #else
+using Compatibility.WinForm;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -256,7 +262,9 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fPadsForeColor = value;
+                foreach (Pad pad in Pads)
+                    pad.ForeColor = value;
             }
         }
 
@@ -271,7 +279,11 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fTransformationType = value;
+                this.fSessionStart = new TimeSpan(0, 0, 0, 0);
+                this.fSessionEnd = new TimeSpan(1, 0, 0, 0);
+                foreach (Pad pad in Pads)
+                    pad.TransformationType = value;
             }
         }
 
@@ -285,7 +297,9 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fSessionGridEnabled = value;
+                foreach (Pad pad in Pads)
+                    pad.SessionGridEnabled = value;
             }
         }
 
@@ -299,7 +313,9 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fSessionGridColor = value;
+                foreach (Pad pad in Pads)
+                    pad.SessionGridColor = value;
             }
         }
 
@@ -313,7 +329,9 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fSessionStart = value;
+                foreach (Pad pad in Pads)
+                    pad.SessionStart = value;
             }
         }
 
@@ -327,7 +345,9 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fSessionEnd = value;
+                foreach (Pad pad in Pads)
+                    pad.SessionEnd = value;
             }
         }
 
@@ -340,17 +360,25 @@ namespace SmartQuant.Charting
 
         public Chart(string name)
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            #if XWT
+            #elif GTK
+            #else
+            this.ResizeRedraw = true;
+            this.SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, true);
+            this.UpdateStyles();
+            #endif
             Name = name;
+            Pads = new PadList();
+            AddPad(0, 0, 1, 1);
+            this.fToolTip = new ToolTip();
+            this.fPadsForeColor = Colors.White;
+            this.fSessionGridColor = Colors.Blue;
         }
 
         public Chart(DateTime date)
         {
-        }
-
-        protected void InitializeComponent()
-        {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Why this?");
         }
 
         public Pad cd(int padIndex)
@@ -361,10 +389,19 @@ namespace SmartQuant.Charting
             return Chart.Pad;
         }
 
+        #if XWT
+        public new void Clear()
+        {
+            Pads.Clear();
+            base.Clear();
+        }
+        #else
         public void Clear()
         {
             Pads.Clear();
         }
+        #endif
+
 
         public void SetRangeX(double min, double max)
         {
@@ -409,31 +446,55 @@ namespace SmartQuant.Charting
         protected void ZoomChanged(object sender, ZoomEventArgs e)
         {
             throw new NotImplementedException();
-        }            
+        }
 
         public void Divide(int x, int y)
         {
-            Pads.Clear();
-            double num1 = 1.0 / x;
-            double num2 = 1.0 / y;
-            Parallel.For(0, y, i => Parallel.For(0, x, j =>
-                    {
-                        double x1 = (double)j * num1;
-                        double x2 = (double)(j + 1) * num1;
-                        double y1 = (double)i * num2;
-                        double y2 = (double)(i + 1) * num2;
-                        this.AddPad(x1, y1, x2, y2);
-                    }));  
+            var widths = Enumerable.Range(0, x).Select<int, double>(d => 1.0 / x).ToArray();
+            var heights = Enumerable.Range(0, y).Select<int, double>(d => 1.0 / y).ToArray();
+            Divide(x, y, widths, heights);
         }
 
         public void Divide(int x, int y, double[] widths, double[] heights)
         {
-            throw new NotImplementedException();
+            Pads.Clear();
+            double y1 = 0;
+            double y2 = 0;
+            foreach (var h in heights)
+            {
+                y2 += h;
+                double x1 = 0;
+                double x2 = 0;
+                foreach (var w in widths)
+                {
+                    x2 += w;
+                    AddPad(x1, y1, x2, y2);
+                    x1 = x2;
+                }
+                y1 = y2;
+            }
         }
 
         public void UpdatePads(Graphics padGraphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            padGraphics.Clear(this.BackColor);
+            if (this.SmoothingEnabled)
+                padGraphics.SmoothingMode = SmoothingMode.AntiAlias;
+            if (this.AntiAliasingEnabled)
+                padGraphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            foreach (Pad pad in Pads)
+            {
+                pad.SetCanvas(width, height);
+                pad.X1 += x;
+                pad.X2 += x;
+                pad.Y1 += y;
+                pad.Y2 += y;
+                pad.Update(padGraphics);
+                pad.X1 -= x;
+                pad.X2 -= x;
+                pad.Y1 -= y;
+                pad.Y2 -= y;
+            }   
         }
 
         public Bitmap GetBitmap()
@@ -459,12 +520,38 @@ namespace SmartQuant.Charting
         public void UpdatePads()
         {
             this.Invalidate();
-//            Application.DoEvents();
+            #if XWT
+            #elif GTK
+            #else
+            Application.DoEvents();
+            #endif
         }
-
-        public void UpdatePads(Graphics g)
+            
+        public void UpdatePads(Graphics graphics)
         {
-            throw new NotImplementedException();
+            if (this.Disposing || this.fIsUpdating)
+                return;
+            this.fIsUpdating = true;
+
+            int width = (int)this.ClientRectangle.Width;
+            int height = (int)this.ClientRectangle.Height;
+
+            graphics.Clear(BackColor);
+            if (SmoothingEnabled)
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            if (AntiAliasingEnabled)
+                graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+//            if (GroupLeftMarginEnabled)
+//                this.AdaptLeftMargin();
+//            if (this.GroupRightMarginEnabled)
+//                this.AdaptRightMargin();
+            foreach (Pad pad in Pads)
+            {
+                pad.SetCanvas(width, height);
+                pad.Update(graphics);
+            }
+
+            this.fIsUpdating = false;
         }
 
         public virtual void Print()
@@ -489,36 +576,98 @@ namespace SmartQuant.Charting
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            throw new NotImplementedException();
+            //UpdatePads(pe.Graphics);
+            base.OnPaint(pe);
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+            e.Graphics.Clear(Colors.Red);
+            base.OnPaintBackground(e);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            // When the mouse is over the boundaies of pads.
+            foreach (Pad pad in Pads)
+            {
+                if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1)
+                {
+                    #if XWT
+                    this.Cursor = CursorType.ResizeUpDown;
+                    #elif GTK
+                    #else
+                    Cursor.Current = Cursors.HSplit;
+                    #endif
+                    return;
+                }
+            }
+
+            foreach (Pad pad in Pads)
+            {
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
+                    pad.MouseMove(e);
+            }
             base.OnMouseMove(e);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
+            foreach (Pad pad in Pads)
+            {
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
+                    pad.MouseWheel(e);
+            }
             base.OnMouseWheel(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            Console.WriteLine("OnMouseDown");
+//            foreach (Pad pad in Pads)
+//            {
+//                if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1)
+//                {
+//                    this.fPadSplit = true;
+//                    this.fPadSplitIndex = this.fPads.IndexOf(pad);
+//                    return;
+//                }
+//            }
+
+            foreach (Pad pad in Pads)
+            {
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
+                    pad.MouseDown(e);
+            }
             base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("OnMouseUp");
+            base.OnMouseUp(e);
         }
 
         protected override void OnDoubleClick(EventArgs e)
         {
-            base.OnDoubleClick(e);
+            #if XWT
+            var be = e as ButtonEventArgs;
+            var screen = be.Position;
+            var point = be.Position;
+            #elif GTK
+            #else
+            var screen = Cursor.Position;
+            var point = this.PointToClient(Cursor.Position);
+            #endif
+//            Console.WriteLine("Cursor.Position: {0}", screen);
+//            Console.WriteLine("Client Position: {0}", point);
+//
+//            foreach (Pad pad in Pads)
+//            {
+//                if (pad.X1 <= point.X && point.X <= pad.X2 && pad.Y1 <= point.Y && point.Y <= pad.Y2)
+//                    pad.DoubleClick((int)point.X, (int)point.Y);
+//            }
+//            base.OnDoubleClick(e);
         }
 
         protected override void Dispose(bool disposing)

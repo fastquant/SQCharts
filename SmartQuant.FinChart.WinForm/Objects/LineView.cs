@@ -5,7 +5,15 @@ using SmartQuant;
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
+#if XWT
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Color = Pango.Color;
+using Compatibility.Gtk;
+#else
 using System.Drawing;
+#endif
 using System.Text;
 
 namespace SmartQuant.FinChart.Objects
@@ -63,7 +71,25 @@ namespace SmartQuant.FinChart.Objects
 
         public void Paint()
         {
-            throw new NotImplementedException();
+            DateTime dateTime1 = new DateTime(Math.Min(this.line.X1.Ticks, this.line.X2.Ticks));
+            Math.Min(this.line.Y1, this.line.Y2);
+            DateTime dateTime2 = new DateTime(Math.Max(this.line.X1.Ticks, this.line.X2.Ticks));
+            Math.Max(this.line.Y1, this.line.Y2);
+            int index1 = this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
+            int index2 = this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
+            int val1_1 = Math.Max(index1, this.pad.FirstIndex);
+            int val1_2 = Math.Max(index2, this.pad.FirstIndex);
+            int num1 = Math.Min(val1_1, this.pad.LastIndex);
+            int num2 = Math.Min(val1_2, this.pad.LastIndex);
+            double lineValueAt1 = this.GetLineValueAt(num1);
+            double lineValueAt2 = this.GetLineValueAt(num2);
+            if (Math.Max(lineValueAt1, lineValueAt2) <= this.pad.MinValue || Math.Min(lineValueAt1, lineValueAt2) >= this.pad.MaxValue)
+                return;
+            int y1 = this.pad.ClientY(lineValueAt1);
+            int y2 = this.pad.ClientY(lineValueAt2);
+            int x1 = this.pad.ClientX(this.pad.MainSeries.GetDateTime(num1));
+            int x2 = this.pad.ClientX(this.pad.MainSeries.GetDateTime(num2));
+            this.pad.Graphics.DrawLine(new Pen(this.line.Color, (float) this.line.Width), x1, y1, x2, y2);
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -74,7 +100,35 @@ namespace SmartQuant.FinChart.Objects
 
         public Distance Distance(int x, double y)
         {
-            throw new NotImplementedException();
+            if (this.chartFirstDate > this.lastDate || this.chartLastDate < this.firstDate)
+                return null;
+
+            Distance distance = new Distance();
+            DateTime dateTime = this.pad.GetDateTime(x);
+            double num;
+            if (dateTime == this.chartFirstDate)
+                num = this.line.Y1;
+            else if (dateTime == this.chartLastDate)
+            {
+                num = this.line.Y2;
+            }
+            else
+            {
+                if (dateTime.Ticks > Math.Max(this.line.X1.Ticks, this.line.X2.Ticks) || dateTime.Ticks < Math.Min(this.line.X1.Ticks, this.line.X2.Ticks))
+                    return null;
+                int xx = this.pad.MainSeries.GetIndex(dateTime, IndexOption.Null);
+                double num1 = (double) this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
+                double num2 = (double) this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
+                num =  this.line.Y1 + ((double) xx - num1) / (num2 - num1) * (this.line.Y2 - this.line.Y1);
+            }
+            distance.X = x;
+            distance.Y = num;
+            distance.DX = 0.0;
+            distance.DY = Math.Abs(y - num);
+            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
+                return null;
+            distance.ToolTipText = string.Format(ToolTipFormat, "Line", this.line.Name, dateTime, num);
+            return distance;
         }
 
         public void Select()
@@ -87,7 +141,14 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(0, 0);
+        }
+
+        private double GetLineValueAt(int x)
+        {
+            double num1 = (double) this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
+            double num2 = (double) this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
+            return this.line.Y1 + ((double) x - num1) / (num2 - num1) * (this.line.Y2 - this.line.Y1);
         }
     }
 }

@@ -4,7 +4,15 @@
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
+#if XWT
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Color = Pango.Color;
+using Compatibility.Gtk;
+#else
 using System.Drawing;
+#endif
 
 namespace SmartQuant.FinChart.Objects
 {
@@ -60,7 +68,11 @@ namespace SmartQuant.FinChart.Objects
 
         public void Paint()
         {
-            throw new NotImplementedException();
+            int x1 = this.Pad.ClientX(this.rect.X1);
+            int x2 = this.Pad.ClientX(this.rect.X2);
+            int y1 = this.Pad.ClientY(this.rect.Y1);
+            int y2 = this.Pad.ClientY(this.rect.Y2);
+            Pad.Graphics.DrawRectangle(new Pen(this.rect.Color, this.rect.Width), Math.Min(x1, x2), Math.Min(y1, y2), Math.Abs(x2 - x1), Math.Abs(y2 - y1));
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -84,7 +96,7 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(0, 0);
         }
     }
 }

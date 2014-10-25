@@ -4,15 +4,23 @@
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
+#if XWT
+using Compatibility.Xwt;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
+#else
 using System.Drawing;
+#endif
 
 namespace SmartQuant.FinChart.Objects
 {
     public class EllipseView : IChartDrawable, IZoomable
     {
+        private DrawingEllipse rect;
+
         protected bool toolTipEnabled = true;
         protected string toolTipFormat = "";
-        private DrawingEllipse rect;
         protected DateTime firstDate;
         protected DateTime lastDate;
         protected bool selected;
@@ -52,14 +60,19 @@ namespace SmartQuant.FinChart.Objects
         public EllipseView(DrawingEllipse rect, Pad pad)
         {
             this.rect = rect;
-            this.Pad = pad;
+            Pad = pad;
             this.toolTipEnabled = true;
             this.toolTipFormat = "{0} {1} {2} - {3:F6}";
         }
 
         public void Paint()
         {
-            throw new NotImplementedException();
+            int x1 = this.Pad.ClientX(this.rect.X1);
+            int x2 = this.Pad.ClientX(this.rect.X2);
+            int y1 = this.Pad.ClientY(this.rect.Y1);
+            int y2 = this.Pad.ClientY(this.rect.Y2);
+            this.Pad.Graphics.DrawEllipse(new Pen(this.rect.Color, this.rect.Width), Math.Min(x1, x2), Math.Min(y1, y2), Math.Abs(x2 - x1), Math.Abs(y2 - y1));
+
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -83,7 +96,7 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            throw new NotImplementedException();
+            return new PadRange(0, 0);
         }
     }
 }

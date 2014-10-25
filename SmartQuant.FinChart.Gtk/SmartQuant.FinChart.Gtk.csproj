@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SmartQuant.FinChart</RootNamespace>
+    <AssemblyName>SmartQuant.FinChart</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;GTK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>GTK</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glade-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="SmartQuant">
+      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingEllipse.cs">
+      <Link>Objects\DrawingEllipse.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingImage.cs">
+      <Link>Objects\DrawingImage.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingLine.cs">
+      <Link>Objects\DrawingLine.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingPath.cs">
+      <Link>Objects\DrawingPath.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingPoint.cs">
+      <Link>Objects\DrawingPoint.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingRay.cs">
+      <Link>Objects\DrawingRay.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\DrawingRectangle.cs">
+      <Link>Objects\DrawingRectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\EllipseView.cs">
+      <Link>Objects\EllipseView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\ImageView.cs">
+      <Link>Objects\ImageView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\IUpdatable.cs">
+      <Link>Objects\IUpdatable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\LineView.cs">
+      <Link>Objects\LineView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\PathView.cs">
+      <Link>Objects\PathView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\RayView.cs">
+      <Link>Objects\RayView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Objects\RectangleView.cs">
+      <Link>Objects\RectangleView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Axis.cs">
+      <Link>Axis.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\BSStyle.cs">
+      <Link>BSStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\BSView.cs">
+      <Link>BSView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Chart.cs">
+      <Link>Chart.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\ChartActionType.cs">
+      <Link>ChartActionType.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\ChartToolStrip.cs">
+      <Link>ChartToolStrip.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\ChartUpdateStyle.cs">
+      <Link>ChartUpdateStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\ColorSeries.cs">
+      <Link>ColorSeries.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Distance.cs">
+      <Link>Distance.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\DSView.cs">
+      <Link>DSView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\EAxisLabelAlignment.cs">
+      <Link>EAxisLabelAlignment.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\EAxisTitlePosition.cs">
+      <Link>EAxisTitlePosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\EGridSize.cs">
+      <Link>EGridSize.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\FillView.cs">
+      <Link>FillView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\IAxesMarked.cs">
+      <Link>IAxesMarked.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\IChartDrawable.cs">
+      <Link>IChartDrawable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\IDateDrawable.cs">
+      <Link>IDateDrawable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\IZoomable.cs">
+      <Link>IZoomable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Pad.cs">
+      <Link>Pad.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\PadList.cs">
+      <Link>PadList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\PadRange.cs">
+      <Link>PadRange.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\PadScaleStyle.cs">
+      <Link>PadScaleStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\PropertyForm.cs">
+      <Link>PropertyForm.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\SeriesView.cs">
+      <Link>SeriesView.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\SimpleBSStyle.cs">
+      <Link>SimpleBSStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\SimpleDSStyle.cs">
+      <Link>SimpleDSStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\SortedRangeList.cs">
+      <Link>SortedRangeList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\ToolBar.cs">
+      <Link>ToolBar.cs</Link>
+    </Compile>
+    <Compile Include="Chart.Gtk.cs" />
+    <Compile Include="..\SmartQuant.FinChart.WinForm\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Objects\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
+      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
+      <Name>Compatibility.Gtk</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

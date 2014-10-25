@@ -69,7 +69,6 @@
     <Compile Include="Draw3D\ESmoothing.cs" />
     <Compile Include="TTitleItem.cs" />
     <Compile Include="TTextBoxItem.cs" />
-    <Compile Include="Fonts.cs" />
     <Compile Include="TLegendItem.cs" />
     <Compile Include="TTitle.cs" />
     <Compile Include="Viewer.cs" />

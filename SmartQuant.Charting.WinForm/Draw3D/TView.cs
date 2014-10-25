@@ -1,7 +1,9 @@
 ﻿using System;
 
 #if XWT
-using Xwt.Drawing;
+using Compatibility.Xwt;
+#elif GTK
+using Compatibility.Gtk;
 #else
 using System.Drawing;
 #endif

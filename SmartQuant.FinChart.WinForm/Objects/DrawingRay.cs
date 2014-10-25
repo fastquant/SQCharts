@@ -12,8 +12,7 @@ namespace SmartQuant.FinChart.Objects
         private DateTime x;
         private double y;
         private Color color;
-
-        public bool rangeY;
+        private bool rangeY;
 
         public bool RangeY
         {

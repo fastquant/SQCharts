@@ -4,6 +4,9 @@
 using System;
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
 #else
 using System.Drawing;
 #endif

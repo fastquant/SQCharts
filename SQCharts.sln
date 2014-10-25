@@ -25,11 +25,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUserControl", "Tests\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Tests\Demo\Demo.csproj", "{9412EBA1-6B47-4502-8544-B73DE58770CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWinFormGood", "Tests\TestWinFormGood\TestWinFormGood.csproj", "{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUserControlGtk", "Tests\TestUserControlGtk\TestUserControlGtk.csproj", "{E0F5D536-CFE8-48C4-A82C-56B48BB067FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGtk", "Tests\TestGtk\TestGtk.csproj", "{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.Xwt", "SmartQuant.Controls.Xwt\SmartQuant.Controls.Xwt.csproj", "{1579BD48-C741-49B4-8471-B9CFC50389FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.Xwt", "Compatibility.Xwt\Compatibility.Xwt.csproj", "{952610E1-8750-4476-87BE-C3F915272D21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.WinForm", "Compatibility.WinForm\Compatibility.WinForm.csproj", "{1AF26544-F67B-465A-B1CB-C15B090F8232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.Gtk", "Compatibility.Gtk\Compatibility.Gtk.csproj", "{83CE5610-A15C-488C-8D9F-909C2340107E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting.Gtk", "SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj", "{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.FinChart.Gtk", "SmartQuant.FinChart.Gtk\SmartQuant.FinChart.Gtk.csproj", "{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers.Gtk", "SmartQuant.ChartViewers.Gtk\SmartQuant.ChartViewers.Gtk.csproj", "{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.Gtk", "SmartQuant.Controls.Gtk\SmartQuant.Controls.Gtk.csproj", "{26692FBA-DC22-41DA-838A-7DF6D1420637}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +69,22 @@ Global
 		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D4EC22C-579F-4464-ABA8-19366DEE11ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACAFA23-BDA5-4985-90A2-3B601CB70D64}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,6 +93,10 @@ Global
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A29D92-B078-4DA0-9D17-F7C9E5905A1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83CE5610-A15C-488C-8D9F-909C2340107E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83CE5610-A15C-488C-8D9F-909C2340107E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83CE5610-A15C-488C-8D9F-909C2340107E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83CE5610-A15C-488C-8D9F-909C2340107E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9412EBA1-6B47-4502-8544-B73DE58770CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9412EBA1-6B47-4502-8544-B73DE58770CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9412EBA1-6B47-4502-8544-B73DE58770CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,10 +113,26 @@ Global
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADC4B0B2-8CB0-4961-AD4E-191F13749DF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0F5D536-CFE8-48C4-A82C-56B48BB067FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0F5D536-CFE8-48C4-A82C-56B48BB067FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0F5D536-CFE8-48C4-A82C-56B48BB067FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0F5D536-CFE8-48C4-A82C-56B48BB067FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6515A7E-2CBC-4823-AB77-E2B747227FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -99,6 +147,9 @@ Global
 		{1931DA5A-82BD-4DA7-B7D0-A570AE3E923E} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 		{9FF2A4B4-7B2A-4773-860B-0717A2DC40A5} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 		{9412EBA1-6B47-4502-8544-B73DE58770CB} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+		{D1C73354-9803-4ACF-9A5C-1C3FFA5EFA0B} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+		{E0F5D536-CFE8-48C4-A82C-56B48BB067FD} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
+		{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Tests\TestWinForm\TestWinForm.csproj
@@ -116,7 +167,6 @@ Global
 		$3.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $4
 		$4.IndentSwitchBody = True
-		$4.IndentBlocksInsideExpressions = True
 		$4.AnonymousMethodBraceStyle = NextLine
 		$4.PropertyBraceStyle = NextLine
 		$4.PropertyGetBraceStyle = NextLine

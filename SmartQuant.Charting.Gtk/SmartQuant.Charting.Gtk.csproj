@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SmartQuant.Charting</RootNamespace>
+    <AssemblyName>SmartQuant.Charting</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;GTK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>GTK</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\SmartQuant.Charting.WinForm\Axis.cs">
+      <Link>Axis.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Canvas.cs">
+      <Link>Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\CanvasList.cs">
+      <Link>CanvasList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\CanvasManager.cs">
+      <Link>CanvasManager.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Chart.cs">
+      <Link>Chart.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EAxisLabelAlignment.cs">
+      <Link>EAxisLabelAlignment.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EAxisPosition.cs">
+      <Link>EAxisPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EAxisTitlePosition.cs">
+      <Link>EAxisTitlePosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EAxisType.cs">
+      <Link>EAxisType.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EGraphMoveStyle.cs">
+      <Link>EGraphMoveStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EGraphStyle.cs">
+      <Link>EGraphStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EGridSize.cs">
+      <Link>EGridSize.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ELegendPosition.cs">
+      <Link>ELegendPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EMarkerStyle.cs">
+      <Link>EMarkerStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EMarkerTextPosition.cs">
+      <Link>EMarkerTextPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EMouseWheelMode.cs">
+      <Link>EMouseWheelMode.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EPalette.cs">
+      <Link>EPalette.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EPrintAlign.cs">
+      <Link>EPrintAlign.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EPrintLayout.cs">
+      <Link>EPrintLayout.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ETextBoxPosition.cs">
+      <Link>ETextBoxPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ETextPosition.cs">
+      <Link>ETextPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ETitlePosition.cs">
+      <Link>ETitlePosition.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ETitleStrategy.cs">
+      <Link>ETitleStrategy.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ETransformationType.cs">
+      <Link>ETransformationType.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\EVerticalGridStyle.cs">
+      <Link>EVerticalGridStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Graph.cs">
+      <Link>Graph.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Histogram.cs">
+      <Link>Histogram.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Histogram2D.cs">
+      <Link>Histogram2D.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\IChartTransformation.cs">
+      <Link>IChartTransformation.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\IDrawable.cs">
+      <Link>IDrawable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Images.cs">
+      <Link>Images.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\IMovable.cs">
+      <Link>IMovable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\IZoomable.cs">
+      <Link>IZoomable.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\NewTickEventArgs.cs">
+      <Link>NewTickEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\NewTickEventHandler.cs">
+      <Link>NewTickEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Pad.cs">
+      <Link>Pad.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\PadList.cs">
+      <Link>PadList.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\PadRange.cs">
+      <Link>PadRange.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Pie.cs">
+      <Link>Pie.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TDistance.cs">
+      <Link>TDistance.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TEmptyTransformation.cs">
+      <Link>TEmptyTransformation.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TImage.cs">
+      <Link>TImage.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TIntradayTransformation.cs">
+      <Link>TIntradayTransformation.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TLabel.cs">
+      <Link>TLabel.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TLegend.cs">
+      <Link>TLegend.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TLegendItem.cs">
+      <Link>TLegendItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TLine.cs">
+      <Link>TLine.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TMarker.cs">
+      <Link>TMarker.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TPieItem.cs">
+      <Link>TPieItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TText.cs">
+      <Link>TText.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TTextBox.cs">
+      <Link>TTextBox.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TTextBoxItem.cs">
+      <Link>TTextBoxItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TTitle.cs">
+      <Link>TTitle.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\TTitleItem.cs">
+      <Link>TTitleItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Viewer.cs">
+      <Link>Viewer.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ZoomEventArgs.cs">
+      <Link>ZoomEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\ZoomEventHandler.cs">
+      <Link>ZoomEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\EChartLook.cs">
+      <Link>Draw3D\EChartLook.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\ESmoothing.cs">
+      <Link>Draw3D\ESmoothing.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TAxisCalc.cs">
+      <Link>Draw3D\TAxisCalc.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TColor.cs">
+      <Link>Draw3D\TColor.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TFunction.cs">
+      <Link>Draw3D\TFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TLight.cs">
+      <Link>Draw3D\TLight.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TMat3x3.cs">
+      <Link>Draw3D\TMat3x3.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TSurface.cs">
+      <Link>Draw3D\TSurface.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TVec3.cs">
+      <Link>Draw3D\TVec3.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Draw3D\TView.cs">
+      <Link>Draw3D\TView.cs</Link>
+    </Compile>
+    <Compile Include="Chart.Gtk.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Draw3D\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
+      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
+      <Name>Compatibility.Gtk</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

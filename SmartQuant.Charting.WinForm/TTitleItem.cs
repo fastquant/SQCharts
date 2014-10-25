@@ -1,6 +1,9 @@
 ﻿using System;
 #if XWT
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
+using Compatibility.Gtk;
 #else
 using Compatibility.WinForm;
 using System.Drawing;
@@ -8,7 +11,6 @@ using System.Drawing;
 
 namespace SmartQuant.Charting
 {
-    [Serializable]
     public class TTitleItem
     {
         public string Text { get; set; }

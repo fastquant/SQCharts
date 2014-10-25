@@ -4,8 +4,14 @@ using SmartQuant;
 using SmartQuant.Charting;
 using SmartQuant.ChartViewers;
 using System.ComponentModel;
-using System.Windows.Forms;
 
+#if XWT
+using Xwt;
+#elif GTK
+using Gtk;
+#else
+using System.Windows.Forms;
+#endif
 namespace SmartQuant.Controls.BarChart
 {
     public class BarChart : FrameworkControl, IGroupListener

@@ -5,6 +5,8 @@ using SmartQuant.FinChart;
 #if XWT
 using Compatibility.Xwt;
 using Xwt.Drawing;
+#elif GTK
+using Gdk;
 #else
 using System.Drawing;
 using System.Windows.Forms;
