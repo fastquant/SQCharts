@@ -19,7 +19,6 @@ using Gdk;
 using Gtk;
 using Compatibility.Gtk;
 using Font = Compatibility.Gtk.Font;
-
 #else
 using System.Drawing;
 using System.Windows.Forms;
@@ -35,6 +34,12 @@ namespace SmartQuant.Charting
         private Dictionary<System.Type, Viewer> viewers = new Dictionary<System.Type, Viewer>();
 
         public bool Grid3D;
+
+        protected Chart fChart;
+        protected Graphics fGraphics;
+        protected ArrayList fPrimitives;
+
+        // geometry
         protected int fX1;
         protected int fX2;
         protected int fY1;
@@ -57,9 +62,8 @@ namespace SmartQuant.Charting
         protected int fMarginBottom;
         protected int fWidth;
         protected int fHeight;
-        protected Chart fChart;
-        protected Graphics fGraphics;
-        protected ArrayList fPrimitives;
+
+        // appearance
         protected Color fBackColor;
         protected Color fForeColor;
 
@@ -397,7 +401,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed ? this.fAxisBottom.Min : this.fXMin;
+                return AxisBottom.Enabled && AxisBottom.Zoomed ? AxisBottom.Min : this.fXMin;
             }
             set
             {
@@ -409,7 +413,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed ? this.fAxisBottom.Max : this.fXMax; 
+                return AxisBottom.Enabled && AxisBottom.Zoomed ? AxisBottom.Max : this.fXMax; 
             }
             set
             {
@@ -421,7 +425,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed ? this.fAxisLeft.Min : this.fYMin;
+                return AxisLeft.Enabled && AxisLeft.Zoomed ? AxisLeft.Min : this.fYMin;
             }
             set
             {
@@ -433,7 +437,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed ? this.fAxisLeft.Max : this.fYMax;
+                return AxisLeft.Enabled && AxisLeft.Zoomed ? AxisLeft.Max : this.fYMax;
             }
             set
             {
@@ -589,7 +593,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Items;
+                return Title.Items;
             }
         }
 
@@ -599,11 +603,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.ItemsEnabled;
+                return Title.ItemsEnabled;
             }
             set
             {
-                this.fTitle.ItemsEnabled = value;
+                Title.ItemsEnabled = value;
             }
         }
 
@@ -613,11 +617,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Text;
+                return Title.Text;
             }
             set
             {
-                this.fTitle.Text = value;
+                Title.Text = value;
             }
         }
 
@@ -627,11 +631,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Font;
+                return Title.Font;
             }
             set
             {
-                this.fTitle.Font = value;
+                Title.Font = value;
             }
         }
 
@@ -641,11 +645,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Color;
+                return Title.Color;
             }
             set
             {
-                this.fTitle.Color = value;
+                Title.Color = value;
             }
         }
 
@@ -683,11 +687,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Position;
+                return Title.Position;
             }
             set
             {
-                this.fTitle.Position = value;
+                Title.Position = value;
             }
         }
 
@@ -697,11 +701,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTitle.Strategy;
+                return Title.Strategy;
             }
             set
             {
-                this.fTitle.Strategy = value;
+                Title.Strategy = value;
             }
         }
 
@@ -763,6 +767,10 @@ namespace SmartQuant.Charting
             {
                 return this.fAxisLeft;
             }
+            private set
+            {
+                this.fAxisLeft = value;
+            }
         }
 
         public Axis AxisRight
@@ -770,6 +778,10 @@ namespace SmartQuant.Charting
             get
             {
                 return this.fAxisRight;
+            }
+            private set
+            {
+                this.fAxisRight = value;
             }
         }
 
@@ -779,6 +791,10 @@ namespace SmartQuant.Charting
             {
                 return this.fAxisTop;
             }
+            private set
+            {
+                this.fAxisTop = value;
+            }
         }
 
         public Axis AxisBottom
@@ -786,6 +802,10 @@ namespace SmartQuant.Charting
             get
             {
                 return this.fAxisBottom;
+            }
+            private set
+            {
+                this.fAxisBottom = value;
             }
         }
 
@@ -795,11 +815,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.GridEnabled;
+                return AxisLeft.GridEnabled;
             }
             set
             {
-                this.fAxisLeft.GridEnabled = value;
+                AxisLeft.GridEnabled = value;
             }
         }
 
@@ -809,11 +829,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.GridEnabled;
+                return AxisBottom.GridEnabled;
             }
             set
             {
-                this.fAxisBottom.GridEnabled = value;
+                AxisBottom.GridEnabled = value;
             }
         }
 
@@ -823,11 +843,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.GridWidth;
+                return AxisLeft.GridWidth;
             }
             set
             {
-                this.fAxisLeft.GridWidth = value;
+                AxisLeft.GridWidth = value;
             }
         }
 
@@ -837,11 +857,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.GridWidth;
+                return AxisBottom.GridWidth;
             }
             set
             {
-                this.fAxisBottom.GridWidth = value;
+                AxisBottom.GridWidth = value;
             }
         }
 
@@ -851,11 +871,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.GridColor;
+                return AxisLeft.GridColor;
             }
             set
             {
-                this.fAxisLeft.GridColor = value;
+                AxisLeft.GridColor = value;
             }
         }
 
@@ -865,11 +885,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.GridColor;
+                return AxisBottom.GridColor;
             }
             set
             {
-                this.fAxisBottom.GridColor = value;
+                AxisBottom.GridColor = value;
             }
         }
 
@@ -879,11 +899,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.GridDashStyle;
+                return AxisLeft.GridDashStyle;
             }
             set
             {
-                this.fAxisLeft.GridDashStyle = value;
+                AxisLeft.GridDashStyle = value;
             }
         }
 
@@ -893,11 +913,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.GridDashStyle;
+                return AxisBottom.GridDashStyle;
             }
             set
             {
-                this.fAxisBottom.GridDashStyle = value;
+                AxisBottom.GridDashStyle = value;
             }
         }
 
@@ -907,11 +927,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.Type;
+                return AxisBottom.Type;
             }
             set
             {
-                this.fAxisBottom.Type = value;
+                AxisBottom.Type = value;
             }
         }
 
@@ -921,11 +941,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.Position;
+                return AxisBottom.Position;
             }
             set
             {
-                this.fAxisBottom.Position = value;
+                AxisBottom.Position = value;
             }
         }
 
@@ -935,11 +955,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.MajorTicksEnabled;
+                return AxisBottom.MajorTicksEnabled;
             }
             set
             {
-                this.fAxisBottom.MajorTicksEnabled = value;
+                AxisBottom.MajorTicksEnabled = value;
             }
         }
 
@@ -949,11 +969,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.MinorTicksEnabled;
+                return AxisBottom.MinorTicksEnabled;
             }
             set
             {
-                this.fAxisBottom.MinorTicksEnabled = value;
+                AxisBottom.MinorTicksEnabled = value;
             }
         }
 
@@ -963,11 +983,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.TitleEnabled;
+                return AxisBottom.TitleEnabled;
             }
             set
             {
-                this.fAxisBottom.TitleEnabled = value;
+                AxisBottom.TitleEnabled = value;
             }
         }
 
@@ -977,11 +997,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.Title;
+                return AxisBottom.Title;
             }
             set
             {
-                this.fAxisBottom.Title = value;
+                AxisBottom.Title = value;
             }
         }
 
@@ -991,11 +1011,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.TitleFont;
+                return AxisBottom.TitleFont;
             }
             set
             {
-                this.fAxisBottom.TitleFont = value;
+                AxisBottom.TitleFont = value;
             }
         }
 
@@ -1005,11 +1025,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.TitleColor;
+                return AxisBottom.TitleColor;
             }
             set
             {
-                this.fAxisBottom.TitleColor = value;
+                AxisBottom.TitleColor = value;
             }
         }
 
@@ -1019,11 +1039,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.TitleOffset;
+                return AxisBottom.TitleOffset;
             }
             set
             {
-                this.fAxisBottom.TitleOffset = value;
+                AxisBottom.TitleOffset = value;
             }
         }
 
@@ -1033,11 +1053,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.TitlePosition;
+                return AxisBottom.TitlePosition;
             }
             set
             {
-                this.fAxisBottom.TitlePosition = value;
+                AxisBottom.TitlePosition = value;
             }
         }
 
@@ -1047,11 +1067,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelEnabled;
+                return AxisBottom.LabelEnabled;
             }
             set
             {
-                this.fAxisBottom.LabelEnabled = value;
+                AxisBottom.LabelEnabled = value;
             }
         }
 
@@ -1061,11 +1081,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelFont;
+                return AxisBottom.LabelFont;
             }
             set
             {
-                this.fAxisBottom.LabelFont = value;
+                AxisBottom.LabelFont = value;
             }
         }
 
@@ -1075,11 +1095,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelColor;
+                return AxisBottom.LabelColor;
             }
             set
             {
-                this.fAxisBottom.LabelColor = value;
+                AxisBottom.LabelColor = value;
             }
         }
 
@@ -1089,11 +1109,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelOffset;
+                return AxisBottom.LabelOffset;
             }
             set
             {
-                this.fAxisBottom.LabelOffset = value;
+                AxisBottom.LabelOffset = value;
             }
         }
 
@@ -1103,11 +1123,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelFormat;
+                return AxisBottom.LabelFormat;
             }
             set
             {
-                this.fAxisBottom.LabelFormat = value;
+                AxisBottom.LabelFormat = value;
             }
         }
 
@@ -1117,11 +1137,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisBottom.LabelAlignment;
+                return AxisBottom.LabelAlignment;
             }
             set
             {
-                this.fAxisBottom.LabelAlignment = value;
+                AxisBottom.LabelAlignment = value;
             }
         }
 
@@ -1131,12 +1151,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.Type;
+                return AxisLeft.Type;
             }
             set
             {
-                this.fAxisLeft.Type = value;
-                this.fAxisRight.Type = value;
+                AxisLeft.Type = value;
+                AxisRight.Type = value;
             }
         }
 
@@ -1146,11 +1166,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.Position;
+                return AxisLeft.Position;
             }
             set
             {
-                this.fAxisLeft.Position = value;
+                AxisLeft.Position = value;
             }
         }
 
@@ -1160,12 +1180,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.MajorTicksEnabled;
+                return AxisLeft.MajorTicksEnabled;
             }
             set
             {
-                this.fAxisLeft.MajorTicksEnabled = value;
-                this.fAxisRight.MajorTicksEnabled = value;
+                AxisLeft.MajorTicksEnabled = value;
+                AxisRight.MajorTicksEnabled = value;
             }
         }
 
@@ -1175,12 +1195,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.MinorTicksEnabled;
+                return AxisLeft.MinorTicksEnabled;
             }
             set
             {
-                this.fAxisLeft.MinorTicksEnabled = value;
-                this.fAxisRight.MinorTicksEnabled = value;
+                AxisLeft.MinorTicksEnabled = value;
+                AxisRight.MinorTicksEnabled = value;
             }
         }
 
@@ -1190,11 +1210,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.TitleEnabled;
+                return AxisLeft.TitleEnabled;
             }
             set
             {
-                this.fAxisLeft.TitleEnabled = value;
+                AxisLeft.TitleEnabled = value;
             }
         }
 
@@ -1204,12 +1224,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.Title;
+                return AxisLeft.Title;
             }
             set
             {
-                this.fAxisLeft.Title = value;
-                this.fAxisRight.Title = value;
+                AxisLeft.Title = value;
+                AxisRight.Title = value;
             }
         }
 
@@ -1219,12 +1239,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.TitleFont;
+                return AxisLeft.TitleFont;
             }
             set
             {
-                this.fAxisLeft.TitleFont = value;
-                this.fAxisRight.TitleFont = value;
+                AxisLeft.TitleFont = value;
+                AxisRight.TitleFont = value;
             }
         }
 
@@ -1234,12 +1254,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.TitleColor;
+                return AxisLeft.TitleColor;
             }
             set
             {
-                this.fAxisLeft.TitleColor = value;
-                this.fAxisRight.TitleColor = value;
+                AxisLeft.TitleColor = value;
+                AxisRight.TitleColor = value;
             }
         }
 
@@ -1249,11 +1269,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.TitleOffset;
+                return AxisLeft.TitleOffset;
             }
             set
             {
-                this.fAxisLeft.TitleOffset = value;
+                AxisLeft.TitleOffset = value;
                 this.fAxisRight.TitleOffset = value;
             }
         }
@@ -1264,12 +1284,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.TitlePosition;
+                return AxisLeft.TitlePosition;
             }
             set
             {
-                this.fAxisLeft.TitlePosition = value;
-                this.fAxisRight.TitlePosition = value;
+                AxisLeft.TitlePosition = value;
+                AxisRight.TitlePosition = value;
             }
         }
 
@@ -1279,11 +1299,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelEnabled;
+                return AxisLeft.LabelEnabled;
             }
             set
             {
-                this.fAxisLeft.LabelEnabled = value;
+                AxisLeft.LabelEnabled = value;
             }
         }
 
@@ -1293,12 +1313,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelFont;
+                return AxisLeft.LabelFont;
             }
             set
             {
-                this.fAxisLeft.LabelFont = value;
-                this.fAxisRight.LabelFont = value;
+                AxisLeft.LabelFont = value;
+                AxisRight.LabelFont = value;
             }
         }
 
@@ -1308,12 +1328,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelColor;
+                return AxisLeft.LabelColor;
             }
             set
             {
-                this.fAxisLeft.LabelColor = value;
-                this.fAxisRight.LabelColor = value;
+                AxisLeft.LabelColor = value;
+                AxisRight.LabelColor = value;
             }
         }
 
@@ -1323,12 +1343,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelOffset;
+                return AxisLeft.LabelOffset;
             }
             set
             {
-                this.fAxisLeft.LabelOffset = value;
-                this.fAxisRight.LabelOffset = value;
+                AxisLeft.LabelOffset = value;
+                AxisRight.LabelOffset = value;
             }
         }
 
@@ -1338,12 +1358,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelFormat;
+                return AxisLeft.LabelFormat;
             }
             set
             {
-                this.fAxisLeft.LabelFormat = value;
-                this.fAxisRight.LabelFormat = value;
+                AxisLeft.LabelFormat = value;
+                AxisRight.LabelFormat = value;
             }
         }
 
@@ -1353,12 +1373,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fAxisLeft.LabelAlignment;
+                return AxisLeft.LabelAlignment;
             }
             set
             {
-                this.fAxisLeft.LabelAlignment = value;
-                this.fAxisRight.LabelAlignment = value;
+                AxisLeft.LabelAlignment = value;
+                AxisRight.LabelAlignment = value;
             }
         }
 
@@ -1368,6 +1388,10 @@ namespace SmartQuant.Charting
             get
             {
                 return this.fLegend;
+            }
+            private set
+            {
+                this.fLegend = value;
             }
         }
 
@@ -1728,6 +1752,10 @@ namespace SmartQuant.Charting
             {
                 return this.fTransformation;
             }
+            private set
+            {
+                this.fTransformation = value;
+            }
         }
 
         [Category("Transformation")]
@@ -1882,21 +1910,21 @@ namespace SmartQuant.Charting
             MarginRight = 20;
             MarginTop = 10;
             MarginBottom = 10;
-//            TitleEnabled = true;
-//            Title = new TTitle(this, "");
-//            TitleOffsetX = TitleOffsetY = 5;
-            this.fTransformation = (IChartTransformation)new TIntradayTransformation();
+            TitleEnabled = true;
+            Title = new TTitle(this, "");
+            TitleOffsetX = TitleOffsetY = 5;
+            Transformation = (IChartTransformation)new TIntradayTransformation();
             this.fTransformationType = ETransformationType.Empty;
             SessionGridColor = Colors.Blue;
-            this.fAxisLeft = new Axis(this, EAxisPosition.Left);
-            this.fAxisRight = new Axis(this, EAxisPosition.Right);
-            this.fAxisTop = new Axis(this, EAxisPosition.Top);
-            this.fAxisBottom = new Axis(this, EAxisPosition.Bottom);
+            AxisLeft = new Axis(this, EAxisPosition.Left);
+            AxisRight = new Axis(this, EAxisPosition.Right);
+            AxisTop = new Axis(this, EAxisPosition.Top);
+            AxisBottom = new Axis(this, EAxisPosition.Bottom);
             AxisRight.LabelEnabled = false;
             AxisRight.TitleEnabled = false;
             AxisTop.LabelEnabled = false;
             AxisTop.TitleEnabled = false;
-            this.fLegend = new TLegend(this);
+            Legend = new TLegend(this);
             LegendEnabled = false;
             LegendPosition = ELegendPosition.TopRight;
             LegendOffsetX = 5;
@@ -1906,6 +1934,7 @@ namespace SmartQuant.Charting
             BorderWidth = 1;
             SetRange(0.0, 100.0, 0.0, 100.0);
             Graphics = null;
+
             this.fOnAxis = false;
             this.fOnPrimitive = false;
             this.fMouseDown = false;

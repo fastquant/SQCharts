@@ -161,13 +161,13 @@ namespace SmartQuant.Charting
             Title = "";
             TitlePosition = EAxisTitlePosition.Centre;
             TitleFont = new Font("Arial", 8f);
-            TitleColor = Color.Black;
+            TitleColor = Colors.Black;
             TitleOffset = 2;
 
             // label
             LabelEnabled = true;
             LabelFont = new Font("Arial", 8f);
-            LabelColor = Color.Black;
+            LabelColor = Colors.Black;
             LabelFormat =  null;
             LabelOffset = 2;
             LabelAlignment = EAxisLabelAlignment.Centre;
@@ -182,7 +182,7 @@ namespace SmartQuant.Charting
             MinorGridDashStyle = DashStyle.Solid;
             MinorGridWidth = 0.5f;
             MajorTicksEnabled = true;
-            MajorTicksColor = Color.Black;
+            MajorTicksColor = Colors.Black;
             MajorTicksWidth = 0.5f;
             MajorTicksLength = 4;
             MinorTicksEnabled = true;
