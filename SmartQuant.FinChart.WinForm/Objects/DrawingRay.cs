@@ -85,7 +85,7 @@ namespace SmartQuant.FinChart.Objects
 
         public DrawingRay(DateTime x, double y, string name)
         {
-            this.Name = name;
+            Name = name;
             this.x = x;
             this.y = y;
         }

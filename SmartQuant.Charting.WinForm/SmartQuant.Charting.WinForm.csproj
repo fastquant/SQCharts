@@ -80,10 +80,7 @@
     <Compile Include="TMarker.cs" />
     <Compile Include="TEmptyTransformation.cs" />
     <Compile Include="TImage.cs" />
-    <Compile Include="Images.cs" />
     <Compile Include="TIntradayTransformation.cs" />
-    <Compile Include="ZoomEventArgs.cs" />
-    <Compile Include="ZoomEventHandler.cs" />
     <Compile Include="Draw3D\TColor.cs" />
     <Compile Include="Draw3D\TSurface.cs" />
     <Compile Include="Draw3D\TAxisCalc.cs" />
@@ -105,15 +102,12 @@
     <Compile Include="Pie.cs" />
     <Compile Include="TLegend.cs" />
     <Compile Include="Chart.WinForm.cs" />
+    <Compile Include="ZoomEventArgs.cs" />
+    <Compile Include="ZoomEventHandler.cs" />
+    <Compile Include="TPaintingBitmap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Draw3D\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Compatibility.WinForm\Compatibility.WinForm.csproj">
-      <Project>{1AF26544-F67B-465A-B1CB-C15B090F8232}</Project>
-      <Name>Compatibility.WinForm</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

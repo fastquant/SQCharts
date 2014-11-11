@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Drawing;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -24,7 +19,7 @@ namespace SmartQuant.Charting
         }
 
         public TTextBoxItem(string text, Color color)
-            : this(text, color, Fonts.SystemFont())
+            : this(text, color, new Font("Arial", 8f))
         {
         }
     }

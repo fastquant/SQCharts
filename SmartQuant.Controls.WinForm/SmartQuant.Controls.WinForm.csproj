@@ -50,10 +50,6 @@
     <Folder Include="BarChart\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
-      <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
-      <Name>SmartQuant.Charting.WinForm</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SmartQuant.ChartViewers.WinForm\SmartQuant.ChartViewers.WinForm.csproj">
       <Project>{E6515A7E-2CBC-4823-AB77-E2B747227FA9}</Project>
       <Name>SmartQuant.ChartViewers.WinForm</Name>
@@ -62,9 +58,9 @@
       <Project>{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}</Project>
       <Name>SmartQuant.FinChart.WinForm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Compatibility.WinForm\Compatibility.WinForm.csproj">
-      <Project>{1AF26544-F67B-465A-B1CB-C15B090F8232}</Project>
-      <Name>Compatibility.WinForm</Name>
+    <ProjectReference Include="..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
+      <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
+      <Name>SmartQuant.Charting.WinForm</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

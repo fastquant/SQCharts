@@ -3,13 +3,7 @@
 
 using System;
 using System.Collections;
-#if XWT
-using Color = Xwt.Drawing.Color;
-#elif GTK
-using Color = Pango.Color;
-#else
-using Color = System.Drawing.Color;
-#endif
+using System.Drawing;
 
 namespace SmartQuant.FinChart
 {

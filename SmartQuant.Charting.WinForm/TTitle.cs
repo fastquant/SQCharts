@@ -1,17 +1,11 @@
-﻿// Licensed under the Apache License, Version 2.0. 
-// Copyright (c) Alex Lee. All rights reserved.
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Drawing;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
+using System.Linq;
 
 namespace SmartQuant.Charting
 {
+    [Serializable]
     public class TTitle
     {
         private Pad pad;
@@ -36,7 +30,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                throw new NotImplementedException();
+                return (int)this.pad.Graphics.MeasureString(GetText(), Font).Width;
             }
         }
 
@@ -44,7 +38,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                throw new NotImplementedException();
+                return (int)this.pad.Graphics.MeasureString(GetText(), Font).Height;
             }
         }
 
@@ -56,7 +50,7 @@ namespace SmartQuant.Charting
             Text = Text;
             Items = new ArrayList();
             ItemsEnabled = false;
-            Font = Fonts.SystemFont();
+            Font = new Font("Arial", 8f);
             Color = Color.Black;
             Position = ETitlePosition.Left;
             Strategy = ETitleStrategy.Smart;
@@ -64,14 +58,37 @@ namespace SmartQuant.Charting
             Y = 0;
         }
 
-        public void Add(string text, Color color)
+        public void Add(string Text, Color Color)
         {
-            Items.Add(new TTitleItem(text, color));
+            Items.Add(new TTitleItem(Text, Color));
+        }
+
+        private string GetText()
+        {
+            string str = Text;
+            foreach (TTitleItem item in Items)
+                str = str + " " + item.Text;
+            return str;
         }
 
         public void Paint()
         {
+            var solidBrush1 = new SolidBrush(Color);
+            if (!string.IsNullOrEmpty(Text))
+                this.pad.Graphics.DrawString(Text, Font, (Brush)solidBrush1, X, Y);
+            if (Strategy == ETitleStrategy.Smart && Text == "" && ItemsEnabled && Items.Count != 0)
+                this.pad.Graphics.DrawString(((TTitleItem)Items[0]).Text, Font, (Brush)new SolidBrush(Color), X, Y);
+            if (!ItemsEnabled)
+                return;
+            string str = Text;
+            foreach (TTitleItem ttitleItem in Items)
+            {
+                var solidBrush2 = new SolidBrush(ttitleItem.Color);
+                string text = str + " ";
+                int num = X + (int)this.pad.Graphics.MeasureString(text, Font).Width;
+                this.pad.Graphics.DrawString(ttitleItem.Text, Font, solidBrush2, num, Y);
+                str = text + ttitleItem.Text;
+            }
         }
     }
 }
-

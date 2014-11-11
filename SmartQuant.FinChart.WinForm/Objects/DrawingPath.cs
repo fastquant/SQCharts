@@ -3,11 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 
 namespace SmartQuant.FinChart.Objects

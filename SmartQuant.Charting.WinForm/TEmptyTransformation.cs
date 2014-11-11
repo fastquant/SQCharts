@@ -5,7 +5,6 @@ using System;
 
 namespace SmartQuant.Charting
 {
-    [Serializable]
     public class TEmptyTransformation : IChartTransformation
     {
         public double CalculateNotInSessionTicks(double x, double y)

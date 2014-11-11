@@ -3,12 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using PointF = System.Drawing.PointF;
-#if XWT
-using Xwt;
-#else
 using System.Drawing;
-#endif
 
 namespace SmartQuant.Charting.Draw3D
 {

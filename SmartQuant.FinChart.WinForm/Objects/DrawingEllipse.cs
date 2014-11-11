@@ -2,11 +2,6 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 
 namespace SmartQuant.FinChart.Objects
@@ -118,7 +113,7 @@ namespace SmartQuant.FinChart.Objects
 
         public DrawingEllipse(DateTime x1, double y1, DateTime x2, double y2, string name)
         {
-            this.Name = name;
+            Name = name;
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;

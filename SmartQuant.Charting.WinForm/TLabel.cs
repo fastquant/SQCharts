@@ -4,11 +4,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -54,7 +49,7 @@ namespace SmartQuant.Charting
             : base(x, y, markerColor)
         {
             Text = text;
-            TextFont = Fonts.SystemFont();
+            TextFont = new Font("Arial", 8f);
             TextPosition = ETextPosition.RightBottom;
             TextColor = Color.Black;
             TextOffsetX = 0;
@@ -62,9 +57,39 @@ namespace SmartQuant.Charting
             TextColor = textColor;
         }
 
-        public override void Paint(Pad Pad, double MinX, double MaxX, double MinY, double MaxY)
+        public override void Paint(Pad pad, double minX, double maxX, double minY, double maxY)
         {
-            throw new NotImplementedException();
+            base.Paint(pad, minX, maxX, minY, maxY);
+            if (string.IsNullOrWhiteSpace(Text))
+                return;
+            var size = pad.Graphics.MeasureString(Text, TextFont);
+            float w = size.Width;
+            float h = size.Height;
+            float clientX = pad.ClientX(X);
+            float clientY = pad.ClientY(Y);
+            PointF point = PointF.Empty;
+            switch (TextPosition)
+            {
+                case ETextPosition.RightTop:
+                    point = new PointF(clientX + TextOffsetX, clientY - h - TextOffsetY);
+                    break;
+                case ETextPosition.LeftTop:
+                    point = new PointF(clientX - w - TextOffsetX, clientY - h - TextOffsetY);
+                    break;
+                case ETextPosition.CentreTop:
+                    point = new PointF(clientX - w / 2 - TextOffsetX, clientY - h - TextOffsetY);
+                    break;
+                case ETextPosition.RightBottom:
+                    point = new PointF(clientX + TextOffsetX, clientY + Size / 2 + TextOffsetY);
+                    break;
+                case ETextPosition.LeftBottom:
+                    point = new PointF(clientX - w - TextOffsetX, clientY + Size / 2 + TextOffsetY);
+                    break;
+                case ETextPosition.CentreBottom:
+                    point = new PointF(clientX - w / 2 - TextOffsetX, clientY + Size / 2 + TextOffsetY);
+                    break;
+            }
+            pad.Graphics.DrawString(Text, TextFont, new SolidBrush(TextColor), point.X, point.Y);
         }
     }
 }

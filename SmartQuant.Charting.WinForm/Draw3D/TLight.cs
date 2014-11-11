@@ -1,38 +1,24 @@
-﻿// Licensed under the Apache License, Version 2.0. 
-// Copyright (c) Alex Lee. All rights reserved.
+﻿// Decompiled with JetBrains decompiler
+// Type: SmartQuant.Charting.Draw3D.TLight
+// Assembly: SmartQuant.Charting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=23953e483e363d68
+// MVID: F3B55EE9-4DBA-4875-B18A-7BD8DFCF4D88
+// Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll
 
-using System;
 using System.Drawing;
 
 namespace SmartQuant.Charting.Draw3D
 {
     public class TLight
     {
-        public struct TSource
+        public TColor Ambient = new TColor(Color.PaleTurquoise);
+        public TLight.TSource[] ParallelBeams = new TLight.TSource[1]
         {
-            public TVec3 o;
-            public TColor c;
-
-            public TSource(TVec3 o, TColor c)
-            {
-                this.o = o;
-                this.c = c;
-            }
-        }
-
-        public TColor Ambient;
-        public TSource[] ParallelBeams;
-        public TSource[] NearSources;
+            new TLight.TSource(new TVec3(3.0, -2.0, 2.0), (TColor) Color.LightYellow)
+        };
+        public TLight.TSource[] NearSources = new TLight.TSource[0];
 
         public TLight()
         {
-            Ambient = new TColor(Color.PaleTurquoise);
-            ParallelBeams = new TSource[1]
-            {
-                new TSource(new TVec3(3.0, -2.0, 2.0), (TColor)Color.LightYellow)
-            };
-            NearSources = new TSource[0];
-
             this.SetSfumatoDay();
             this.SetShadowSources(0.25);
         }
@@ -57,20 +43,20 @@ namespace SmartQuant.Charting.Draw3D
             this.ParallelBeams[0].c *= 1.2;
         }
 
-        public void SetShadowSources(double k)
+        public void SetShadowSources(double K)
         {
-            var sources = new TSource[2 * this.ParallelBeams.Length];
-            for (int i = 0; i < this.ParallelBeams.Length; ++i)
+            TLight.TSource[] tsourceArray = new TLight.TSource[2 * this.ParallelBeams.Length];
+            for (int index1 = 0; index1 < this.ParallelBeams.Length; ++index1)
             {
-                int index2 = 2 * i;
-                sources[index2] = this.ParallelBeams[i];
-                sources[index2 + 1].o = -sources[index2].o;
-                sources[index2 + 1].c = -k * sources[index2].c;
+                int index2 = 2 * index1;
+                tsourceArray[index2] = this.ParallelBeams[index1];
+                tsourceArray[index2 + 1].o = -tsourceArray[index2].o;
+                tsourceArray[index2 + 1].c = -K * tsourceArray[index2].c;
             }
-            this.ParallelBeams = sources;
+            this.ParallelBeams = tsourceArray;
         }
 
-        public virtual TColor Result(TVec3 r, TVec3 n, TColor diffuse)
+        public virtual TColor Result(TVec3 r, TVec3 n, TColor Diffuse)
         {
             TColor tcolor = this.Ambient;
             foreach (TLight.TSource tsource in this.ParallelBeams)
@@ -93,8 +79,19 @@ namespace SmartQuant.Charting.Draw3D
                     tcolor += num3 * tsource.c;
                 }
             }
-            return diffuse * tcolor;
+            return Diffuse * tcolor;
+        }
+
+        public struct TSource
+        {
+            public TVec3 o;
+            public TColor c;
+
+            public TSource(TVec3 o, TColor c)
+            {
+                this.o = o;
+                this.c = c;
+            }
         }
     }
 }
-

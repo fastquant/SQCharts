@@ -28,7 +28,7 @@ namespace SmartQuant.Charting
 
         public void Print()
         {
-            foreach (Canvas canvas in (SortedList)this)
+            foreach (Canvas canvas in this)
                 canvas.Print();
         }
     }

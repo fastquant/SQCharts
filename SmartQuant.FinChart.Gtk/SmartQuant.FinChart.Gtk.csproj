@@ -112,9 +112,6 @@
     <Compile Include="..\SmartQuant.FinChart.WinForm\ChartActionType.cs">
       <Link>ChartActionType.cs</Link>
     </Compile>
-    <Compile Include="..\SmartQuant.FinChart.WinForm\ChartToolStrip.cs">
-      <Link>ChartToolStrip.cs</Link>
-    </Compile>
     <Compile Include="..\SmartQuant.FinChart.WinForm\ChartUpdateStyle.cs">
       <Link>ChartUpdateStyle.cs</Link>
     </Compile>
@@ -178,12 +175,12 @@
     <Compile Include="..\SmartQuant.FinChart.WinForm\SortedRangeList.cs">
       <Link>SortedRangeList.cs</Link>
     </Compile>
-    <Compile Include="..\SmartQuant.FinChart.WinForm\ToolBar.cs">
-      <Link>ToolBar.cs</Link>
-    </Compile>
     <Compile Include="Chart.Gtk.cs" />
     <Compile Include="..\SmartQuant.FinChart.WinForm\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.FinChart.WinForm\SimpleBSView.cs">
+      <Link>SimpleBSView.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

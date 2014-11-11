@@ -1,9 +1,4 @@
 ﻿using System;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 
 namespace SmartQuant.Charting

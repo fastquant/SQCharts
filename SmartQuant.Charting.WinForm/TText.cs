@@ -5,11 +5,6 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 
 namespace SmartQuant.Charting
 {
@@ -138,11 +133,11 @@ namespace SmartQuant.Charting
         {
             X = x;
             Y = y;
-            Z = 0.0;
+            Z = 0;
             Text = text;
-            Color = color;
             Position = ETextPosition.RightBottom;
-            Font = Fonts.SystemFont();
+            Font = SystemFonts.DefaultFont;
+            Color = color;
         }
 
         public TText(string text, DateTime x, double y)
@@ -157,12 +152,31 @@ namespace SmartQuant.Charting
 
         public virtual void Draw()
         {
-            throw new NotImplementedException();
+            if (Chart.Pad == null)
+            {
+                Canvas canvas = new Canvas("Canvas", "Canvas");
+            }
+            Chart.Pad.Add((object)this);
         }
 
         public void Paint(Pad pad, double minX, double maxX, double minY, double maxY)
         {
-            throw new NotImplementedException();
+            if (this.fText == null)
+                return;
+            int num1 = (int)pad.Graphics.MeasureString(this.fText, this.fFont).Width;
+            double num2 = (double)pad.Graphics.MeasureString(this.fText, this.fFont).Height;
+            switch (this.fPosition)
+            {
+                case ETextPosition.RightBottom:
+                    pad.Graphics.DrawString(this.fText, this.fFont, (Brush)new SolidBrush(this.fColor), (float)pad.ClientX(this.fX), (float)pad.ClientY(this.fY));
+                    break;
+                case ETextPosition.LeftBottom:
+                    pad.Graphics.DrawString(this.fText, this.fFont, (Brush)new SolidBrush(this.fColor), (float)(pad.ClientX(this.fX) - num1), (float)pad.ClientY(this.fY));
+                    break;
+                case ETextPosition.CentreBottom:
+                    pad.Graphics.DrawString(this.fText, this.fFont, (Brush)new SolidBrush(this.fColor), (float)(pad.ClientX(this.fX) - num1 / 2), (float)pad.ClientY(this.fY));
+                    break;
+            }
         }
 
         public TDistance Distance(double X, double Y)

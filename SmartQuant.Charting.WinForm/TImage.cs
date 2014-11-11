@@ -3,11 +3,7 @@
 
 using System;
 using System.ComponentModel;
-#if XWT
-using Xwt.Drawing;
-#else
 using System.Drawing;
-#endif
 using System.Text;
 
 namespace SmartQuant.Charting
@@ -47,12 +43,12 @@ namespace SmartQuant.Charting
         }
 
         public TImage(string fileName, double x, double y)
-            : this(Images.FromFile(fileName), x, y)
+            : this(Image.FromFile(fileName), x, y)
         {
         }
 
         public TImage(string fileName, DateTime x, double y)
-            : this(Images.FromFile(fileName), x.Ticks, y)
+            : this(Image.FromFile(fileName), x.Ticks, y)
         {
         }
 
@@ -61,23 +57,20 @@ namespace SmartQuant.Charting
             throw new NotImplementedException();
         }
 
-        public virtual void Paint(Pad Pad, double XMin, double XMax, double YMin, double YMax)
+        public virtual void Paint(Pad pad, double xMin, double xMax, double yMin, double yMax)
         {
-            throw new NotImplementedException();
-
+            pad.Graphics.DrawImage(Image, pad.ClientX(X), pad.ClientY(Y));
         }
 
         public TDistance Distance(double x, double y)
         {
-            TDistance td = new TDistance();
-            td.X = X;
-            td.Y = Y;
-            td.dX = Math.Abs(x - X);
-            td.dY = Math.Abs(y - Y);
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat(ToolTipFormat, X, Y);
-            td.ToolTipText = sb.ToString();
-            return td;
+            var d = new TDistance();
+            d.X = X;
+            d.Y = Y;
+            d.dX = Math.Abs(x - X);
+            d.dY = Math.Abs(y - Y);
+            d.ToolTipText = string.Format(ToolTipFormat, X, Y);
+            return d;
         }
 
         public void Move(double x, double y, double dx, double dy)

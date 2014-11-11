@@ -18,7 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -31,22 +31,13 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
     <Reference Include="SmartQuant">
       <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartQuant.Charting">
-      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartQuant.ChartViewers">
-      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.ChartViewers.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartQuant.Controls">
-      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Controls.dll</HintPath>
     </Reference>
     <Reference Include="SmartQuant.FinChart">
       <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.FinChart.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -57,4 +48,18 @@
     <Compile Include="Backtest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\SmartQuant.Controls.WinForm\SmartQuant.Controls.WinForm.csproj">
+      <Project>{3D4EC22C-579F-4464-ABA8-19366DEE11ED}</Project>
+      <Name>SmartQuant.Controls.WinForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.ChartViewers.WinForm\SmartQuant.ChartViewers.WinForm.csproj">
+      <Project>{E6515A7E-2CBC-4823-AB77-E2B747227FA9}</Project>
+      <Name>SmartQuant.ChartViewers.WinForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
+      <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
+      <Name>SmartQuant.Charting.WinForm</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

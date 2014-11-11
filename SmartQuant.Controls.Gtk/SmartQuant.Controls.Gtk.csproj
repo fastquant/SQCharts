@@ -36,6 +36,7 @@
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -52,12 +53,6 @@
     <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\BarChart2.cs">
       <Link>BarChart\BarChart2.cs</Link>
     </Compile>
-    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem.cs">
-      <Link>BarChart\GroupItem.cs</Link>
-    </Compile>
-    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem2.cs">
-      <Link>BarChart\GroupItem2.cs</Link>
-    </Compile>
     <Compile Include="..\SmartQuant.Controls.WinForm\ControlSettings.cs">
       <Link>ControlSettings.cs</Link>
     </Compile>
@@ -67,23 +62,29 @@
     <Compile Include="..\SmartQuant.Controls.WinForm\ShowPropertiesEventArgs.cs">
       <Link>ShowPropertiesEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem.cs">
+      <Link>BarChart\GroupItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SmartQuant.Controls.WinForm\BarChart\GroupItem2.cs">
+      <Link>BarChart\GroupItem2.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
-      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
-      <Name>SmartQuant.Charting.Gtk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SmartQuant.FinChart.Gtk\SmartQuant.FinChart.Gtk.csproj">
       <Project>{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}</Project>
       <Name>SmartQuant.FinChart.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
+      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
+      <Name>Compatibility.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmartQuant.ChartViewers.Gtk\SmartQuant.ChartViewers.Gtk.csproj">
       <Project>{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}</Project>
       <Name>SmartQuant.ChartViewers.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
-      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
-      <Name>Compatibility.Gtk</Name>
+    <ProjectReference Include="..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
+      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
+      <Name>SmartQuant.Charting.Gtk</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

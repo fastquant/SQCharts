@@ -1,16 +1,11 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: SmartQuant.Charting.TMarker
 // Assembly: SmartQuant.Charting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=23953e483e363d68
-// MVID: D7916FA1-2509-47A3-B59F-156017766DAE
+// MVID: F3B55EE9-4DBA-4875-B18A-7BD8DFCF4D88
 // Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll
 
 using System;
 using System.ComponentModel;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 using System.Text;
 
@@ -351,158 +346,236 @@ namespace SmartQuant.Charting
         }
 
         public TMarker(double x, double y)
+            : this(x, y, 0, Color.Black)
         {
-            this.fX = x;
-            this.fY = y;
-            this.fZ = 0.0;
-            this.InitMarker();
         }
 
-        public TMarker(DateTime X, double Y)
+        public TMarker(DateTime x, double y)
+            : this(x.Ticks, y)
         {
-            this.fX = (double) X.Ticks;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
         }
 
-        public TMarker(string X, double Y)
+        public TMarker(string x, double y)
+            : this(DateTime.Parse(x).Ticks, y)
         {
-            this.fX = (double) DateTime.Parse(X).Ticks;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
         }
 
-        public TMarker(double X, double Y, Color Color)
+        public TMarker(double x, double y, Color color)
+            : this(x, y, 0, color)
         {
-            this.fX = X;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
-            this.fColor = Color;
         }
 
-        public TMarker(double X, double Y, EMarkerStyle Style)
+        public TMarker(double x, double y, EMarkerStyle style)
+            : this(x, y, 0, Color.Black)
         {
-            this.fX = X;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
-            this.fStyle = Style;
-            if (this.fStyle != EMarkerStyle.Buy && this.fStyle != EMarkerStyle.Sell && (this.fStyle != EMarkerStyle.SellShort && this.fStyle != EMarkerStyle.BuyShort))
-                return;
-            this.fSize = 10;
         }
 
-        public TMarker(DateTime X, double Y, EMarkerStyle Style)
+        public TMarker(DateTime x, double y, EMarkerStyle style)
+            : this(x.Ticks, y, 0, Color.Black)
         {
-            this.fX = (double) X.Ticks;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
-            this.fStyle = Style;
-            if (this.fStyle != EMarkerStyle.Buy && this.fStyle != EMarkerStyle.Sell && (this.fStyle != EMarkerStyle.SellShort && this.fStyle != EMarkerStyle.BuyShort))
-                return;
-            this.fSize = 10;
         }
 
-        public TMarker(string X, double Y, EMarkerStyle Style)
+        public TMarker(string x, double y, EMarkerStyle style)
+            : this(DateTime.Parse(x).Ticks, y, 0, Color.Black)
         {
-            this.fX = (double) DateTime.Parse(X).Ticks;
-            this.fY = Y;
-            this.fZ = 0.0;
-            this.InitMarker();
-            this.fStyle = Style;
-            if (this.fStyle != EMarkerStyle.Buy && this.fStyle != EMarkerStyle.Sell && (this.fStyle != EMarkerStyle.SellShort && this.fStyle != EMarkerStyle.BuyShort))
-                return;
-            this.fSize = 10;
+
         }
 
-        public TMarker(double X, double Y, double Z)
+        public TMarker(double x, double y, double z)
+            : this(x, y, z, Color.Black)
         {
-            this.fX = X;
-            this.fY = Y;
-            this.fZ = Z;
-            this.InitMarker();
         }
 
-        public TMarker(double X, double Y, double Z, Color Color)
+        public TMarker(double x, double y, double z, Color color)
+            : this(x, y, z, EMarkerStyle.Rectangle, 0, 0, 0, 0, Color.Black)
         {
-            this.fX = X;
-            this.fY = Y;
-            this.fZ = Z;
-            this.InitMarker();
-            this.fColor = Color;
         }
 
-        public TMarker(double X, double High, double Low, double Open, double Close)
+        public TMarker(double x, double high, double low, double open, double close)
+            : this(x, high, low, open, close, Color.Black)
         {
-            this.fX = X;
-            this.fY = 0.0;
-            this.fZ = 0.0;
-            this.fHigh = High;
-            this.fLow = Low;
-            this.fOpen = Open;
-            this.fClose = Close;
-            this.InitMarker();
         }
 
-        public TMarker(double X, double High, double Low, double Open, double Close, Color Color)
+        public TMarker(double x, double high, double low, double open, double close, Color color)
+            : this(x, 0, 0, EMarkerStyle.Rectangle, high, low, open, close, color)
         {
-            this.fX = X;
-            this.fY = 0.0;
-            this.fZ = 0.0;
-            this.fHigh = High;
-            this.fLow = Low;
-            this.fOpen = Open;
-            this.fClose = Close;
-            this.InitMarker();
-            this.fColor = Color;
         }
 
-        private void InitMarker()
+        private TMarker(double x, double y, double z, EMarkerStyle style, double high, double low, double open, double close, Color color)
         {
-            this.fStyle = EMarkerStyle.Rectangle;
-            this.fColor = Color.Black;
-            this.fSize = 5;
-            this.fFilled = true;
-            this.fTextEnabled = true;
-            this.fTextOffset = 2;
-            this.fTextPosition = EMarkerTextPosition.Bottom;
-            this.fTextFont = Fonts.SystemFont();
-            this.fTextColor = Color.Black;
-            this.fToolTipEnabled = true;
-            this.fToolTipFormat = "X = {0:F2} Y = {1:F2}";
+            X = x;
+            Y = y;
+            Z = z;
+            High = high;
+            Low = low;
+            Open = open;
+            Close = close;
+            Style = style;
+            Color = color;
+            Size = (Style == EMarkerStyle.Buy || Style == EMarkerStyle.Sell || Style == EMarkerStyle.SellShort || Style == EMarkerStyle.BuyShort) ? 10 : 5;
+            Filled = true;
+            TextEnabled = true;
+            TextOffset = 2;
+            TextPosition = EMarkerTextPosition.Bottom;
+            TextFont = new Font("Arial", 8f);
+            TextColor = Color.Black;
+            ToolTipEnabled = true;
+            ToolTipFormat = "X = {0:F2} Y = {1:F2}";
         }
 
         public virtual void Draw()
         {
-            throw new NotImplementedException();
+            if (Chart.Pad == null)
+            {
+                var canvas = new Canvas("Canvas", "Canvas");
+            }
+            Chart.Pad.Add(this);
         }
 
-        public virtual void Paint(Pad Pad, double XMin, double XMax, double YMin, double YMax)
+        public virtual void Paint(Pad pad, double xMin, double xMax, double yMin, double yMax)
         {
-            throw new NotImplementedException();
+            int num1 = pad.ClientX(this.fX);
+            int y = pad.ClientY(this.fY);
+            float num2 = (float)this.fSize;
+            switch (this.fStyle)
+            {
+                case EMarkerStyle.Rectangle:
+                    if (this.fFilled)
+                    {
+                        pad.Graphics.FillRectangle((Brush)new SolidBrush(this.fColor), (float)num1 - num2 / 2f, (float)y - num2 / 2f, num2, num2);
+                        break;
+                    }
+                    else
+                    {
+                        Pen pen = new Pen(this.fColor);
+                        pad.Graphics.DrawRectangle(pen, (float)num1 - num2 / 2f, (float)y - num2 / 2f, num2, num2);
+                        break;
+                    }
+                case EMarkerStyle.Triangle:
+                    float num3 = (float)((double)num2 / 2.0 * Math.Tan(Math.PI / 6.0));
+                    float num4 = num2 * (float)Math.Cos(Math.PI / 6.0) - num3;
+                    PointF pointF1 = new PointF((float)num1, (float)y - num4);
+                    PointF pointF2 = new PointF((float)num1 - num2 / 2f, (float)y + num3);
+                    PointF pointF3 = new PointF((float)num1 + num2 / 2f, (float)y + num3);
+                    PointF[] points1 = new PointF[4]
+                    {
+                        pointF1,
+                        pointF2,
+                        pointF3,
+                        pointF1
+                    };
+                    if (this.fFilled)
+                    {
+                        pad.Graphics.FillPolygon((Brush)new SolidBrush(this.fColor), points1);
+                        break;
+                    }
+                    else
+                    {
+                        Pen pen = new Pen(this.fColor);
+                        pad.Graphics.DrawLines(pen, points1);
+                        break;
+                    }
+                case EMarkerStyle.Circle:
+                    if (this.fFilled)
+                    {
+                        pad.Graphics.FillEllipse((Brush)new SolidBrush(this.fColor), (float)num1 - num2 / 2f, (float)y - num2 / 2f, num2, num2);
+                        break;
+                    }
+                    else
+                    {
+                        Pen pen = new Pen(this.fColor);
+                        pad.Graphics.DrawEllipse(pen, (float)num1 - num2 / 2f, (float)y - num2 / 2f, num2, num2);
+                        break;
+                    }
+                case EMarkerStyle.Bar:
+                    Pen pen1 = new Pen(this.fColor);
+                    pad.Graphics.DrawLine(pen1, num1, pad.ClientY(this.fLow), pad.ClientX(this.fX), pad.ClientY(this.fHigh));
+                    pad.Graphics.DrawLine(pen1, num1, pad.ClientY(this.fLow), pad.ClientX(this.fX) - 3, pad.ClientY(this.fLow));
+                    pad.Graphics.DrawLine(pen1, num1, pad.ClientY(this.fHigh), pad.ClientX(this.fX) + 3, pad.ClientY(this.fHigh));
+                    break;
+                case EMarkerStyle.Buy:
+                    PointF[] points2 = new PointF[3]
+                    {
+                        (PointF)new Point(num1, y),
+                        (PointF)new Point((int)((double)num1 - (double)num2 / 2.0), (int)((double)y + (double)num2)),
+                        (PointF)new Point((int)((double)num1 + (double)num2 / 2.0), (int)((double)y + (double)num2))
+                    };
+                    pad.Graphics.FillPolygon((Brush)new SolidBrush(this.fBuyColor), points2);
+                    break;
+                case EMarkerStyle.Sell:
+                    Point[] points3 = new Point[3]
+                    {
+                        new Point(num1, y),
+                        new Point((int)((double)num1 - (double)num2 / 2.0), (int)((double)y - (double)num2)),
+                        new Point((int)((double)num1 + (double)num2 / 2.0), (int)((double)y - (double)num2))
+                    };
+                    pad.Graphics.FillPolygon((Brush)new SolidBrush(this.fSellColor), points3);
+                    break;
+                case EMarkerStyle.SellShort:
+                    Point[] points4 = new Point[3]
+                    {
+                        new Point(num1, y),
+                        new Point((int)((double)num1 - (double)num2 / 2.0), (int)((double)y - (double)num2)),
+                        new Point((int)((double)num1 + (double)num2 / 2.0), (int)((double)y - (double)num2))
+                    };
+                    pad.Graphics.FillPolygon((Brush)new SolidBrush(this.fSellShortColor), points4);
+                    break;
+                case EMarkerStyle.BuyShort:
+                    Point[] points5 = new Point[3]
+                    {
+                        new Point(num1, y),
+                        new Point((int)((double)num1 - (double)num2 / 2.0), (int)((double)y + (double)num2)),
+                        new Point((int)((double)num1 + (double)num2 / 2.0), (int)((double)y + (double)num2))
+                    };
+                    pad.Graphics.FillPolygon((Brush)new SolidBrush(this.fBuyShortColor), points5);
+                    break;
+                case EMarkerStyle.Plus:
+                    Pen pen2 = new Pen(this.fColor);
+                    pad.Graphics.DrawLine(pen2, (float)num1 - num2 / 2f, (float)y, (float)num1 + num2 / 2f, (float)y);
+                    pad.Graphics.DrawLine(pen2, (float)num1, (float)y - num2 / 2f, (float)num1, (float)y + num2 / 2f);
+                    break;
+                case EMarkerStyle.Cross:
+                    Pen pen3 = new Pen(this.fColor);
+                    pad.Graphics.DrawLine(pen3, (float)num1 - num2 / 2f, (float)y - num2 / 2f, (float)num1 + num2 / 2f, (float)y + num2 / 2f);
+                    pad.Graphics.DrawLine(pen3, (float)num1 - num2 / 2f, (float)y + num2 / 2f, (float)num1 + num2 / 2f, (float)y - num2 / 2f);
+                    break;
+            }
+            if (!this.fTextEnabled || this.fText == null || !(this.fText != ""))
+                return;
+            int num5 = (int)pad.Graphics.MeasureString(this.fText, this.fTextFont).Width;
+            int num6 = (int)pad.Graphics.MeasureString(this.fText, this.fTextFont).Height;
+            switch (this.fStyle)
+            {
+                case EMarkerStyle.Buy:
+                    pad.Graphics.DrawString(this.fText, this.fTextFont, (Brush)new SolidBrush(this.fTextColor), (float)(pad.ClientX(this.fX) - num5 / 2), (float)pad.ClientY(this.fY) + num2 + (float)this.fTextOffset);
+                    break;
+                case EMarkerStyle.Sell:
+                    pad.Graphics.DrawString(this.fText, this.fTextFont, (Brush)new SolidBrush(this.fTextColor), (float)(pad.ClientX(this.fX) - num5 / 2), (float)pad.ClientY(this.fY) - num2 - (float)this.fTextOffset - (float)num6);
+                    break;
+                case EMarkerStyle.SellShort:
+                    pad.Graphics.DrawString(this.fText, this.fTextFont, (Brush)new SolidBrush(this.fTextColor), (float)(pad.ClientX(this.fX) - num5 / 2), (float)pad.ClientY(this.fY) + num2 + (float)this.fTextOffset);
+                    break;
+                case EMarkerStyle.BuyShort:
+                    pad.Graphics.DrawString(this.fText, this.fTextFont, (Brush)new SolidBrush(this.fTextColor), (float)(pad.ClientX(this.fX) - num5 / 2), (float)pad.ClientY(this.fY) + num2 + (float)this.fTextOffset);
+                    break;
+            }
         }
 
         public virtual TDistance Distance(double x, double y)
         {
-            TDistance tdistance = new TDistance();
-            tdistance.X = this.fX;
-            tdistance.Y = this.fY;
-            tdistance.dX = Math.Abs(x - this.fX);
-            tdistance.dY = Math.Abs(y - this.fY);
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(this.fToolTipFormat, (object) this.fX, (object) this.fY);
-            tdistance.ToolTipText = ((object) stringBuilder).ToString();
-            return tdistance;
+            TDistance d = new TDistance();
+            d.X = X;
+            d.Y = Y;
+            d.dX = Math.Abs(x - X);
+            d.dY = Math.Abs(y - Y);
+            d.ToolTipText = string.Format(ToolTipFormat, X, Y);
+            return d;
         }
 
-        public void Move(double x, double y, double dx, double dy)
+        public void Move(double x, double y, double dX, double dY)
         {
-            this.fX += dx;
-            this.fY += dy;
+            X += dX;
+            Y += dY;
         }
     }
 }

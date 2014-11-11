@@ -5,19 +5,18 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 
 namespace SmartQuant.Charting
 {
     [Serializable]
     public class TTextBox : IDrawable
     {
+        [Category("ToolTip")]
+        [Description("")]
         public bool ToolTipEnabled { get; set; }
 
+        [Category("ToolTip")]
+        [Description("")]
         public string ToolTipFormat { get; set; }
 
         public ETextBoxPosition Position { get; set; }
@@ -78,22 +77,69 @@ namespace SmartQuant.Charting
 
         public virtual void Draw()
         {
-            throw new NotImplementedException();
+            if (Chart.Pad == null)
+            {
+                Canvas canvas = new Canvas("Canvas", "Canvas");
+            }
+            Chart.Pad.Add( this);
         }
 
         private float GetWidth(Pad pad)
         {
-            throw new NotImplementedException();
+            Width = 0;
+            foreach (TTextBoxItem ttextBoxItem in Items)
+            {
+                int num = (int) pad.Graphics.MeasureString(ttextBoxItem.Text, ttextBoxItem.Font).Width;
+                if (num > Width)
+                    Width = num;
+            }
+            Width += 12;
+            return (float)Width;
         }
 
         private float GetHeight(Pad pad)
         {
-            throw new NotImplementedException();
+            Height = 0;
+            foreach (TTextBoxItem ttextBoxItem in Items)
+                Height += (int) pad.Graphics.MeasureString(ttextBoxItem.Text, ttextBoxItem.Font).Height + 2;
+            Height += 2;
+            return (float)Height;
         }
 
         public virtual void Paint(Pad pad, double minX, double maxX, double minY, double maxY)
         {
-            throw new NotImplementedException();
+            float height = GetHeight(pad);
+            float width = GetWidth(pad);
+            float x = 0f;
+            float y = 0f;
+            switch (Position)
+            {
+                case ETextBoxPosition.TopRight:
+                    x = (float) (pad.ClientX() + pad.ClientWidth() - X) - width;
+                    y = (float) (pad.ClientY() + Y);
+                    break;
+                case ETextBoxPosition.TopLeft:
+                    x = (float) (pad.ClientX() + X);
+                    y = (float) (pad.ClientY() + Y);
+                    break;
+                case ETextBoxPosition.BottomRight:
+                    x = (float) (pad.ClientX() + pad.ClientWidth() - X) - width;
+                    y = (float) (pad.ClientY() + pad.ClientHeight() -Y) - height;
+                    break;
+                case ETextBoxPosition.BottomLeft:
+                    x = (float) (pad.ClientX() + X);
+                    y = (float) (pad.ClientY() + pad.ClientHeight() - Y) - height;
+                    break;
+            }
+            pad.Graphics.FillRectangle((Brush) new SolidBrush(BackColor), x, y, width, height);
+            if (BorderEnabled)
+                pad.Graphics.DrawRectangle(new Pen(BorderColor), x, y, width, height);
+            foreach (TTextBoxItem ttextBoxItem in Items)
+            {
+                int num = (int) pad.Graphics.MeasureString(ttextBoxItem.Text, ttextBoxItem.Font).Height;
+                pad.Graphics.DrawString(ttextBoxItem.Text, ttextBoxItem.Font, (Brush) new SolidBrush(ttextBoxItem.Color), x + 5f, y);
+                y += (float) (2 + num);
+            }
         }
 
         public TDistance Distance(double x, double y)

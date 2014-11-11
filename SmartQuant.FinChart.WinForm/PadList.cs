@@ -6,6 +6,7 @@ using System.Collections;
 
 namespace SmartQuant.FinChart
 {
+    [Serializable]
     public class PadList : IList
     {
         private ArrayList list = new ArrayList();

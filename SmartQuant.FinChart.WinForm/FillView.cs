@@ -1,22 +1,26 @@
-﻿using System;
-using System.ComponentModel;
-using System.Text;
+﻿// Decompiled with JetBrains decompiler
+// Type: SmartQuant.FinChart.FillView
+// Assembly: SmartQuant.FinChart, Version=1.0.5424.18125, Culture=neutral, PublicKeyToken=null
+// MVID: 8A140279-ED2D-4F5A-B7EB-2662861D60C1
+// Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.FinChart.dll
 
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
+using SmartQuant;
+using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 
 namespace SmartQuant.FinChart
 {
     public class FillView : IChartDrawable, IDateDrawable
     {
+        private Color buyColor = Color.Blue;
+        private Color sellColor = Color.Red;
+        private Color sellShortColor = Color.Yellow;
+        private bool textEnabled = true;
+        protected bool toolTipEnabled = true;
+        protected string toolTipFormat = "";
         private Fill fill;
-
-        protected bool toolTipEnabled;
-        protected string toolTipFormat;
         protected Pad pad;
         protected DateTime firstDate;
         protected DateTime lastDate;
@@ -36,19 +40,59 @@ namespace SmartQuant.FinChart
 
         [Category("Drawing Style")]
         [Browsable(false)]
-        public Color BuyColor { get; set; }
+        public Color BuyColor
+        {
+            get
+            {
+                return this.buyColor;
+            }
+            set
+            {
+                this.buyColor = value;
+            }
+        }
 
         [Category("Drawing Style")]
         [Browsable(false)]
-        public Color SellColor { get; set; }
+        public Color SellColor
+        {
+            get
+            {
+                return this.sellColor;
+            }
+            set
+            {
+                this.sellColor = value;
+            }
+        }
 
         [Category("Drawing Style")]
         [Browsable(false)]
-        public Color SellShortColor { get; set; }
+        public Color SellShortColor
+        {
+            get
+            {
+                return this.sellShortColor;
+            }
+            set
+            {
+                this.sellShortColor = value;
+            }
+        }
 
         [Browsable(false)]
         [Category("Drawing Style")]
-        public bool TextEnabled { get; set; }
+        public bool TextEnabled
+        {
+            get
+            {
+                return this.textEnabled;
+            }
+            set
+            {
+                this.textEnabled = value;
+            }
+        }
 
         [Category("ToolTip")]
         [Description("Enable or disable tooltip appearance for this marker.")]
@@ -82,7 +126,14 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                throw new NotImplementedException();
+                if (!(this.pad.Series is BarSeries))
+                    return this.fill.DateTime;
+                int index = this.pad.Series.GetIndex(this.fill.DateTime, IndexOption.Prev);
+                Bar bar = index >= 0 ? (this.pad.Series as BarSeries)[index] : (Bar) null;
+                if (bar != null)
+                    return bar.DateTime;
+                else
+                    return DateTime.MinValue;
             }
         }
 
@@ -90,12 +141,8 @@ namespace SmartQuant.FinChart
         {
             this.fill = fill;
             this.pad = pad;
-            TextEnabled = true;
-            ToolTipEnabled = true;
-            ToolTipFormat = "{0} {2} {1} @ {3} {4} {5}";
-            BuyColor = Color.Blue;
-            SellColor = Color.Red;
-            SellShortColor = Color.Yellow;
+            this.toolTipEnabled = true;
+            this.toolTipFormat = "{0} {2} {1} @ {3} {4} {5}";
         }
 
         public void Paint()
@@ -114,12 +161,12 @@ namespace SmartQuant.FinChart
             }
             float num3 = 8f;
             string str = ((object) this.fill.Side).ToString() + (object) " " + (string) (object) this.fill.Qty + " @ " + this.fill.Price.ToString();
-            Font font = !this.selected ? Fonts.SystemFont() : Fonts.SystemFont(); // new Font("Arial", 7f) : new Font("Arial", 9f);
+            Font font = !this.selected ? new Font("Arial", 7f) : new Font("Arial", 9f);
             int y = this.fill.Side != OrderSide.Buy ? num1 - 5 : num1 + 5;
             switch (this.fill.Side)
             {
                 case OrderSide.Buy:
-                    Color color1 = this.BuyColor;
+                    Color color1 = this.buyColor;
                     PointF[] points1 = new PointF[3]
                     {
                         (PointF) new Point(x, y),
@@ -132,8 +179,8 @@ namespace SmartQuant.FinChart
                     this.pad.Graphics.FillRectangle((Brush) new SolidBrush(color1), (float) x - num3 / 4f, (float) ((double) y + (double) num3 / 2.0 - 1.0), num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
                     break;
                 case OrderSide.Sell:
-                    Color color2 = this.SellColor;
-                    PointF[] points2 = new PointF[3]
+                    Color color2 = this.sellColor;
+                    Point[] points2 = new Point[3]
                     {
                         new Point(x, y),
                         new Point((int) ((double) x - (double) num3 / 2.0), (int) ((double) y - (double) num3 / 2.0)),
@@ -145,7 +192,7 @@ namespace SmartQuant.FinChart
                     this.pad.Graphics.FillRectangle((Brush) new SolidBrush(color2), (float) x - num3 / 4f, (float) y - num3, num3 / 2f, (float) ((double) num3 / 2.0 + 1.0));
                     break;
             }
-            if (!this.TextEnabled)
+            if (!this.textEnabled)
                 return;
             int num4 = (int) this.pad.Graphics.MeasureString(str, font).Width;
             int num5 = (int) this.pad.Graphics.MeasureString(str, font).Height;
@@ -155,17 +202,17 @@ namespace SmartQuant.FinChart
             switch (this.fill.Side)
             {
                 case OrderSide.Buy:
-                    this.pad.Graphics.DrawString(str, font,  new SolidBrush(color3), (float) (x - num4 / 2), (float) ((double) y + (double) num3 + 2.0));
+                    this.pad.Graphics.DrawString(str, font, (Brush) new SolidBrush(color3), (float) (x - num4 / 2), (float) ((double) y + (double) num3 + 2.0));
                     break;
                 case OrderSide.Sell:
-                    this.pad.Graphics.DrawString(str, font,  new SolidBrush(color3), (float) (x - num4 / 2), (float) ((double) y - (double) num3 - 2.0) - (float) num5);
+                    this.pad.Graphics.DrawString(str, font, (Brush) new SolidBrush(color3), (float) (x - num4 / 2), (float) ((double) y - (double) num3 - 2.0) - (float) num5);
                     break;
             }
         }
 
         public bool Compare(object obj)
         {
-            return this.fill == obj;
+            return obj == this.fill;
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -200,4 +247,3 @@ namespace SmartQuant.FinChart
         }
     }
 }
-

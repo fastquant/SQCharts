@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using SmartQuant.FinChart;
-
-#if XWT
-using Compatibility.Xwt;
-using Xwt.Drawing;
-#elif GTK
-using Gdk;
-#else
 using System.Drawing;
+
+#if GTK
+using Compatibility.Gtk;
+#else
 using System.Windows.Forms;
 #endif
 
@@ -36,8 +33,26 @@ namespace SmartQuant.Controls
 
         public GroupItem2(Group group)
         {
-            this.Table = new Dictionary<int, object>();
+            Name = group.Name;
+            PadNumber = (int)group.Fields["Pad"].Value;
+            Format = !group.Fields.ContainsKey("Format") ? "F2" : (string)group.Fields["Format"].Value;
+            SelectorKey = (string)group.Fields["SelectorKey"].Value;
+            if (group.Fields.ContainsKey("Color"))
+            {
+                IsColor = true;
+                Color = (Color)group.Fields["Color"].Value;
+            }
+            if (group.Fields.ContainsKey("Style"))
+            {
+                IsStyle = true;
+                if (group.Fields["Style"].Value.ToString() == "Line")
+                    Style = SimpleDSStyle.Line;
+                else if (group.Fields["Style"].Value.ToString() == "Bar")
+                    Style = SimpleDSStyle.Bar;
+                else if (group.Fields["Style"].Value.ToString() == "Circle")
+                    Style = SimpleDSStyle.Circle;
+            }
+            Table = new Dictionary<int, object>();
         }
     }
 }
-

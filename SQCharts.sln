@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUserControlGtk", "Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGtk", "Tests\TestGtk\TestGtk.csproj", "{2C0EB898-2635-4D8A-A1FF-8DD9CA8743B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.WinForm", "Compatibility.WinForm\Compatibility.WinForm.csproj", "{1AF26544-F67B-465A-B1CB-C15B090F8232}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compatibility.Gtk", "Compatibility.Gtk\Compatibility.Gtk.csproj", "{83CE5610-A15C-488C-8D9F-909C2340107E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Charting.Gtk", "SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj", "{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}"
@@ -43,10 +41,6 @@ Global
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{021AA1BA-603D-4207-A089-05BFD66716ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AF26544-F67B-465A-B1CB-C15B090F8232}.Release|Any CPU.Build.0 = Release|Any CPU
 		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26692FBA-DC22-41DA-838A-7DF6D1420637}.Release|Any CPU.ActiveCfg = Release|Any CPU

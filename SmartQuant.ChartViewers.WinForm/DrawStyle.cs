@@ -10,4 +10,3 @@ namespace SmartQuant.ChartViewers
         Circle,
     }
 }
-

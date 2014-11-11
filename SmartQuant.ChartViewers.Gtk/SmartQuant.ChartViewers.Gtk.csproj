@@ -60,13 +60,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
-      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
-      <Name>SmartQuant.Charting.Gtk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Compatibility.Gtk\Compatibility.Gtk.csproj">
       <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
       <Name>Compatibility.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
+      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
+      <Name>SmartQuant.Charting.Gtk</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

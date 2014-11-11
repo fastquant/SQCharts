@@ -3,7 +3,6 @@
 using Gdk;
 using Gtk;
 using MouseButtons = System.Windows.Forms.MouseButtons;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Image = Gdk.Image;
 using Gtk.DotNet;
 using System.Drawing;
@@ -26,7 +25,7 @@ namespace Compatibility.Gtk
     public class ToolTip
     {
     }
-        
+
     public class Form : Gdk.Window
     {
         public Form()
@@ -73,34 +72,53 @@ namespace Compatibility.Gtk
             Location = new System.Drawing.Point(x, y);
         }
 
-        //        public static implicit operator MouseEventArgs(MouseMovedEventArgs args)
-        //        {
-        //            return new MouseEventArgs((int)args.X, (int)args.Y);
-        //        }
-        //
-        //        public static implicit operator MouseEventArgs(MouseScrolledEventArgs args)
-        //        {
-        //            return new MouseEventArgs((int)args.X, (int)args.Y);
-        //        }
-        //
-        //        public static implicit operator MouseEventArgs(ButtonEventArgs args)
-        //        {
-        //            var me = new MouseEventArgs((int)args.X, (int)args.Y);
-        //            me.Clicks = args.MultiplePress;
-        //            return me;
-        //        }
-    }
+        public static implicit operator MouseEventArgs(global::Gtk.MotionNotifyEventArgs args)
+        {
+            return new MouseEventArgs((int)args.Event.X, (int)args.Event.Y);
+        }
 
-    public class PrintPageEventArgs : EventArgs
-    {
+        public static implicit operator MouseEventArgs(global::Gtk.EnterNotifyEventArgs args)
+        {
+            return new MouseEventArgs((int)args.Event.X, (int)args.Event.Y);
+        }
+
+        public static implicit operator MouseEventArgs(global::Gtk.LeaveNotifyEventArgs args)
+        {
+            return new MouseEventArgs((int)args.Event.X, (int)args.Event.Y);
+        }
+
+        public static implicit operator MouseEventArgs(global::Gtk.ScrollEventArgs args)
+        {
+            return new MouseEventArgs((int)args.Event.X, (int)args.Event.Y);
+        }
+
+        public static implicit operator MouseEventArgs(global::Gtk.ButtonPressEventArgs args)
+        {
+            return FromEventButton(args.Event);
+        }
+
+        public static implicit operator MouseEventArgs(global::Gtk.ButtonReleaseEventArgs args)
+        {
+            return FromEventButton(args.Event);
+        }
+
+        public static MouseEventArgs FromEventButton(global::Gdk.EventButton evt)
+        {
+            return new MouseEventArgs((int)evt.X, (int)evt.Y);
+        }
     }
 
     public class KeyPressEventArgs : EventArgs
     {
-        //            public static implicit operator KeyPressEventArgs(KeyEventArgs args)
-        //            {
-        //                throw new NotImplementedException();
-        //            }
+        public static implicit operator KeyPressEventArgs(global::Gtk.KeyPressEventArgs args)
+        {
+            return new KeyPressEventArgs();
+        }
+
+        public static implicit operator KeyPressEventArgs(global::Gdk.EventKey evnt)
+        {
+            return new KeyPressEventArgs();
+        }
     }
 
     public class PaintEventArgs : EventArgs, IDisposable
@@ -119,10 +137,12 @@ namespace Compatibility.Gtk
             ClipRectangle = clipRect;
         }
     }
-        
+
     public class UserControl : ScrolledWindow
     {
         public string Text { get; set; }
+
+        public virtual System.Drawing.Font Font { get; set; }
 
         public System.Drawing.Size Size
         { 
@@ -180,93 +200,104 @@ namespace Compatibility.Gtk
         public System.Drawing.Color BackColor { get; private set; }
 
         private Tooltip tooltip;
+        private DrawingArea drawingArea;
 
         public UserControl()
         {
-            Events = EventMask.AllEventsMask;
+            this.drawingArea = new DrawingArea();
+            this.drawingArea.Events = EventMask.AllEventsMask;
+            var eb = new EventBox();
+            eb.Add(this.drawingArea);
+            var vp = new Viewport();
+            vp.ShadowType = ShadowType.None;
+            vp.Add(eb);
+            this.Add(vp);
+            Child.ShowAll();
+
+            this.drawingArea.ExposeEvent += (o, args) =>
+            {
+                var da = o as DrawingArea;
+                var g = global::Gtk.DotNet.Graphics.FromDrawable(da.GdkWindow);
+                var pe = new PaintEventArgs(g, args.Event.Area.ToStandardRectangle());
+                this.OnPaintBackground(pe);
+                this.OnPaint(pe);
+            };
+
+            this.drawingArea.EnterNotifyEvent += (o, args) =>
+            {
+                this.OnMouseEnter(args);
+            };
+
+            this.drawingArea.LeaveNotifyEvent += (o, args) =>
+            {
+                this.OnMouseLeave(args);
+            };
+
+            this.drawingArea.MotionNotifyEvent += (o, args) =>
+            {
+                this.OnMouseMove(args);
+            };
+
+            this.drawingArea.ScrollEvent += (o, args) =>
+            {
+                this.OnMouseWheel(args);
+            };
+
+            this.drawingArea.ButtonPressEvent += (o, args) =>
+            {
+                var evt = args.Event;
+                if (evt.Type == EventType.TwoButtonPress)
+                    this.OnDoubleClick(args);
+                else
+                    this.OnMouseDown(args);
+            };
+
+            this.drawingArea.ButtonReleaseEvent += (o, args) =>
+            {
+                this.OnMouseUp(args);
+            };
+
+            this.drawingArea.SizeAllocated += (o, args) =>
+            {
+                this.OnResize(args);
+            };
+
+//            this.drawingArea.KeyPressEvent += (o, args) =>
+//            {
+//                Console.WriteLine("KeyPressEvent");
+//                this.OnKeyPress(args);
+//            };
+
+            Hide();
         }
 
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        public object Invoke(Delegate method, params object[] args)
         {
-            Console.WriteLine("HandleSizeAllocated:{0}", allocation);
-            base.OnSizeAllocated(allocation);
-        }
-
-        protected override bool OnExposeEvent(Gdk.EventExpose evnt)
-        {
-            var g = global::Gtk.DotNet.Graphics.FromDrawable(GdkWindow);
-            var pe = new PaintEventArgs(g, evnt.Area.ToStandardRectangle());
-            this.OnPaintBackground(pe);
-            this.OnPaint(pe);
-            return base.OnExposeEvent(evnt);
-        }
-
-        protected override bool OnButtonPressEvent(Gdk.EventButton evnt)
-        {
-            Console.WriteLine("OnButtonPressed");
-            return base.OnButtonPressEvent(evnt);
-        }
-
-        #region Native Events Dispatch
-
-        protected override bool OnEnterNotifyEvent(Gdk.EventCrossing evnt)
-        {
-            Console.WriteLine("OnEnterNotifyEvent");
-            return true;
-        }
-
-        protected override bool OnLeaveNotifyEvent(Gdk.EventCrossing evnt)
-        {
-            Console.WriteLine("OnLeaveNotifyEvent");
-            return base.OnLeaveNotifyEvent(evnt);
-        }
-
-        protected override bool OnMotionNotifyEvent(Gdk.EventMotion evnt)
-        {
-            Console.WriteLine("OnMotionNotifyEvent");
-            return base.OnMotionNotifyEvent(evnt);
-        }
-
-//        protected override bool OnButtonPressEvent(Gdk.EventButton evnt)
-//        {
-//            Console.WriteLine("OnButtonPressEvent");
-//            return base.OnButtonPressEvent(evnt);
-//
-//        }
-
-        protected override bool OnButtonReleaseEvent(Gdk.EventButton evnt)
-        {
-//            Console.WriteLine("OnButtonReleaseEvent");
-            return base.OnButtonReleaseEvent(evnt);
-        }
-
-        protected override bool OnScrollEvent(Gdk.EventScroll evnt)
-        {
-            Console.WriteLine("OnScrollEvent");
-            return base.OnScrollEvent(evnt);
-        }
-
-        protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
-        {
-//            Console.WriteLine("OnKeyPressEvent");
-            return base.OnKeyPressEvent(evnt);
-        }
-
-        #endregion
-
-        public object Invoke(Delegate method)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnPaint(PaintEventArgs pe)
-        {
-            //            Console.WriteLine("OnPaint");
+            //Gtk.Application
+            return null;
         }
 
         public void Invalidate()
         {
             QueueDraw();
+        }
+
+        protected override bool OnKeyPressEvent(EventKey evnt)
+        {
+            this.OnKeyPress(evnt);
+            return base.OnKeyPressEvent(evnt);
+        }
+
+        //TODO: fixme
+        public System.Drawing.Graphics CreateGraphics()
+        {
+            return null;
+        }
+
+        #region UserControl Events
+
+        protected virtual void OnPaint(PaintEventArgs pe)
+        {
         }
 
         protected virtual void OnPaintBackground(PaintEventArgs e)
@@ -275,44 +306,41 @@ namespace Compatibility.Gtk
 
         protected virtual void OnMouseMove(MouseEventArgs e)
         {
-            //            Console.WriteLine("OnMouseMove");
         }
 
         protected virtual void OnMouseWheel(MouseEventArgs e)
         {
-            //            Console.WriteLine("OnMouseWheel");
         }
 
         protected virtual void OnMouseDown(MouseEventArgs e)
         {
-            //            Console.WriteLine("OnMouseDown");
         }
 
         protected virtual void OnMouseUp(MouseEventArgs e)
         {
-            //            Console.WriteLine("OnMouseUp");
+        }
+
+        protected virtual void OnMouseEnter(EventArgs e)
+        {
         }
 
         protected virtual void OnMouseLeave(EventArgs e)
         {
-            //            Console.WriteLine("OnMouseLeave");
         }
 
         protected virtual void OnDoubleClick(EventArgs e)
         {
-            //            Console.WriteLine("OnDoubleClick");
         }
 
         protected virtual void OnResize(EventArgs e)
         {
-            //            Console.WriteLine("ScreenBounds:{0}", this.ScreenBounds);
-            //            Console.WriteLine("Bounds:{0}", this.Bounds);
         }
 
         protected virtual void OnKeyPress(KeyPressEventArgs e)
         {
-            Console.WriteLine("OnKeyPress");
         }
+
+        #endregion
 
         protected virtual void Dispose(bool disposing)
         {

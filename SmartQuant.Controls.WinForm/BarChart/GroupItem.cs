@@ -4,7 +4,7 @@ using SmartQuant.Charting;
 
 namespace SmartQuant.Controls
 {
-    public class GroupItem
+    class GroupItem
     {
         public Dictionary<int, Tuple<Viewer, object>> Table { get; private set; }
 

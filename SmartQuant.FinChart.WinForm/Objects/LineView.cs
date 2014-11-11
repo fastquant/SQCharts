@@ -5,11 +5,6 @@ using SmartQuant;
 using SmartQuant.FinChart;
 using System;
 using System.ComponentModel;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 using System.Text;
 
@@ -112,18 +107,16 @@ namespace SmartQuant.FinChart.Objects
             else
             {
                 if (dateTime.Ticks > Math.Max(this.line.X1.Ticks, this.line.X2.Ticks) || dateTime.Ticks < Math.Min(this.line.X1.Ticks, this.line.X2.Ticks))
-                    return null;
-                int xx = this.pad.MainSeries.GetIndex(dateTime, IndexOption.Null);
-                double num1 = (double) this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
-                double num2 = (double) this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
-                num =  this.line.Y1 + ((double) xx - num1) / (num2 - num1) * (this.line.Y2 - this.line.Y1);
+                    return (Distance) null;
+                num = this.GetLineValueAt(this.pad.MainSeries.GetIndex(dateTime, IndexOption.Null));
             }
-            distance.X = x;
+            distance.X = (double) x;
             distance.Y = num;
             distance.DX = 0.0;
             distance.DY = Math.Abs(y - num);
             if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
-                return null;
+                return  null;
+ 
             distance.ToolTipText = string.Format(ToolTipFormat, "Line", this.line.Name, dateTime, num);
             return distance;
         }
@@ -146,6 +139,7 @@ namespace SmartQuant.FinChart.Objects
             double num1 = (double) this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
             double num2 = (double) this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
             return this.line.Y1 + ((double) x - num1) / (num2 - num1) * (this.line.Y2 - this.line.Y1);
+
         }
     }
 }

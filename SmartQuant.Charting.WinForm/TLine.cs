@@ -1,9 +1,12 @@
-﻿// Licensed under the Apache License, Version 2.0. 
-// Copyright (c) Alex Lee. All rights reserved.
+﻿// Decompiled with JetBrains decompiler
+// Type: SmartQuant.Charting.TLine
+// Assembly: SmartQuant.Charting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=23953e483e363d68
+// MVID: F3B55EE9-4DBA-4875-B18A-7BD8DFCF4D88
+// Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll
 
 using System;
-using System.Drawing.Drawing2D;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace SmartQuant.Charting
 {
@@ -39,19 +42,23 @@ namespace SmartQuant.Charting
             Width = 1;
         }
 
-        public TLine(DateTime X1, double Y1, DateTime X2, double Y2)
-            : this(X1.Ticks, Y1, X2.Ticks, Y2)
+        public TLine(DateTime x1, double y1, DateTime x2, double y2)
+            : this(x1.Ticks, y1, x2.Ticks, y2)
         {
         }
 
         public virtual void Draw()
         {
-            throw new NotImplementedException();
+            if (Chart.Pad == null)
+            {
+                var canvas = new Canvas("Canvas", "Canvas");
+            }
+            Chart.Pad.Add((object)this);
         }
 
-        public virtual void Paint(Pad Pad, double XMin, double XMax, double YMin, double YMax)
+        public virtual void Paint(Pad pad, double xMin, double xMax, double yMin, double yMax)
         {
-            throw new NotImplementedException();
+            pad.DrawLine(new Pen(Color) { Width = Width, DashStyle = DashStyle }, X1, Y1, X2, Y2);
         }
 
         public TDistance Distance(double X, double Y)

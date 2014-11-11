@@ -5,7 +5,6 @@ using System;
 
 namespace SmartQuant.Charting
 {
-	[Serializable]
 	public class TDistance
 	{
 		public double dX { get; set; }

@@ -2,11 +2,6 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System;
-#if GTK
-using Compatibility.Gtk;
-#else
-using Compatibility.WinForm;
-#endif
 using System.Drawing;
 
 namespace SmartQuant.FinChart.Objects
@@ -62,7 +57,7 @@ namespace SmartQuant.FinChart.Objects
 
         public DrawingImage(DateTime x, double y, Image image, string name)
         {
-            this.Name = name;
+            Name = name;
             this.x = x;
             this.y = y;
             this.image = image;

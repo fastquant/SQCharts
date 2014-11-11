@@ -1,14 +1,11 @@
-// Licensed under the Apache License, Version 2.0. 
-// Copyright (c) Alex Lee. All rights reserved.
-
-using System.Collections.Generic;
-using System.Collections;
-using System.ComponentModel;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using MouseButtons = System.Windows.Forms.MouseButtons;
 #if GTK
+using MouseButtons = System.Windows.Forms.MouseButtons;
 using Compatibility.Gtk;
 #else
 using System.Windows.Forms;
@@ -16,21 +13,14 @@ using System.Windows.Forms;
 
 namespace SmartQuant.Charting
 {
-    class ViewerList
-    {
-    }
-
+    [Serializable]
     public class Pad
     {
         private Dictionary<System.Type, Viewer> viewers = new Dictionary<System.Type, Viewer>();
-
+        private List<Pad.ObjectViewer> objectViewers = new List<Pad.ObjectViewer>();
+        private Pad.TFeatures3D Features3D;
+        [Browsable(false)]
         public bool Grid3D;
-
-        protected Chart fChart;
-        protected Graphics fGraphics;
-        protected ArrayList fPrimitives;
-
-        // geometry
         protected int fX1;
         protected int fX2;
         protected int fY1;
@@ -53,59 +43,47 @@ namespace SmartQuant.Charting
         protected int fMarginBottom;
         protected int fWidth;
         protected int fHeight;
-
-        // appearance
+        [NonSerialized]
+        protected Chart fChart;
+        [NonSerialized]
+        protected Graphics fGraphics;
+        protected ArrayList fPrimitives;
         protected Color fBackColor;
         protected Color fForeColor;
-
-        // title
         protected string fName;
-        protected bool fTitleEnabled;
         protected TTitle fTitle;
+        protected bool fTitleEnabled;
         protected int fTitleOffsetX;
         protected int fTitleOffsetY;
-
-        // axis
         protected Axis fAxisLeft;
         protected Axis fAxisRight;
         protected Axis fAxisTop;
         protected Axis fAxisBottom;
-        protected bool fLegendEnabled;
-
-        // legend
         protected TLegend fLegend;
+        protected bool fLegendEnabled;
         protected ELegendPosition fLegendPosition;
         protected int fLegendOffsetX;
         protected int fLegendOffsetY;
-
-        // border
         protected bool fBorderEnabled;
         protected Color fBorderColor;
         protected int fBorderWidth;
-
-        // outline
-        protected bool fOutlineEnabled;
-        protected Rectangle fOutlineRectangle;
-
-        // selection
         protected IDrawable fSelectedPrimitive;
         protected TDistance fSelectedPrimitiveDistance;
-
-        // zooming
+        protected bool fOnAxis;
+        protected bool fOnPrimitive;
+        protected bool fMouseDown;
+        protected int fMouseDownX;
+        protected int fMouseDownY;
+        [NonSerialized]
+        protected MouseButtons fMouseDownButton;
+        protected bool fOutlineEnabled;
+        protected Rectangle fOutlineRectangle;
         protected bool fMouseZoomEnabled;
         protected bool fMouseZoomXAxisEnabled;
         protected bool fMouseZoomYAxisEnabled;
         protected bool fMouseUnzoomEnabled;
         protected bool fMouseUnzoomXAxisEnabled;
         protected bool fMouseUnzoomYAxisEnabled;
-
-        // mouse
-        protected bool fOnAxis;
-        protected bool fOnPrimitive;
-        protected bool fMouseDown;
-        protected int fMouseDownX;
-        protected int fMouseDownY;
-        protected MouseButtons fMouseDownButton;
         protected bool fMouseMoveContentEnabled;
         protected bool fMouseMovePrimitiveEnabled;
         protected bool fMouseDeletePrimitiveEnabled;
@@ -115,7 +93,6 @@ namespace SmartQuant.Charting
         protected bool fMouseWheelEnabled;
         protected double fMouseWheelSensitivity;
         protected EMouseWheelMode fMouseWheelMode;
-
         protected int fWindowSize;
         protected bool fMonitored;
         protected bool fUpdating;
@@ -124,66 +101,85 @@ namespace SmartQuant.Charting
         protected DateTime fLastUpdateDateTime;
         protected ETransformationType fTransformationType;
         protected IChartTransformation fTransformation;
-
-        // grid
         protected Color fSessionGridColor;
+        #if GTK
+        #else
+        [NonSerialized]
+        private ContextMenu PrimitiveContextMenu;
+        [NonSerialized]
+        private MenuItem DeleteMenuItem;
+        [NonSerialized]
+        private MenuItem PropertiesMenuItem;
+        #endif
+        private int TitleHeight;
+        private int AxisBottomHeight;
+        private int AxisTopHeight;
+        private int AxisRightWidth;
+        private int AxisLeftWidth;
 
+        [Browsable(false)]
         public bool For3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.Active;
             }
             set
             {
-                throw new NotImplementedException();
+                this.Features3D.Active = value;
             }
         }
 
+        [Browsable(false)]
         public object View3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.View;
             }
             set
             {
-                throw new NotImplementedException();
+                this.Features3D.View = value;
             }
         }
 
+        [Browsable(false)]
         public Axis[] Axes3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.Axes;
             }
         }
 
+        [Browsable(false)]
         public Axis AxisX3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.Axes[0];
             }
         }
 
+        [Browsable(false)]
         public Axis AxisY3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.Axes[1];
             }
         }
 
+        [Browsable(false)]
         public Axis AxisZ3D
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Features3D.Axes[2];
             }
         }
 
+        [Browsable(false)]
         public Chart Chart
         {
             get
@@ -202,11 +198,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.DoubleBufferingEnabled;
+                return this.fChart.DoubleBufferingEnabled;
             }
             set
             {
-                Chart.DoubleBufferingEnabled = value;
+                this.fChart.DoubleBufferingEnabled = value;
             }
         }
 
@@ -216,11 +212,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.SmoothingEnabled;
+                return this.fChart.SmoothingEnabled;
             }
             set
             {
-                Chart.SmoothingEnabled = value;
+                this.fChart.SmoothingEnabled = value;
             }
         }
 
@@ -230,11 +226,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Chart.AntiAliasingEnabled;
+                return this.fChart.AntiAliasingEnabled;
             }
             set
             {
-                Chart.AntiAliasingEnabled = value;
+                this.fChart.AntiAliasingEnabled = value;
             }
         }
 
@@ -294,22 +290,25 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double CanvasWidth
         {
             get
             {
-                return Math.Abs(CanvasX2 - CanvasX1);
+                return Math.Abs(this.fCanvasX2 - this.fCanvasX1);
             }
         }
 
+        [Browsable(false)]
         public double CanvasHeight
         {
             get
             {
-                return Math.Abs(CanvasY2 - CanvasY1);
+                return Math.Abs(this.fCanvasY2 - this.fCanvasY1);
             }
         }
 
+        [Browsable(false)]
         public virtual int X1
         {
             get
@@ -323,6 +322,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public virtual int X2
         {
             get
@@ -336,6 +336,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public int Y1
         {
             get
@@ -349,6 +350,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public int Y2
         {
             get
@@ -362,6 +364,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public int Width
         {
             get
@@ -375,6 +378,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public int Height
         {
             get
@@ -388,11 +392,15 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double XMin
         {
             get
             {
-                return AxisBottom.Enabled && AxisBottom.Zoomed ? AxisBottom.Min : this.fXMin;
+                if (this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed)
+                    return this.fAxisBottom.Min;
+                else
+                    return this.fXMin;
             }
             set
             {
@@ -400,11 +408,15 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double XMax
         {
             get
             {
-                return AxisBottom.Enabled && AxisBottom.Zoomed ? AxisBottom.Max : this.fXMax; 
+                if (this.fAxisBottom.Enabled && this.fAxisBottom.Zoomed)
+                    return this.fAxisBottom.Max;
+                else
+                    return this.fXMax;
             }
             set
             {
@@ -412,11 +424,15 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double YMin
         {
             get
             {
-                return AxisLeft.Enabled && AxisLeft.Zoomed ? AxisLeft.Min : this.fYMin;
+                if (this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed)
+                    return this.fAxisLeft.Min;
+                else
+                    return this.fYMin;
             }
             set
             {
@@ -424,11 +440,15 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double YMax
         {
             get
             {
-                return AxisLeft.Enabled && AxisLeft.Zoomed ? AxisLeft.Max : this.fYMax;
+                if (this.fAxisLeft.Enabled && this.fAxisLeft.Zoomed)
+                    return this.fAxisLeft.Max;
+                else
+                    return this.fYMax;
             }
             set
             {
@@ -436,6 +456,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double XRangeMin
         {
             get
@@ -448,6 +469,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double XRangeMax
         {
             get
@@ -460,6 +482,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double YRangeMin
         {
             get
@@ -472,6 +495,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public double YRangeMax
         {
             get
@@ -552,6 +576,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public TTitle Title
         {
             get
@@ -584,7 +609,7 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Items;
+                return this.fTitle.Items;
             }
         }
 
@@ -594,11 +619,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.ItemsEnabled;
+                return this.fTitle.ItemsEnabled;
             }
             set
             {
-                Title.ItemsEnabled = value;
+                this.fTitle.ItemsEnabled = value;
             }
         }
 
@@ -608,11 +633,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Text;
+                return this.fTitle.Text;
             }
             set
             {
-                Title.Text = value;
+                this.fTitle.Text = value;
             }
         }
 
@@ -622,11 +647,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Font;
+                return this.fTitle.Font;
             }
             set
             {
-                Title.Font = value;
+                this.fTitle.Font = value;
             }
         }
 
@@ -636,11 +661,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Color;
+                return this.fTitle.Color;
             }
             set
             {
-                Title.Color = value;
+                this.fTitle.Color = value;
             }
         }
 
@@ -678,11 +703,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Position;
+                return this.fTitle.Position;
             }
             set
             {
-                Title.Position = value;
+                this.fTitle.Position = value;
             }
         }
 
@@ -692,11 +717,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Title.Strategy;
+                return this.fTitle.Strategy;
             }
             set
             {
-                Title.Strategy = value;
+                this.fTitle.Strategy = value;
             }
         }
 
@@ -728,6 +753,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public ArrayList Primitives
         {
             get
@@ -740,6 +766,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public Graphics Graphics
         {
             get
@@ -752,51 +779,39 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public Axis AxisLeft
         {
             get
             {
                 return this.fAxisLeft;
             }
-            private set
-            {
-                this.fAxisLeft = value;
-            }
         }
 
+        [Browsable(false)]
         public Axis AxisRight
         {
             get
             {
                 return this.fAxisRight;
             }
-            private set
-            {
-                this.fAxisRight = value;
-            }
         }
 
+        [Browsable(false)]
         public Axis AxisTop
         {
             get
             {
                 return this.fAxisTop;
             }
-            private set
-            {
-                this.fAxisTop = value;
-            }
         }
 
+        [Browsable(false)]
         public Axis AxisBottom
         {
             get
             {
                 return this.fAxisBottom;
-            }
-            private set
-            {
-                this.fAxisBottom = value;
             }
         }
 
@@ -806,11 +821,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.GridEnabled;
+                return this.fAxisLeft.GridEnabled;
             }
             set
             {
-                AxisLeft.GridEnabled = value;
+                this.fAxisLeft.GridEnabled = value;
             }
         }
 
@@ -820,11 +835,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.GridEnabled;
+                return this.fAxisBottom.GridEnabled;
             }
             set
             {
-                AxisBottom.GridEnabled = value;
+                this.fAxisBottom.GridEnabled = value;
             }
         }
 
@@ -834,11 +849,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.GridWidth;
+                return this.fAxisLeft.GridWidth;
             }
             set
             {
-                AxisLeft.GridWidth = value;
+                this.fAxisLeft.GridWidth = value;
             }
         }
 
@@ -848,11 +863,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.GridWidth;
+                return this.fAxisBottom.GridWidth;
             }
             set
             {
-                AxisBottom.GridWidth = value;
+                this.fAxisBottom.GridWidth = value;
             }
         }
 
@@ -862,11 +877,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.GridColor;
+                return this.fAxisLeft.GridColor;
             }
             set
             {
-                AxisLeft.GridColor = value;
+                this.fAxisLeft.GridColor = value;
             }
         }
 
@@ -876,11 +891,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.GridColor;
+                return this.fAxisBottom.GridColor;
             }
             set
             {
-                AxisBottom.GridColor = value;
+                this.fAxisBottom.GridColor = value;
             }
         }
 
@@ -890,11 +905,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.GridDashStyle;
+                return this.fAxisLeft.GridDashStyle;
             }
             set
             {
-                AxisLeft.GridDashStyle = value;
+                this.fAxisLeft.GridDashStyle = value;
             }
         }
 
@@ -904,11 +919,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.GridDashStyle;
+                return this.fAxisBottom.GridDashStyle;
             }
             set
             {
-                AxisBottom.GridDashStyle = value;
+                this.fAxisBottom.GridDashStyle = value;
             }
         }
 
@@ -918,11 +933,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.Type;
+                return this.fAxisBottom.Type;
             }
             set
             {
-                AxisBottom.Type = value;
+                this.fAxisBottom.Type = value;
             }
         }
 
@@ -932,11 +947,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.Position;
+                return this.fAxisBottom.Position;
             }
             set
             {
-                AxisBottom.Position = value;
+                this.fAxisBottom.Position = value;
             }
         }
 
@@ -946,11 +961,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.MajorTicksEnabled;
+                return this.fAxisBottom.MajorTicksEnabled;
             }
             set
             {
-                AxisBottom.MajorTicksEnabled = value;
+                this.fAxisBottom.MajorTicksEnabled = value;
             }
         }
 
@@ -960,11 +975,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.MinorTicksEnabled;
+                return this.fAxisBottom.MinorTicksEnabled;
             }
             set
             {
-                AxisBottom.MinorTicksEnabled = value;
+                this.fAxisBottom.MinorTicksEnabled = value;
             }
         }
 
@@ -974,11 +989,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.TitleEnabled;
+                return this.fAxisBottom.TitleEnabled;
             }
             set
             {
-                AxisBottom.TitleEnabled = value;
+                this.fAxisBottom.TitleEnabled = value;
             }
         }
 
@@ -988,11 +1003,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.Title;
+                return this.fAxisBottom.Title;
             }
             set
             {
-                AxisBottom.Title = value;
+                this.fAxisBottom.Title = value;
             }
         }
 
@@ -1002,11 +1017,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.TitleFont;
+                return this.fAxisBottom.TitleFont;
             }
             set
             {
-                AxisBottom.TitleFont = value;
+                this.fAxisBottom.TitleFont = value;
             }
         }
 
@@ -1016,11 +1031,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.TitleColor;
+                return this.fAxisBottom.TitleColor;
             }
             set
             {
-                AxisBottom.TitleColor = value;
+                this.fAxisBottom.TitleColor = value;
             }
         }
 
@@ -1030,11 +1045,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.TitleOffset;
+                return this.fAxisBottom.TitleOffset;
             }
             set
             {
-                AxisBottom.TitleOffset = value;
+                this.fAxisBottom.TitleOffset = value;
             }
         }
 
@@ -1044,11 +1059,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.TitlePosition;
+                return this.fAxisBottom.TitlePosition;
             }
             set
             {
-                AxisBottom.TitlePosition = value;
+                this.fAxisBottom.TitlePosition = value;
             }
         }
 
@@ -1058,11 +1073,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelEnabled;
+                return this.fAxisBottom.LabelEnabled;
             }
             set
             {
-                AxisBottom.LabelEnabled = value;
+                this.fAxisBottom.LabelEnabled = value;
             }
         }
 
@@ -1072,11 +1087,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelFont;
+                return this.fAxisBottom.LabelFont;
             }
             set
             {
-                AxisBottom.LabelFont = value;
+                this.fAxisBottom.LabelFont = value;
             }
         }
 
@@ -1086,11 +1101,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelColor;
+                return this.fAxisBottom.LabelColor;
             }
             set
             {
-                AxisBottom.LabelColor = value;
+                this.fAxisBottom.LabelColor = value;
             }
         }
 
@@ -1100,11 +1115,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelOffset;
+                return this.fAxisBottom.LabelOffset;
             }
             set
             {
-                AxisBottom.LabelOffset = value;
+                this.fAxisBottom.LabelOffset = value;
             }
         }
 
@@ -1114,11 +1129,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelFormat;
+                return this.fAxisBottom.LabelFormat;
             }
             set
             {
-                AxisBottom.LabelFormat = value;
+                this.fAxisBottom.LabelFormat = value;
             }
         }
 
@@ -1128,11 +1143,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisBottom.LabelAlignment;
+                return this.fAxisBottom.LabelAlignment;
             }
             set
             {
-                AxisBottom.LabelAlignment = value;
+                this.fAxisBottom.LabelAlignment = value;
             }
         }
 
@@ -1142,12 +1157,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.Type;
+                return this.fAxisLeft.Type;
             }
             set
             {
-                AxisLeft.Type = value;
-                AxisRight.Type = value;
+                this.fAxisLeft.Type = value;
+                this.fAxisRight.Type = value;
             }
         }
 
@@ -1157,11 +1172,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.Position;
+                return this.fAxisLeft.Position;
             }
             set
             {
-                AxisLeft.Position = value;
+                this.fAxisLeft.Position = value;
             }
         }
 
@@ -1171,12 +1186,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.MajorTicksEnabled;
+                return this.fAxisLeft.MajorTicksEnabled;
             }
             set
             {
-                AxisLeft.MajorTicksEnabled = value;
-                AxisRight.MajorTicksEnabled = value;
+                this.fAxisLeft.MajorTicksEnabled = value;
+                this.fAxisRight.MajorTicksEnabled = value;
             }
         }
 
@@ -1186,12 +1201,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.MinorTicksEnabled;
+                return this.fAxisLeft.MinorTicksEnabled;
             }
             set
             {
-                AxisLeft.MinorTicksEnabled = value;
-                AxisRight.MinorTicksEnabled = value;
+                this.fAxisLeft.MinorTicksEnabled = value;
+                this.fAxisRight.MinorTicksEnabled = value;
             }
         }
 
@@ -1201,11 +1216,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.TitleEnabled;
+                return this.fAxisLeft.TitleEnabled;
             }
             set
             {
-                AxisLeft.TitleEnabled = value;
+                this.fAxisLeft.TitleEnabled = value;
             }
         }
 
@@ -1215,12 +1230,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.Title;
+                return this.fAxisLeft.Title;
             }
             set
             {
-                AxisLeft.Title = value;
-                AxisRight.Title = value;
+                this.fAxisLeft.Title = value;
+                this.fAxisRight.Title = value;
             }
         }
 
@@ -1230,12 +1245,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.TitleFont;
+                return this.fAxisLeft.TitleFont;
             }
             set
             {
-                AxisLeft.TitleFont = value;
-                AxisRight.TitleFont = value;
+                this.fAxisLeft.TitleFont = value;
+                this.fAxisRight.TitleFont = value;
             }
         }
 
@@ -1245,12 +1260,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.TitleColor;
+                return this.fAxisLeft.TitleColor;
             }
             set
             {
-                AxisLeft.TitleColor = value;
-                AxisRight.TitleColor = value;
+                this.fAxisLeft.TitleColor = value;
+                this.fAxisRight.TitleColor = value;
             }
         }
 
@@ -1260,11 +1275,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.TitleOffset;
+                return this.fAxisLeft.TitleOffset;
             }
             set
             {
-                AxisLeft.TitleOffset = value;
+                this.fAxisLeft.TitleOffset = value;
                 this.fAxisRight.TitleOffset = value;
             }
         }
@@ -1275,12 +1290,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.TitlePosition;
+                return this.fAxisLeft.TitlePosition;
             }
             set
             {
-                AxisLeft.TitlePosition = value;
-                AxisRight.TitlePosition = value;
+                this.fAxisLeft.TitlePosition = value;
+                this.fAxisRight.TitlePosition = value;
             }
         }
 
@@ -1290,11 +1305,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelEnabled;
+                return this.fAxisLeft.LabelEnabled;
             }
             set
             {
-                AxisLeft.LabelEnabled = value;
+                this.fAxisLeft.LabelEnabled = value;
             }
         }
 
@@ -1304,12 +1319,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelFont;
+                return this.fAxisLeft.LabelFont;
             }
             set
             {
-                AxisLeft.LabelFont = value;
-                AxisRight.LabelFont = value;
+                this.fAxisLeft.LabelFont = value;
+                this.fAxisRight.LabelFont = value;
             }
         }
 
@@ -1319,12 +1334,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelColor;
+                return this.fAxisLeft.LabelColor;
             }
             set
             {
-                AxisLeft.LabelColor = value;
-                AxisRight.LabelColor = value;
+                this.fAxisLeft.LabelColor = value;
+                this.fAxisRight.LabelColor = value;
             }
         }
 
@@ -1334,12 +1349,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelOffset;
+                return this.fAxisLeft.LabelOffset;
             }
             set
             {
-                AxisLeft.LabelOffset = value;
-                AxisRight.LabelOffset = value;
+                this.fAxisLeft.LabelOffset = value;
+                this.fAxisRight.LabelOffset = value;
             }
         }
 
@@ -1349,12 +1364,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelFormat;
+                return this.fAxisLeft.LabelFormat;
             }
             set
             {
-                AxisLeft.LabelFormat = value;
-                AxisRight.LabelFormat = value;
+                this.fAxisLeft.LabelFormat = value;
+                this.fAxisRight.LabelFormat = value;
             }
         }
 
@@ -1364,12 +1379,12 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return AxisLeft.LabelAlignment;
+                return this.fAxisLeft.LabelAlignment;
             }
             set
             {
-                AxisLeft.LabelAlignment = value;
-                AxisRight.LabelAlignment = value;
+                this.fAxisLeft.LabelAlignment = value;
+                this.fAxisRight.LabelAlignment = value;
             }
         }
 
@@ -1379,10 +1394,6 @@ namespace SmartQuant.Charting
             get
             {
                 return this.fLegend;
-            }
-            private set
-            {
-                this.fLegend = value;
             }
         }
 
@@ -1448,11 +1459,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Legend.BorderEnabled;
+                return this.fLegend.BorderEnabled;
             }
             set
             {
-                Legend.BorderEnabled = value;
+                this.fLegend.BorderEnabled = value;
             }
         }
 
@@ -1462,11 +1473,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Legend.BorderColor;
+                return this.fLegend.BorderColor;
             }
             set
             {
-                Legend.BorderColor = value;
+                this.fLegend.BorderColor = value;
             }
         }
 
@@ -1476,11 +1487,11 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return Legend.BackColor;
+                return this.fLegend.BackColor;
             }
             set
             {
-                Legend.BackColor = value;
+                this.fLegend.BackColor = value;
             }
         }
 
@@ -1743,10 +1754,6 @@ namespace SmartQuant.Charting
             {
                 return this.fTransformation;
             }
-            private set
-            {
-                this.fTransformation = value;
-            }
         }
 
         [Category("Transformation")]
@@ -1759,7 +1766,16 @@ namespace SmartQuant.Charting
             }
             set
             {
-                throw new NotImplementedException();
+                this.fTransformationType = value;
+                double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
+                double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                if (this.fTransformationType == ETransformationType.Empty)
+                    this.fTransformation = (IChartTransformation) new TEmptyTransformation();
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    this.fTransformation = (IChartTransformation) new TIntradayTransformation();
+                this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
+                this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
+                this.Update();
             }
         }
 
@@ -1769,12 +1785,16 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTransformationType == ETransformationType.Intraday ? ((TIntradayTransformation)this.Transformation).SessionGridEnabled : false;
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    return ((TIntradayTransformation) this.Transformation).SessionGridEnabled;
+                else
+                    return false;
             }
             set
             {
-                if (this.fTransformationType == ETransformationType.Intraday)
-                    ((TIntradayTransformation)this.Transformation).SessionGridEnabled = value;
+                if (this.fTransformationType != ETransformationType.Intraday)
+                    return;
+                ((TIntradayTransformation) this.Transformation).SessionGridEnabled = value;
             }
         }
 
@@ -1798,11 +1818,20 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTransformationType == ETransformationType.Intraday ? new TimeSpan(((TIntradayTransformation)this.fTransformation).FirstSessionTick) : new TimeSpan(0);
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).FirstSessionTick);
+                else
+                    return new TimeSpan(0, 0, 0, 0);
             }
             set
             {
-                throw new NotImplementedException();
+                double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
+                double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    ((TIntradayTransformation) this.fTransformation).FirstSessionTick = value.Ticks;
+                this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
+                this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
+                this.Update();
             }
         }
 
@@ -1812,14 +1841,24 @@ namespace SmartQuant.Charting
         {
             get
             {
-                return this.fTransformationType == ETransformationType.Intraday ? new TimeSpan(((TIntradayTransformation)this.fTransformation).LastSessionTick) : new TimeSpan(1, 0, 0, 0);
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).LastSessionTick);
+                else
+                    return new TimeSpan(0, 24, 0, 0);
             }
             set
             {
-                throw new NotImplementedException();
+                double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
+                double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                if (this.fTransformationType == ETransformationType.Intraday)
+                    ((TIntradayTransformation) this.fTransformation).LastSessionTick = value.Ticks;
+                this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
+                this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
+                this.Update();
             }
         }
 
+        [Browsable(false)]
         public bool Monitored
         {
             get
@@ -1830,12 +1869,13 @@ namespace SmartQuant.Charting
             {
                 this.fMonitored = value;
                 if (this.fMonitored)
-                    NewTick += new NewTickEventHandler(this.OnNewTick);
+                    Pad.NewTick += new NewTickEventHandler(this.OnNewTick);
                 else
-                    NewTick -= new NewTickEventHandler(this.OnNewTick); 
+                    Pad.NewTick -= new NewTickEventHandler(this.OnNewTick);
             }
         }
 
+        [Browsable(false)]
         public int WindowSize
         {
             get
@@ -1848,6 +1888,7 @@ namespace SmartQuant.Charting
             }
         }
 
+        [Browsable(false)]
         public int UpdateInterval
         {
             get
@@ -1865,227 +1906,303 @@ namespace SmartQuant.Charting
         public event ZoomEventHandler Zoom;
 
         public Pad()
-            : this(null)
         {
-        }
-
-        public Pad(Chart chart)
-            : this(chart, 0, 0, 0, 0)
-        {
-        }
-
-        public Pad(Chart chart, double x1, double y1, double x2, double y2)
-        {
-            this.fChart = chart;
-            SetCanvas(x1, y1, x2, y2);
             this.Init();
         }
 
-        public void Init()
+        public Pad(Chart Chart)
         {
-            this.fPrimitives = new ArrayList();
-            Chart.Pad = this;
-            //            this.Features3D = new Pad.TFeatures3D(this);
+            this.fChart = Chart;
+            this.Init();
+        }
 
-            this.fX1 = this.fY1 = 0;
-            this.fX2 = this.fY2 = 1; 
-            this.fWidth = Chart.ClientSize.Width;
-            this.fHeight = Chart.ClientSize.Height;
-            this.fClientX = 10;
-            this.fClientY = 10;
-            this.fClientWidth = 0;
-            this.fClientHeight = 0;
-            BackColor = Color.LightGray;
-            ForeColor = Color.White;
-            MarginLeft = 10;
-            MarginRight = 20;
-            MarginTop = 10;
-            MarginBottom = 10;
-            TitleEnabled = true;
-            Title = new TTitle(this, "");
-            TitleOffsetX = TitleOffsetY = 5;
-            Transformation = (IChartTransformation)new TIntradayTransformation();
-            this.fTransformationType = ETransformationType.Empty;
-            SessionGridColor = Color.Blue;
-            AxisLeft = new Axis(this, EAxisPosition.Left);
-            AxisRight = new Axis(this, EAxisPosition.Right);
-            AxisTop = new Axis(this, EAxisPosition.Top);
-            AxisBottom = new Axis(this, EAxisPosition.Bottom);
-            AxisRight.LabelEnabled = false;
-            AxisRight.TitleEnabled = false;
-            AxisTop.LabelEnabled = false;
-            AxisTop.TitleEnabled = false;
-            Legend = new TLegend(this);
-            LegendEnabled = false;
-            LegendPosition = ELegendPosition.TopRight;
-            LegendOffsetX = 5;
-            LegendOffsetY = 5;
-            BorderEnabled = true;
-            BorderColor = Color.Black;
-            BorderWidth = 1;
-            SetRange(0.0, 100.0, 0.0, 100.0);
-            Graphics = null;
+        public Pad(Chart Chart, double X1, double Y1, double X2, double Y2)
+        {
+            this.fChart = Chart;
+            this.fCanvasX1 = X1;
+            this.fCanvasX2 = X2;
+            this.fCanvasY1 = Y1;
+            this.fCanvasY2 = Y2;
+            this.Init();
+        }
 
-            this.fOnAxis = false;
-            this.fOnPrimitive = false;
-            this.fMouseDown = false;
-            this.fMouseDownX = 0;
-            this.fMouseDownY = 0;
-            this.fOutlineEnabled = false;
-            WindowSize = 600;
-            this.fLastTickTime = 0;
-            UpdateInterval = 1;
-            this.fLastUpdateDateTime = DateTime.Now;
-            Monitored = false;
-            this.fUpdating = false;
-            MouseZoomEnabled = true;
-            MouseZoomXAxisEnabled = true;
-            MouseZoomYAxisEnabled = true;
-            MouseUnzoomEnabled = true;
-            MouseUnzoomXAxisEnabled = true;
-            MouseUnzoomYAxisEnabled = true;
-            MouseMoveContentEnabled = true;
-            MouseMovePrimitiveEnabled = true;
-            MouseDeletePrimitiveEnabled = true;
-            MousePadPropertiesEnabled = true;
-            MousePrimitivePropertiesEnabled = true;
-            MouseContextMenuEnabled = true;
-            MouseWheelEnabled = true;
-            MouseWheelSensitivity = 0.1;
-            MouseWheelMode = EMouseWheelMode.ZoomX;
+        private Viewer GetViewer(object obj)
+        {
+            System.Type key = obj.GetType();
+            Viewer viewer = (Viewer) null;
+            for (; key != (System.Type) null; key = key.BaseType)
+            {
+                if (this.viewers.TryGetValue(key, out viewer))
+                    return Activator.CreateInstance(viewer.GetType()) as Viewer;
+            }
+            Console.WriteLine("No viewer exists for object with type " + (object) obj.GetType());
+            return (Viewer) null;
         }
 
         public void RegisterViewer(Viewer viewer)
         {
-            this.viewers.Add(viewer.Type, viewer);
+            try
+            {
+                this.viewers.Add(viewer.Type, viewer);
+            }
+            catch
+            {
+            }
         }
 
         public void Set(object obj, string name, object value)
         {
-            throw new NotImplementedException();
+            Viewer viewer = this.GetViewer(obj);
+            if (viewer == null)
+                return;
+            viewer.Set(obj, name, value);
         }
 
         public void ResetLastTickTime()
         {
             this.fLastTickTime = 0;
         }
-            
-        public virtual void SetCanvas(double x1, double y1, double x2, double y2, int width, int height)
+
+        public void Init()
         {
-            SetCanvas(x1, y1, x2, y2);
-            SetCanvas(width, height);
+            this.fPrimitives = new ArrayList();
+            Chart.Pad = this;
+            this.Features3D = new Pad.TFeatures3D(this);
+            this.fBackColor = Color.LightGray;
+            this.fForeColor = Color.White;
+            this.fX1 = 0;
+            this.fX2 = 1;
+            this.fY1 = 0;
+            this.fY2 = 1;
+            this.fWidth = this.fChart.ClientSize.Width;
+            this.fHeight = this.fChart.ClientSize.Height;
+            this.fClientX = 10;
+            this.fClientY = 10;
+            this.fClientWidth = 0;
+            this.fClientHeight = 0;
+            this.fMarginLeft = 10;
+            this.fMarginRight = 20;
+            this.fMarginTop = 10;
+            this.fMarginBottom = 10;
+            this.fTitle = new TTitle(this, "");
+            this.fTitleEnabled = true;
+            this.fTitleOffsetX = 5;
+            this.fTitleOffsetY = 5;
+            this.fTransformation = (IChartTransformation) new TIntradayTransformation();
+            this.fTransformationType = ETransformationType.Empty;
+            this.fSessionGridColor = Color.Blue;
+            this.fAxisLeft = new Axis(this, EAxisPosition.Left);
+            this.fAxisRight = new Axis(this, EAxisPosition.Right);
+            this.fAxisTop = new Axis(this, EAxisPosition.Top);
+            this.fAxisBottom = new Axis(this, EAxisPosition.Bottom);
+            this.fAxisRight.LabelEnabled = false;
+            this.fAxisRight.TitleEnabled = false;
+            this.fAxisTop.LabelEnabled = false;
+            this.fAxisTop.TitleEnabled = false;
+            this.fLegend = new TLegend(this);
+            this.fLegendEnabled = false;
+            this.fLegendPosition = ELegendPosition.TopRight;
+            this.fLegendOffsetX = 5;
+            this.fLegendOffsetY = 5;
+            this.fBorderEnabled = true;
+            this.fBorderColor = Color.Black;
+            this.fBorderWidth = 1;
+            this.SetRange(0.0, 100.0, 0.0, 100.0);
+            this.fGraphics = (Graphics) null;
+            this.fOnAxis = false;
+            this.fOnPrimitive = false;
+            this.fMouseDown = false;
+            this.fMouseDownX = 0;
+            this.fMouseDownY = 0;
+            this.fOutlineEnabled = false;
+            this.fWindowSize = 600;
+            this.fLastTickTime = 0;
+            this.fUpdateInterval = 1;
+            this.fLastUpdateDateTime = DateTime.Now;
+            this.Monitored = false;
+            this.fUpdating = false;
+            this.fMouseZoomEnabled = true;
+            this.fMouseZoomXAxisEnabled = true;
+            this.fMouseZoomYAxisEnabled = true;
+            this.fMouseUnzoomEnabled = true;
+            this.fMouseUnzoomXAxisEnabled = true;
+            this.fMouseUnzoomYAxisEnabled = true;
+            this.fMouseMoveContentEnabled = true;
+            this.fMouseMovePrimitiveEnabled = true;
+            this.fMouseDeletePrimitiveEnabled = true;
+            this.fMousePadPropertiesEnabled = true;
+            this.fMousePrimitivePropertiesEnabled = true;
+            this.fMouseContextMenuEnabled = true;
+            this.fMouseWheelEnabled = true;
+            this.fMouseWheelSensitivity = 0.1;
+            this.fMouseWheelMode = EMouseWheelMode.ZoomX;
         }
 
-        public virtual void SetCanvas(double x1, double y1, double x2, double y2)
+        private void InitContextMenu()
         {
-            this.fCanvasX1 = x1;
-            this.fCanvasX2 = x2;
-            this.fCanvasY1 = y1;
-            this.fCanvasY2 = y2;
+            #if GTK
+            #else
+            if (this.PrimitiveContextMenu != null)
+                return;
+            this.PrimitiveContextMenu = new ContextMenu();
+            this.DeleteMenuItem = new MenuItem();
+            this.PropertiesMenuItem = new MenuItem();
+            MenuItem menuItem = new MenuItem();
+            this.PrimitiveContextMenu.MenuItems.AddRange(new MenuItem[3]
+            {
+                this.DeleteMenuItem,
+                menuItem,
+                this.PropertiesMenuItem
+            });
+            this.DeleteMenuItem.Index = 0;
+            this.DeleteMenuItem.Text = "Delete";
+            this.DeleteMenuItem.Click += new EventHandler(this.DeleteMenuItem_Click);
+            menuItem.Index = 1;
+            menuItem.Text = "-";
+            this.PropertiesMenuItem.Index = 2;
+            this.PropertiesMenuItem.Text = "Properties";
+            this.PropertiesMenuItem.Click += new EventHandler(this.PropertiesMenuItem_Click);
+            #endif
         }
 
-        public virtual void SetCanvas(int width, int height)
+        public virtual void SetCanvas(double X1, double Y1, double X2, double Y2, int Width, int Height)
         {
-            this.fX1 = (int)(width * this.fCanvasX1);
-            this.fX2 = (int)(width * this.fCanvasX2);
-            this.fY1 = (int)(height * this.fCanvasY1);
-            this.fY2 = (int)(height * this.fCanvasY2);
+            this.fCanvasX1 = X1;
+            this.fCanvasX2 = X2;
+            this.fCanvasY1 = Y1;
+            this.fCanvasY2 = Y2;
+            this.SetCanvas(Width, Height);
+        }
+
+        public virtual void SetCanvas(double X1, double Y1, double X2, double Y2)
+        {
+            this.fCanvasX1 = X1;
+            this.fCanvasX2 = X2;
+            this.fCanvasY1 = Y1;
+            this.fCanvasY2 = Y2;
+        }
+
+        public virtual void SetCanvas(int Width, int Height)
+        {
+            this.fX1 = (int) ((double) Width * this.fCanvasX1);
+            this.fX2 = (int) ((double) Width * this.fCanvasX2);
+            this.fY1 = (int) ((double) Height * this.fCanvasY1);
+            this.fY2 = (int) ((double) Height * this.fCanvasY2);
             this.fWidth = this.fX2 - this.fX1;
-            this.fHeight = this.fY2 - this.fY1;    
+            this.fHeight = this.fY2 - this.fY1;
         }
 
-        public void SetRangeX(double xMin, double xMax)
+        public void SetRangeX(double XMin, double XMax)
         {
-            this.fXMin = xMin;
-            this.fXMax = xMax - CalculateNotInSessionTicks(xMin, xMax);
-            this.fAxisBottom.SetRange(xMin, xMax);
-            this.fAxisTop.SetRange(xMin, xMax);
+            this.fXMin = XMin;
+            this.fXMax = XMax - this.CalculateNotInSessionTicks(XMin, XMax);
+            this.fAxisBottom.SetRange(this.fXMin, this.fXMax);
+            this.fAxisTop.SetRange(this.fXMin, this.fXMax);
+            this.Features3D.SetRangeX(this.fXMin, this.fXMax);
         }
 
-        public void SetRangeX(DateTime xMin, DateTime xMax)
+        public void SetRangeX(DateTime XMin, DateTime XMax)
         {
-            SetRangeX(xMin.Ticks, xMax.Ticks);
+            this.SetRangeX((double) XMin.Ticks, (double) XMax.Ticks);
         }
 
-        public void SetRangeY(double yMin, double yMax)
+        public void SetRangeY(double YMin, double YMax)
         {
-            this.fYMin = yMin;
-            this.fYMax = yMax;
-            this.fAxisLeft.SetRange(yMin, yMax);
-            this.fAxisRight.SetRange(yMin, yMax);
+            this.fYMin = YMin;
+            this.fYMax = YMax;
+            this.fAxisLeft.SetRange(this.fYMin, this.fYMax);
+            this.fAxisRight.SetRange(this.fYMin, this.fYMax);
+            this.Features3D.SetRangeY(this.fYMin, this.fYMax);
         }
 
-        public void SetRange(double xMin, double xMax, double yMin, double yMax)
+        public void SetRange(double XMin, double XMax, double YMin, double YMax)
         {
-            SetRangeX(xMin, xMax);
-            SetRangeY(yMin, yMax);
+            this.fXMin = XMin;
+            this.fXMax = XMax - this.CalculateNotInSessionTicks(XMin, XMax);
+            this.fYMin = YMin;
+            this.fYMax = YMax;
+            this.fAxisBottom.SetRange(this.fXMin, this.fXMax);
+            this.fAxisTop.SetRange(this.fXMin, this.fXMax);
+            this.fAxisLeft.SetRange(this.fYMin, this.fYMax);
+            this.fAxisRight.SetRange(this.fYMin, this.fYMax);
+            this.Features3D.SetRange(this.fXMin, this.fXMax, this.fYMin, this.fYMax);
         }
 
-        public void SetRange(DateTime xMin, DateTime xMax, double yMin, double yMax)
+        public void SetRange(DateTime XMin, DateTime XMax, double YMin, double YMax)
         {
-            SetRange(xMin.Ticks, xMax.Ticks, yMin, yMax);
+            this.SetRange((double) XMin.Ticks, (double) XMax.Ticks, YMin, YMax);
         }
 
-        public void SetRange(string xMin, string xMax, double yMin, double yMax)
+        public void SetRange(string XMin, string XMax, double YMin, double YMax)
         {
-            SetRange(DateTime.Parse(xMin).Ticks, DateTime.Parse(xMax).Ticks, yMin, yMax);
+            this.SetRange((double) DateTime.Parse(XMin).Ticks, (double) DateTime.Parse(XMax).Ticks, YMin, YMax);
         }
 
-        public bool IsInRange(double x, double y)
+        public bool IsInRange(double X, double Y)
         {
-            return XMin <= x && x <= XMin + this.CalculateRealQuantityOfTicks_Right(XMin, XMax) && YMin <= y && y <= YMax;
+            return X >= this.XMin && X <= this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax) && (Y >= this.YMin && Y <= this.YMax);
         }
 
         public void UnZoomX()
         {
-            AxisBottom.UnZoom();
-            AxisTop.UnZoom();
+            this.fAxisBottom.UnZoom();
+            this.fAxisTop.UnZoom();
         }
 
         public void UnZoomY()
         {
-            AxisLeft.UnZoom();
-            AxisRight.UnZoom(); 
+            this.fAxisLeft.UnZoom();
+            this.fAxisRight.UnZoom();
         }
 
         public void UnZoom()
         {
-            throw new NotImplementedException();
+            this.fAxisBottom.SetRange(this.fXMin, this.fXMax);
+            this.fAxisTop.SetRange(this.fXMin, this.fXMax);
+            this.fAxisLeft.SetRange(this.fYMin, this.fYMax);
+            this.fAxisRight.SetRange(this.fYMin, this.fYMax);
+            this.fAxisBottom.Zoomed = false;
+            this.fAxisTop.Zoomed = false;
+            this.fAxisLeft.Zoomed = false;
+            this.fAxisRight.Zoomed = false;
+            if (this.fChart.GroupZoomEnabled)
+                return;
+            this.Update();
         }
 
-        public double GetNextGridDivision(double firstTick, double prevMajor, int majorCount, EGridSize gridSize)
+        public double GetNextGridDivision(double FirstTick, double PrevMajor, int MajorCount, EGridSize GridSize)
         {
-            return this.fTransformation.GetNextGridDivision(firstTick, prevMajor, majorCount, gridSize);
+            return this.fTransformation.GetNextGridDivision(FirstTick, PrevMajor, MajorCount, GridSize);
         }
 
-        public double CalculateRealQuantityOfTicks_Right(double x, double y)
+        public double CalculateRealQuantityOfTicks_Right(double X, double Y)
         {
-            return this.fTransformation.CalculateRealQuantityOfTicks_Right(x, y);
+            return this.fTransformation.CalculateRealQuantityOfTicks_Right(X, Y);
         }
 
-        public double CalculateRealQuantityOfTicks_Left(double x, double y)
+        public double CalculateRealQuantityOfTicks_Left(double X, double Y)
         {
-            return this.fTransformation.CalculateRealQuantityOfTicks_Left(x, y);
+            return this.fTransformation.CalculateRealQuantityOfTicks_Left(X, Y);
         }
 
-        public void GetFirstGridDivision(ref EGridSize gridSize, ref double min, ref double max, ref DateTime firstDateTime)
+        public void GetFirstGridDivision(ref EGridSize GridSize, ref double Min, ref double Max, ref DateTime FirstDateTime)
         {
-            this.fTransformation.GetFirstGridDivision(ref gridSize, ref min, ref max, ref firstDateTime);
+            this.fTransformation.GetFirstGridDivision(ref GridSize, ref Min, ref Max, ref FirstDateTime);
         }
 
-        public double CalculateNotInSessionTicks(double x, double y)
+        public double CalculateNotInSessionTicks(double X, double Y)
         {
-            return this.fTransformation.CalculateNotInSessionTicks(x, y);
+            return this.fTransformation.CalculateNotInSessionTicks(X, Y);
         }
 
-        public int ClientX(double worldX)
+        public int ClientX(double WorldX)
         {
-            return (int)((double)this.fClientX + (worldX - this.XMin - this.CalculateNotInSessionTicks(this.XMin, worldX)) * ((double)this.fClientWidth / (this.XMax - this.XMin)));
+            return (int) ((double) this.fClientX + (WorldX - this.XMin - this.CalculateNotInSessionTicks(this.XMin, WorldX)) * ((double) this.fClientWidth / (this.XMax - this.XMin)));
         }
 
-        public int ClientY(double worldY)
+        public int ClientY(double WorldY)
         {
-            return (int)((double)this.fClientY + (double)this.fClientHeight * (1.0 - (worldY - this.YMin) / (this.YMax - this.YMin)));
+            return (int) ((double) this.fClientY + (double) this.fClientHeight * (1.0 - (WorldY - this.YMin) / (this.YMax - this.YMin)));
         }
 
         public int ClientX()
@@ -2108,148 +2225,901 @@ namespace SmartQuant.Charting
             return this.fClientWidth;
         }
 
-        public double WorldX(int clientX)
+        public double WorldX(int ClientX)
         {
-            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, XMin + (double)(clientX - this.fClientX) / (double)this.fClientWidth * (XMax - XMin));
+            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.XMin + (double) (ClientX - this.fClientX) / (double) this.fClientWidth * (this.XMax - this.XMin));
         }
 
-        public double WorldY(int clientY)
+        public double WorldY(int ClientY)
         {
-            return YMin + (1.0 - (double)(clientY - this.fClientY) / (double)this.fClientHeight) * (YMax - YMin);
+            return this.YMin + (1.0 - (double) (ClientY - this.fClientY) / (double) this.fClientHeight) * (this.YMax - this.YMin);
         }
 
         public Viewer Add(object obj)
         {
-            throw new NotImplementedException();
+            if (obj is IDrawable)
+            {
+                this.fPrimitives.Add((object) (obj as IDrawable));
+                return (Viewer) null;
+            }
+            else
+            {
+                Viewer viewer = this.GetViewer(obj);
+                if (viewer == null)
+                    throw new Exception("There is no viewer for " + (object) obj.GetType());
+                this.objectViewers.Add(new Pad.ObjectViewer(obj, viewer));
+                return viewer;
+            }
         }
 
         public Viewer Insert(int index, object obj)
         {
-            throw new NotImplementedException();
+            if (obj is IDrawable)
+            {
+                this.fPrimitives.Add((object) (obj as IDrawable));
+                return (Viewer) null;
+            }
+            else
+            {
+                Viewer viewer = this.GetViewer(obj);
+                if (viewer == null)
+                    throw new Exception("There is no viewer for " + (object) obj.GetType());
+                this.objectViewers.Insert(index, new Pad.ObjectViewer(obj, viewer));
+                return viewer;
+            }
         }
 
         public void Remove(object obj)
         {
-            throw new NotImplementedException();
+            if (obj is IDrawable)
+            {
+                this.fPrimitives.Remove(obj);
+            }
+            else
+            {
+                foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+                {
+                    if (objectViewer.Object == obj)
+                    {
+                        this.objectViewers.Remove(objectViewer);
+                        break;
+                    }
+                }
+            }
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            this.fPrimitives.Clear();
+            this.fLegend.Items.Clear();
+            this.objectViewers.Clear();
         }
 
         public static Graphics GetGraphics()
         {
-            return Chart.Pad != null ? Chart.Pad.Graphics : null;
+            if (Chart.Pad != null)
+                return Chart.Pad.Graphics;
+            else
+                return (Graphics) null;
         }
 
         public virtual void Update()
         {
-            throw new NotImplementedException();
+            if (this.fUpdating)
+                return;
+            this.fUpdating = true;
+            this.fChart.UpdatePads();
+            this.fUpdating = false;
         }
 
-        public virtual void Update(Graphics graphics)
+        public virtual void Update(Graphics Graphics)
         {
-            this.PaintAll(graphics);
+            double val1_1 = double.MaxValue;
+            double val1_2 = double.MinValue;
+            double val1_3 = double.MaxValue;
+            double val1_4 = double.MinValue;
+            bool flag1 = false;
+            bool flag2 = false;
+            bool flag3 = false;
+            try
+            {
+                foreach (IDrawable drawable in this.fPrimitives)
+                {
+                    if (drawable is Histogram)
+                        flag3 = true;
+                    if (drawable is IZoomable)
+                    {
+                        IZoomable zoomable = (IZoomable) drawable;
+                        if (zoomable.IsPadRangeX())
+                        {
+                            PadRange padRangeX = zoomable.GetPadRangeX(this);
+                            if (padRangeX.IsValid)
+                            {
+                                val1_1 = Math.Min(val1_1, padRangeX.Min);
+                                val1_2 = Math.Max(val1_2, padRangeX.Max);
+                                flag1 = true;
+                            }
+                        }
+                        if (zoomable.IsPadRangeY())
+                        {
+                            double max = this.fAxisBottom.Max;
+                            double num = this.fXMax;
+                            this.fAxisBottom.Max = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                            this.fXMax = this.fAxisBottom.Max;
+                            PadRange padRangeY = zoomable.GetPadRangeY(this);
+                            if (padRangeY.IsValid)
+                            {
+                                val1_3 = Math.Min(val1_3, padRangeY.Min);
+                                val1_4 = Math.Max(val1_4, padRangeY.Max);
+                                flag2 = true;
+                            }
+                            this.fAxisBottom.Max = max;
+                            this.fXMax = num;
+                        }
+                    }
+                }
+                foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+                {
+                    if (objectViewer.Viewer.IsZoomable)
+                    {
+                        PadRange padRangeX = objectViewer.Viewer.GetPadRangeX(objectViewer.Object, this);
+                        if (padRangeX != null && padRangeX.IsValid)
+                        {
+                            val1_1 = Math.Min(val1_1, padRangeX.Min);
+                            val1_2 = Math.Max(val1_2, padRangeX.Max);
+                            flag1 = true;
+                        }
+                        PadRange padRangeY = objectViewer.Viewer.GetPadRangeY(objectViewer.Object, this);
+                        if (padRangeY != null)
+                        {
+                            double max = this.fAxisBottom.Max;
+                            double num = this.fXMax;
+                            this.fAxisBottom.Max = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                            this.fXMax = this.fAxisBottom.Max;
+                            if (padRangeY.IsValid)
+                            {
+                                val1_3 = Math.Min(val1_3, padRangeY.Min);
+                                val1_4 = Math.Max(val1_4, padRangeY.Max);
+                                if (Math.Round(val1_3, 6) == 0.0 && Math.Round(val1_4, 6) == 0.0)
+                                {
+                                    val1_3 = -1.0;
+                                    val1_4 = 1.0;
+                                }
+                                flag2 = true;
+                            }
+                            this.fAxisBottom.Max = max;
+                            this.fXMax = num;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+            if (!flag2 && !flag3)
+            {
+                flag2 = true;
+                val1_4 = 1.0;
+                val1_3 = -1.0;
+            }
+            if (flag1)
+                this.SetRangeX(val1_1 - (val1_2 - val1_1) / 20.0, val1_2 + (val1_2 - val1_1) / 20.0);
+            if (flag2)
+                this.SetRangeY(val1_3 - (val1_4 - val1_3) / 20.0, val1_4 + (val1_4 - val1_3) / 20.0);
+            this.fGraphics = Graphics;
+            this.TitleHeight = 0;
+            this.AxisBottomHeight = 0;
+            this.AxisTopHeight = 0;
+            this.AxisRightWidth = 0;
+            this.AxisLeftWidth = 0;
+            if (this.fTitleEnabled)
+            {
+                switch (this.fTitle.Position)
+                {
+                    case ETitlePosition.Left:
+                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        break;
+                    case ETitlePosition.Right:
+                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        break;
+                    case ETitlePosition.Centre:
+                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        break;
+                    case ETitlePosition.InsideLeft:
+                        this.TitleHeight = 0;
+                        break;
+                    case ETitlePosition.InsideRight:
+                        this.TitleHeight = 0;
+                        break;
+                    case ETitlePosition.InsideCentre:
+                        this.TitleHeight = 0;
+                        break;
+                }
+            }
+            if (this.fAxisBottom.Enabled)
+                this.AxisBottomHeight = this.fAxisBottom.Height;
+            if (this.fAxisTop.Enabled)
+                this.AxisTopHeight = this.fAxisTop.Height;
+            if (this.fAxisRight.Enabled)
+                this.AxisRightWidth = this.fAxisRight.Width;
+            if (this.fAxisLeft.Enabled)
+                this.AxisLeftWidth = this.fAxisLeft.Width;
+            this.PaintAll(Graphics);
         }
 
-        public void PaintAll(Graphics graphics)
+        public void PaintAll(Graphics Graphics)
+        {
+            this.fGraphics = Graphics;
+            this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth + 1, this.fHeight + 1));
+            this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fBackColor), this.fX1, this.fY1, this.fWidth, this.fHeight);
+            if (this.fBorderEnabled)
+            {
+                int height = this.fHeight;
+                int width = this.fWidth;
+                int num1 = this.fChart.ClientRectangle.Height - this.fY1 - 1;
+                int num2 = this.fChart.ClientRectangle.Width - this.fX1 - 1;
+                if (this.fHeight > num1)
+                    height = num1;
+                if (this.fWidth > num2)
+                    width = num2;
+                this.fGraphics.DrawRectangle(new Pen(this.fBorderColor)
+                {
+                    Width = (float) this.fBorderWidth
+                }, this.fX1, this.fY1, width, height);
+            }
+            this.fClientX = this.fX1 + this.AxisLeftWidth + this.fMarginLeft;
+            this.fClientY = this.fY1 + this.TitleHeight + this.AxisTopHeight + this.fMarginTop;
+            this.fClientWidth = this.fWidth - this.AxisLeftWidth - this.AxisRightWidth - this.fMarginLeft - this.fMarginRight;
+            this.fClientHeight = this.fHeight - this.TitleHeight - this.AxisTopHeight - this.AxisBottomHeight - this.fMarginTop - this.fMarginBottom;
+            if (this.fClientWidth != 0 && this.fClientHeight != 0)
+                this.fGraphics.FillRectangle((Brush) new LinearGradientBrush(new RectangleF((float) this.fClientX, (float) this.fClientY, (float) this.fClientWidth, (float) this.fClientHeight), Color.FromArgb((int) byte.MaxValue, (int) byte.MaxValue, (int) byte.MaxValue), Color.FromArgb(200, 200, 200), LinearGradientMode.Vertical), this.fClientX, this.fClientY, this.fClientWidth, this.fClientHeight);
+            if (this.fAxisBottom.Enabled)
+            {
+                this.fAxisBottom.SetLocation((double) this.fClientX, (double) (this.fClientY + this.fClientHeight), (double) (this.fClientX + this.fClientWidth), (double) (this.fClientY + this.fClientHeight));
+                this.fAxisBottom.Paint();
+            }
+            if (this.fAxisLeft.Enabled)
+            {
+                this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth, this.fHeight));
+                this.fAxisLeft.SetLocation((double) this.fClientX, (double) this.fClientY, (double) this.fClientX, (double) (this.fClientY + this.fClientHeight));
+                this.fAxisLeft.Paint();
+            }
+            if (this.fAxisTop.Enabled)
+            {
+                this.fAxisTop.SetLocation((double) this.fClientX, (double) this.fClientY, (double) (this.fClientX + this.fClientWidth), (double) this.fClientY);
+                this.fAxisTop.Paint();
+            }
+            if (this.fAxisRight.Enabled)
+            {
+                this.fAxisRight.SetLocation((double) (this.fClientX + this.fClientWidth), (double) this.fClientY, (double) (this.fClientX + this.fClientWidth), (double) (this.fClientY + this.fClientHeight));
+                this.fAxisRight.Paint();
+            }
+            this.fGraphics.Clip = new Region(new Rectangle(this.fClientX + 1, this.fClientY + 1, this.fClientWidth - 1, this.fClientHeight - 1));
+            try
+            {
+                foreach (IDrawable drawable in this.fPrimitives)
+                    drawable.Paint(this, this.XMin, this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax), this.YMin, this.YMax);
+            }
+            catch
+            {
+            }
+            foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+                objectViewer.Viewer.Paint(objectViewer.Object, this);
+            if (this.fOutlineEnabled)
+                this.fGraphics.DrawRectangle(new Pen(Color.Green), this.fOutlineRectangle);
+            if (this.fTitleEnabled)
+            {
+                switch (this.fTitle.Position)
+                {
+                    case ETitlePosition.Left:
+                        this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth, this.fHeight));
+                        this.fTitle.Y = this.fY1 + this.fMarginTop;
+                        this.fTitle.X = this.fClientX + this.fTitleOffsetX;
+                        break;
+                    case ETitlePosition.Right:
+                        this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth, this.fHeight));
+                        this.fTitle.Y = this.fY1 + this.fMarginTop;
+                        this.fTitle.X = this.fClientX + this.fClientWidth - this.fTitle.Width - this.fTitleOffsetX;
+                        break;
+                    case ETitlePosition.Centre:
+                        this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth, this.fHeight));
+                        this.fTitle.Y = this.fY1 + this.fMarginTop;
+                        this.fTitle.X = this.fClientX + this.fClientWidth / 2 - this.fTitle.Width / 2 + this.fTitleOffsetX;
+                        break;
+                    case ETitlePosition.InsideLeft:
+                        this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
+                        this.fTitle.X = this.fClientX + this.fTitleOffsetX;
+                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        break;
+                    case ETitlePosition.InsideRight:
+                        this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
+                        this.fTitle.X = this.fClientX + this.fClientWidth - this.fTitle.Width - this.fTitleOffsetX;
+                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        break;
+                    case ETitlePosition.InsideCentre:
+                        this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
+                        this.fTitle.X = this.fClientX + this.fClientWidth / 2 - this.fTitle.Width / 2 + this.fTitleOffsetX;
+                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        break;
+                }
+                this.fTitle.Paint();
+            }
+            if (!this.fLegendEnabled)
+                return;
+            switch (this.fLegendPosition)
+            {
+                case ELegendPosition.TopRight:
+                    this.fLegend.X = this.fClientX + this.fClientWidth - this.fLegendOffsetX - this.fLegend.Width;
+                    this.fLegend.Y = this.fClientY + this.fLegendOffsetY;
+                    break;
+                case ELegendPosition.TopLeft:
+                    this.fLegend.X = this.fClientX + this.fLegendOffsetX;
+                    this.fLegend.Y = this.fClientY + this.fLegendOffsetY;
+                    break;
+                case ELegendPosition.BottomRight:
+                    this.fLegend.X = this.fClientX + this.fClientWidth - this.fLegendOffsetX - this.fLegend.Width;
+                    this.fLegend.Y = this.fClientY + this.fClientHeight - this.fLegendOffsetY - this.fLegend.Height;
+                    break;
+                case ELegendPosition.BottomLeft:
+                    this.fLegend.X = this.fClientX + this.fLegendOffsetX;
+                    this.fLegend.Y = this.fClientY + this.fClientHeight - this.fLegendOffsetY - this.fLegend.Height;
+                    break;
+            }
+            this.fLegend.Paint();
+        }
+
+        public void DrawLine(Pen Pen, double X1, double Y1, double X2, double Y2, bool DoTransform)
+        {
+            if (DoTransform)
+                this.fGraphics.DrawLine(Pen, this.ClientX(X1), this.ClientY(Y1), this.ClientX(X2), this.ClientY(Y2));
+            else
+                this.fGraphics.DrawLine(Pen, (int) X1, (int) Y1, (int) X2, (int) Y2);
+        }
+
+        public void DrawVerticalTick(Pen Pen, double X, double Y, int Length)
         {
         }
 
-        public void DrawLine(Pen pen, double x1, double y1, double x2, double y2, bool doTransform)
+        public void DrawHorizontalTick(Pen Pen, double X, double Y, int Length)
         {
-            throw new NotImplementedException();
+            try
+            {
+                this.fGraphics.DrawLine(Pen, (int) X, this.ClientY(Y), (int) X + Length, this.ClientY(Y));
+            }
+            catch
+            {
+            }
         }
 
-        public void DrawVerticalTick(Pen pen, double x, double y, int length)
+        public void DrawVerticalGrid(Pen Pen, double X)
         {
+            this.fGraphics.DrawLine(Pen, this.ClientX(X), this.fClientY, this.ClientX(X), this.fClientY + this.fClientHeight);
         }
 
-        public void DrawHorizontalTick(Pen pen, double x, double y, int length)
+        public void DrawHorizontalGrid(Pen Pen, double Y)
         {
-            throw new NotImplementedException();
+            this.fGraphics.DrawLine(Pen, this.fClientX, this.ClientY(Y), this.fClientX + this.fClientWidth, this.ClientY(Y));
         }
 
-        public void DrawVerticalGrid(Pen pen, double x)
+        public void DrawLine(Pen Pen, double X1, double Y1, double X2, double Y2)
         {
-            this.Graphics.DrawLine(pen, this.ClientX(x), this.fClientY, this.ClientX(x), this.fClientY + this.fClientHeight);
+            this.DrawLine(Pen, X1, Y1, X2, Y2, true);
         }
 
-        public void DrawHorizontalGrid(Pen pen, double y)
+        public void DrawRectangle(Pen Pen, double X, double Y, int Width, int Height)
         {
-            this.Graphics.DrawLine(pen, this.fClientX, this.ClientY(y), this.fClientX + this.fClientWidth, this.ClientY(y));
+            this.fGraphics.DrawRectangle(Pen, this.ClientX(X), this.ClientY(Y), Width, Height);
         }
 
-        public void DrawLine(Pen pen, double x1, double y1, double x2, double y2)
+        public void DrawEllipse(Pen Pen, double X, double Y, int Width, int Height)
         {
-            this.DrawLine(pen, x1, y1, x2, y2, true);
+            this.fGraphics.DrawEllipse(Pen, this.ClientX(X), this.ClientY(Y), Width, Height);
         }
 
-        public void DrawRectangle(Pen pen, double x, double y, int width, int height)
+        public void DrawBeziers(Pen Pen, PointF[] Points)
         {
-            this.Graphics.DrawRectangle(pen, this.ClientX(x), this.ClientY(y), width, height);
+            Point[] points = new Point[Points.Length];
+            for (int index = 0; index < Points.Length; ++index)
+            {
+                PointF pointF = Points[index];
+                points[index] = new Point(this.ClientX((double) pointF.X), this.ClientY((double) pointF.Y));
+            }
+            this.fGraphics.DrawBeziers(Pen, points);
         }
 
-        public void DrawEllipse(Pen pen, double x, double y, int width, int height)
+        public void DrawText(string Text, Font Font, Brush Brush, int X, int Y)
         {
-            this.Graphics.DrawEllipse(pen, this.ClientX(x), this.ClientY(y), width, height);
+            this.fGraphics.DrawString(Text, Font, Brush, (float) X, (float) Y);
         }
 
-        public void DrawBeziers(Pen pen, PointF[] points)
+        private bool IsInsideClient(int X, int Y)
         {
-            throw new NotImplementedException();
+            if (X > this.fClientX && X < this.fClientX + this.fClientWidth && Y > this.fClientY)
+                return Y < this.fClientY + this.fClientHeight;
+            else
+                return false;
         }
 
-        public void DrawText(string text, Font font, Brush brush, int x, int y)
+        public virtual void MouseMove(MouseEventArgs Event)
         {
-            Graphics.DrawString(text, font, brush, x, y);
+            try
+            {
+                if (!this.fMouseDown)
+                {
+                    double num1 = (this.fXMax - this.fXMin) / 100.0;
+                    double num2 = (this.fYMax - this.fYMin) / 100.0;
+                    double X = this.WorldX(Event.X);
+                    double Y = this.WorldY(Event.Y);
+                    string str = "";
+                    this.fSelectedPrimitive = (IDrawable) null;
+                    this.fSelectedPrimitiveDistance = (TDistance) null;
+                    this.fOnPrimitive = false;
+                    foreach (IDrawable drawable in this.fPrimitives)
+                    {
+                        TDistance tdistance = drawable.Distance(X, Y);
+                        if (tdistance != null && tdistance.dX < num1 && tdistance.dY < num2)
+                        {
+                            if (drawable.ToolTipEnabled)
+                            {
+                                if (str != "")
+                                    str = str + "\n\n";
+                                str = str + tdistance.ToolTipText;
+                            }
+                            this.fOnPrimitive = true;
+                            this.fSelectedPrimitive = drawable;
+                            this.fSelectedPrimitiveDistance = tdistance;
+                        }
+                    }
+                }
+                if (this.fMouseMovePrimitiveEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && this.fOnPrimitive) && this.fSelectedPrimitive is IMovable)
+                {
+                    double num1 = this.WorldX(Event.X);
+                    double num2 = this.WorldY(Event.Y);
+                    ((IMovable) this.fSelectedPrimitive).Move(this.fSelectedPrimitiveDistance.X, this.fSelectedPrimitiveDistance.Y, num1 - this.fSelectedPrimitiveDistance.X, num2 - this.fSelectedPrimitiveDistance.Y);
+                    this.fSelectedPrimitiveDistance.X = num1;
+                    this.fSelectedPrimitiveDistance.Y = num2;
+                    this.fOnPrimitive = true;
+                    this.Update();
+                }
+                if (this.fMouseZoomEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && !this.fOnPrimitive))
+                {
+                    int num1 = Math.Abs(this.fMouseDownX - Event.X);
+                    int num2 = Math.Abs(this.fMouseDownY - Event.Y);
+                    int num3 = this.fMouseDownX >= Event.X ? Event.X : this.fMouseDownX;
+                    int num4 = this.fMouseDownY >= Event.Y ? Event.Y : this.fMouseDownY;
+                    this.fOutlineRectangle.X = num3;
+                    this.fOutlineRectangle.Y = num4;
+                    this.fOutlineRectangle.Width = num1;
+                    this.fOutlineRectangle.Height = num2;
+                    this.Update();
+                }
+                if (this.fMouseMoveContentEnabled && this.fMouseDown && this.fMouseDownButton == MouseButtons.Right)
+                {
+                    double num1 = (double) (this.fMouseDownX - Event.X) / (double) this.fClientWidth * (this.XMax - this.XMin);
+                    double num2 = this.WorldY(this.fMouseDownY) - this.WorldY(Event.Y);
+                    double num3 = num1 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num1) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num1);
+                    this.fMouseDownX = Event.X;
+                    this.fMouseDownY = Event.Y;
+                    this.fAxisBottom.SetRange(this.fAxisBottom.Min + num3, this.fAxisBottom.Max + num3);
+                    this.fAxisTop.SetRange(this.fAxisTop.Min + num3, this.fAxisTop.Max + num3);
+                    this.fAxisLeft.SetRange(this.fAxisLeft.Min + num2, this.fAxisLeft.Max + num2);
+                    this.fAxisRight.SetRange(this.fAxisRight.Min + num2, this.fAxisRight.Max + num2);
+                    this.fAxisBottom.Zoomed = true;
+                    this.fAxisTop.Zoomed = true;
+                    this.fAxisLeft.Zoomed = true;
+                    this.fAxisRight.Zoomed = true;
+                    if (!this.fChart.GroupZoomEnabled)
+                        this.Update();
+                    this.EmitZoom(true);
+                }
+                else
+                {
+                    this.fOnAxis = false;
+                    this.fAxisLeft.MouseMove(Event);
+                    this.fAxisBottom.MouseMove(Event);
+                    if (this.fAxisLeft.X1 - 10.0 <= (double) Event.X && this.fAxisLeft.X1 >= (double) Event.X && (this.fAxisLeft.Y1 <= (double) Event.Y && this.fAxisLeft.Y2 >= (double) Event.Y))
+                        this.fOnAxis = true;
+                    if (this.fAxisBottom.X1 <= (double) Event.X && this.fAxisBottom.X2 >= (double) Event.X && (this.fAxisBottom.Y1 <= (double) Event.Y && this.fAxisBottom.Y1 + 10.0 >= (double) Event.Y))
+                        this.fOnAxis = true;
+                    if (this.fOnAxis || this.fOnPrimitive)
+                    {
+                        #if GTK
+                        #else
+                        if (!(Cursor.Current != Cursors.Hand))
+                            return;
+                        Cursor.Current = Cursors.Hand;
+                        #endif
+                    }
+                    else
+                    {
+                        #if GTK
+                        #else
+                        if (!(Cursor.Current != Cursors.Default))
+                            return;
+                        Cursor.Current = Cursors.Default;
+                        #endif
+                    }
+                }
+            }
+            catch
+            {
+            }
         }
 
-        private bool IsInsideClient(int x, int y)
+        public virtual void MouseWheel(MouseEventArgs Event)
         {
-            return x > this.fClientX && x < this.fClientX + this.fClientWidth && y > this.fClientY && y < this.fClientY + this.fClientHeight;
+            if (!this.fMouseWheelEnabled)
+                return;
+            double min = this.fAxisBottom.Min;
+            double max = this.fAxisBottom.Max;
+            switch (this.fMouseWheelMode)
+            {
+                case EMouseWheelMode.MoveX:
+                    double num1 = (double) Event.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num2 = num1 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num1) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num1);
+                    this.fAxisBottom.SetRange(this.fAxisBottom.Min + num2, this.fAxisBottom.Max + num2);
+                    this.fAxisTop.SetRange(this.fAxisTop.Min + num2, this.fAxisTop.Max + num2);
+                    this.fAxisBottom.Zoomed = true;
+                    this.fAxisTop.Zoomed = true;
+                    this.EmitZoom(true);
+                    break;
+                case EMouseWheelMode.MoveY:
+                    double num3 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    this.fAxisLeft.SetRange(this.fAxisLeft.Min + num3, this.fAxisLeft.Max + num3);
+                    this.fAxisRight.SetRange(this.fAxisRight.Min + num3, this.fAxisRight.Max + num3);
+                    this.fAxisLeft.Zoomed = true;
+                    this.fAxisRight.Zoomed = true;
+                    this.EmitZoom(true);
+                    break;
+                case EMouseWheelMode.ZoomX:
+                    double num4 = (double) Event.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num5 = num4 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num4) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num4);
+                    double num6 = num5 - num4;
+                    this.fAxisBottom.SetRange(this.fAxisBottom.Min + num5, this.fAxisBottom.Max + num6);
+                    this.fAxisTop.SetRange(this.fAxisTop.Min + num5, this.fAxisTop.Max + num6);
+                    this.fAxisBottom.Zoomed = true;
+                    this.fAxisTop.Zoomed = true;
+                    this.EmitZoom(true);
+                    break;
+                case EMouseWheelMode.ZoomY:
+                    double num7 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    this.fAxisLeft.SetRange(this.fAxisLeft.Min + num7, this.fAxisLeft.Max);
+                    this.fAxisRight.SetRange(this.fAxisRight.Min + num7, this.fAxisRight.Max);
+                    this.fAxisLeft.Zoomed = true;
+                    this.fAxisRight.Zoomed = true;
+                    this.EmitZoom(true);
+                    break;
+                case EMouseWheelMode.Zoom:
+                    double num8 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
+                    double num9 = (double) Event.Delta / 120.0 * (num8 - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num10 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    double num11 = this.WorldX(Event.X);
+                    double num12 = this.WorldY(Event.Y);
+                    double num13 = (num11 - this.fAxisBottom.Min) / (num8 - this.fAxisBottom.Min) * num9;
+                    double num14 = (num8 - num11) / (num8 - this.fAxisBottom.Min) * num9;
+                    double num15 = (num12 - this.fYMin) / (this.fYMax - this.fYMin) * num10;
+                    double num16 = (this.fYMax - num12) / (this.fYMax - this.fYMin) * num10;
+                    double num17 = num13 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num13) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num13);
+                    double num18 = -num17 + num13 + num14;
+                    this.fAxisBottom.SetRange(this.fAxisBottom.Min + num17, this.fAxisBottom.Max - num18);
+                    this.fAxisTop.SetRange(this.fAxisTop.Min + num17, this.fAxisTop.Max - num18);
+                    this.fAxisLeft.SetRange(this.fAxisLeft.Min + num15, this.fAxisLeft.Max - num16);
+                    this.fAxisRight.SetRange(this.fAxisRight.Min + num15, this.fAxisRight.Max - num16);
+                    this.fAxisBottom.Zoomed = true;
+                    this.fAxisTop.Zoomed = true;
+                    this.fAxisLeft.Zoomed = true;
+                    this.fAxisRight.Zoomed = true;
+                    this.EmitZoom(true);
+                    break;
+            }
+            if (this.fChart.GroupZoomEnabled)
+                return;
+            this.Update();
         }
 
-        public virtual void MouseMove(MouseEventArgs e)
+        public virtual void MouseDown(MouseEventArgs Event)
         {
-            throw new NotImplementedException();
+            if (this.IsInsideClient(Event.X, Event.Y))
+            {
+                this.fMouseDown = true;
+                this.fMouseDownX = Event.X;
+                this.fMouseDownY = Event.Y;
+                this.fMouseDownButton = Event.Button;
+                if (this.fMouseZoomEnabled && this.fMouseDownButton == MouseButtons.Left && this.fSelectedPrimitive == null)
+                    this.fOutlineEnabled = true;
+                if (this.fMouseContextMenuEnabled && this.fMouseDownButton == MouseButtons.Right && this.fOnPrimitive)
+                {
+                    this.InitContextMenu();
+                    #if !GTK
+                    this.DeleteMenuItem.Text = "Delete " + this.fSelectedPrimitive.GetType().Name;
+                    #endif
+                }
+            }
+            this.fAxisLeft.MouseDown(Event);
+            this.fAxisBottom.MouseDown(Event);
         }
 
-        public virtual void MouseWheel(MouseEventArgs e)
+        public virtual void MouseUp(MouseEventArgs Event)
         {
-            //throw new NotImplementedException();
+            if (this.fMouseZoomEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && !this.fOnPrimitive))
+            {
+                this.fOutlineEnabled = false;
+                if (Math.Abs(this.fMouseDownX - Event.X) > 2 && Math.Abs(this.fMouseDownY - Event.Y) > 2)
+                {
+                    double num1 = this.WorldX(this.fMouseDownX);
+                    double num2 = this.WorldX(Event.X);
+                    double num3 = this.WorldY(this.fMouseDownY);
+                    double num4 = this.WorldY(Event.Y);
+                    double num5;
+                    double Y;
+                    if (num1 < num2)
+                    {
+                        num5 = num1;
+                        Y = num2;
+                    }
+                    else
+                    {
+                        num5 = num2;
+                        Y = num1;
+                    }
+                    double Min;
+                    double Max1;
+                    if (num3 < num4)
+                    {
+                        Min = num3;
+                        Max1 = num4;
+                    }
+                    else
+                    {
+                        Min = num4;
+                        Max1 = num3;
+                    }
+                    double Max2 = Y - this.CalculateNotInSessionTicks(num5, Y);
+                    this.fAxisBottom.SetRange(num5, Max2);
+                    this.fAxisTop.SetRange(num5, Max2);
+                    this.fAxisLeft.SetRange(Min, Max1);
+                    this.fAxisRight.SetRange(Min, Max1);
+                    this.fAxisBottom.Zoomed = true;
+                    this.fAxisTop.Zoomed = true;
+                    this.fAxisLeft.Zoomed = true;
+                    this.fAxisRight.Zoomed = true;
+                    if (!this.fChart.GroupZoomEnabled)
+                        this.Update();
+                    this.EmitZoom(true);
+                }
+                this.fMouseDown = false;
+            }
+            else
+            {
+                this.fAxisLeft.MouseUp(Event);
+                this.fAxisBottom.MouseUp(Event);
+                this.fMouseDown = false;
+            }
         }
 
-        public virtual void MouseDown(MouseEventArgs e)
+        public virtual void DoubleClick(int X, int Y)
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual void MouseUp(MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DoubleClick(int x, int y)
-        {
-            throw new NotImplementedException();
+            if (this.IsInsideClient(X, Y))
+            {
+                if (this.fOnPrimitive)
+                {
+                    if (!this.fMousePrimitivePropertiesEnabled)
+                        return;
+                    int num = (int) new PadProperyForm((object) this.fSelectedPrimitive, this).ShowDialog();
+                }
+                else
+                {
+                    if (!this.fMouseUnzoomEnabled || !this.AxisLeft.Zoomed && !this.AxisBottom.Zoomed)
+                        return;
+                    this.fOutlineEnabled = false;
+                    if (!this.fChart.GroupZoomEnabled)
+                        this.UnZoom();
+                    this.EmitZoom(false);
+                }
+            }
+            else
+            {
+                if (!this.fMousePadPropertiesEnabled)
+                    return;
+                int num = (int) new PadProperyForm((object) this, this).ShowDialog();
+            }
         }
 
         public static void EmitNewTick(DateTime datetime)
         {
-            if (NewTick != null)
-                NewTick(null, new NewTickEventArgs(datetime));
+            if (Pad.NewTick == null)
+                return;
+            Pad.NewTick((object) null, new NewTickEventArgs(datetime));
+        }
+
+        private void OnNewTick(object sender, NewTickEventArgs EventArgs)
+        {
+            if (!this.fMonitored)
+                return;
+            int num1 = EventArgs.DateTime.Hour * 60 * 60 + EventArgs.DateTime.Minute * 60 + EventArgs.DateTime.Second;
+            if (num1 - this.fLastTickTime < this.fUpdateInterval)
+                return;
+            DateTime dateTime = EventArgs.DateTime;
+            double XMin = (double) dateTime.AddSeconds((double) -this.fWindowSize).Ticks;
+            double num2 = (double) dateTime.Ticks;
+            this.SetRangeX(XMin, num2 + (num2 - XMin) / 20.0);
+            if ((DateTime.Now.Ticks - this.fLastUpdateDateTime.Ticks) / 1000000L > 1L)
+            {
+                if (!this.fChart.GroupZoomEnabled)
+                    this.Update();
+                this.EmitZoom(true);
+                this.fLastUpdateDateTime = DateTime.Now;
+            }
+            this.fLastTickTime = num1;
         }
 
         public void EmitZoom(bool zoom)
         {
-            if (Zoom != null)
-                Zoom(null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
+            if (this.Zoom == null)
+                return;
+            this.Zoom((object) null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
         }
 
-        private void OnNewTick(object sender, NewTickEventArgs args)
+        private void DeleteMenuItem_Click(object sender, EventArgs e)
         {
+            this.fPrimitives.Remove((object) this.fSelectedPrimitive);
+            this.Update();
+        }
+
+        private void PropertiesMenuItem_Click(object sender, EventArgs e)
+        {
+            int num = (int) new PadProperyForm((object) this.fSelectedPrimitive, this).ShowDialog();
+        }
+
+        private class ObjectViewer
+        {
+            public object Object { get; set; }
+
+            public Viewer Viewer { get; set; }
+
+            public ObjectViewer(object obj, Viewer viewer)
+            {
+                this.Object = obj;
+                this.Viewer = viewer;
+            }
+        }
+
+        [Serializable]
+        private class TFeatures3D
+        {
+            private Pad Pad;
+            private Pad.TFeatures3D.TAxes2D Axes2D;
+            public Axis[] Axes;
+            private bool fActive;
+            public object View;
+
+            public bool Active
+            {
+                get
+                {
+                    return this.fActive;
+                }
+                set
+                {
+                    this.fActive = value;
+                    if (value)
+                    {
+                        this.Axes2D.SetFor3D();
+                        this.Pad.ForeColor = this.Pad.BackColor;
+                        this.Pad.AntiAliasingEnabled = true;
+                    }
+                    else
+                        this.Axes2D.Restore();
+                }
+            }
+
+            public TFeatures3D(Pad Pad)
+            {
+                this.Pad = Pad;
+                this.Axes2D = new Pad.TFeatures3D.TAxes2D(Pad);
+                this.Axes = new Axis[3]
+                {
+                    new Axis(Pad),
+                    new Axis(Pad),
+                    new Axis(Pad)
+                };
+                for (int index = 0; index < this.Axes.Length; ++index)
+                {
+                    this.Axes[index].Max = 1.0;
+                    this.Axes[index].Min = 0.0;
+                }
+            }
+
+            public void SetRangeX(double XMin, double XMax)
+            {
+                this.Axes[0].SetRange(XMin, XMax);
+            }
+
+            public void SetRangeY(double YMin, double YMax)
+            {
+                this.Axes[1].SetRange(YMin, YMax);
+            }
+
+            public void SetRangeZ(double ZMin, double ZMax)
+            {
+                this.Axes[2].SetRange(ZMin, ZMax);
+            }
+
+            public void SetRange(double XMin, double XMax, double YMin, double YMax)
+            {
+                this.SetRangeX(XMin, XMax);
+                this.SetRangeY(YMin, YMax);
+            }
+
+            [Serializable]
+            private class TAxes2D
+            {
+                private Pad Pad;
+                private bool Saved;
+                private Axis Top;
+                private Axis Bottom;
+                private Axis Left;
+                private Axis Right;
+
+                public TAxes2D(Pad Pad)
+                {
+                    this.Pad = Pad;
+                    this.Top = new Axis(Pad);
+                    this.Bottom = new Axis(Pad);
+                    this.Left = new Axis(Pad);
+                    this.Right = new Axis(Pad);
+                }
+
+                private void Copy(Axis dst, Axis src)
+                {
+                    dst.LabelEnabled = src.LabelEnabled;
+                    dst.MajorTicksEnabled = src.MajorTicksEnabled;
+                    dst.MinorTicksEnabled = src.MinorTicksEnabled;
+                    dst.GridEnabled = src.GridEnabled;
+                    dst.MinorGridEnabled = src.MinorGridEnabled;
+                    dst.SetRange(src.Min, src.Max);
+                    dst.Enabled = src.Enabled;
+                }
+
+                private void SetFor3D(Axis a)
+                {
+                    a.LabelEnabled = false;
+                    a.MajorTicksEnabled = false;
+                    a.MinorTicksEnabled = false;
+                    a.GridEnabled = false;
+                    a.MinorGridEnabled = false;
+                    a.SetRange(0.0, 1.0);
+                    a.Enabled = false;
+                }
+
+                public void Save()
+                {
+                    this.Copy(this.Top, this.Pad.fAxisTop);
+                    this.Copy(this.Bottom, this.Pad.fAxisBottom);
+                    this.Copy(this.Left, this.Pad.fAxisLeft);
+                    this.Copy(this.Right, this.Pad.fAxisRight);
+                    this.Saved = true;
+                }
+
+                public void SetFor3D()
+                {
+                    this.Save();
+                    this.SetFor3D(this.Pad.AxisTop);
+                    this.SetFor3D(this.Pad.AxisBottom);
+                    this.SetFor3D(this.Pad.AxisLeft);
+                    this.SetFor3D(this.Pad.AxisRight);
+                }
+
+                public void Restore()
+                {
+                    if (!this.Saved)
+                        return;
+                    this.Copy(this.Pad.fAxisTop, this.Top);
+                    this.Copy(this.Pad.fAxisBottom, this.Bottom);
+                    this.Copy(this.Pad.fAxisLeft, this.Left);
+                    this.Copy(this.Pad.fAxisRight, this.Right);
+                }
+            }
         }
     }
 }
