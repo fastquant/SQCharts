@@ -156,7 +156,7 @@ namespace SmartQuant.Charting.Draw3D
 
         public override bool Equals(object obj)
         {
-            TMat3x3 that = (TMat3x3)obj;
+            var that = (TMat3x3)obj;
             return that.xx == this.xx && that.xy == this.xy && that.xz == this.xz && that.yx == this.yx && that.yy == this.yy && that.yz == this.xz && that.zx == this.zx && that.zy == this.zy && that.zz == this.xz;
         }
 
@@ -231,19 +231,19 @@ namespace SmartQuant.Charting.Draw3D
 
         public void SetNumber(double k)
         {
-            this.SetZero();
+            SetZero();
             for (int i = 0; i < 3; ++i)
                 this.m[i, i] = k;
         }
 
         public void SetUnit()
         {
-            this.SetNumber(1);
+            SetNumber(1);
         }
 
         public void SetDiagonal(double lx, double ly, double lz)
         {
-            this.SetZero();
+            SetZero();
             this.xx = lx;
             this.yy = ly;
             this.zz = lz;
@@ -251,56 +251,56 @@ namespace SmartQuant.Charting.Draw3D
 
         public void SetRot(int i1, int i2, double angle)
         {
-            this.SetUnit();
+            SetUnit();
             this.m[i1, i1] = this.m[i2, i2] = Math.Cos(angle);
             this.m[i1, i2] = -(this.m[i2, i1] = Math.Sin(angle));
         }
 
         public void SetRotYZ(double angle)
         {
-            this.SetRot(1, 2, angle);
+            SetRot(1, 2, angle);
         }
 
         public void SetRotZX(double angle)
         {
-            this.SetRot(2, 0, angle);
+            SetRot(2, 0, angle);
         }
 
         public void SetRotXY(double angle)
         {
-            this.SetRot(0, 1, angle);
+            SetRot(0, 1, angle);
         }
 
         public void SetRotX(double angle)
         {
-            this.SetRotYZ(angle);
+            SetRotYZ(angle);
         }
 
         public void SetRotY(double angle)
         {
-            this.SetRotZX(angle);
+            SetRotZX(angle);
         }
 
         public void SetRotZ(double angle)
         {
-            this.SetRotXY(angle);
+            SetRotXY(angle);
         }
 
         public void SetExchangeAxes(int i, int j)
         {
-            this.SetUnit();
-            this.m[i, i] = this.m[j, j] = 0.0;
-            this.m[i, j] = this.m[j, i] = 1.0;
+            SetUnit();
+            this.m[i, i] = this.m[j, j] = 0;
+            this.m[i, j] = this.m[j, i] = 1;
         }
 
         public void SetExchangeYZ()
         {
-            this.SetExchangeAxes(1, 2);
+            SetExchangeAxes(1, 2);
         }
 
         public void SetSpecialProjection(double angle)
         {
-            this.SetUnit();
+            SetUnit();
             this.zy = Math.Sin(angle);
         }
     }
@@ -309,7 +309,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TMat3x3Diagonal(double lx, double ly, double lz)
         {
-            this.SetDiagonal(lx, ly, lz);
+            SetDiagonal(lx, ly, lz);
         }
     }
 
@@ -317,7 +317,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TSpecialProjection(double angle)
         {
-            this.SetSpecialProjection(angle);
+            SetSpecialProjection(angle);
         }
     }
 
@@ -325,7 +325,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TRotX(double angle)
         {
-            this.SetRotX(angle);
+            SetRotX(angle);
         }
     }
 
@@ -333,7 +333,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TRotY(double angle)
         {
-            this.SetRotY(angle);
+            SetRotY(angle);
         }
     }
 
@@ -341,7 +341,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TRotZ(double angle)
         {
-            this.SetRotZ(angle);
+            SetRotZ(angle);
         }
     }
 
@@ -349,7 +349,7 @@ namespace SmartQuant.Charting.Draw3D
     {
         public TExchangeYZ()
         {
-            this.SetExchangeYZ();
+            SetExchangeYZ();
         }
     }
 }

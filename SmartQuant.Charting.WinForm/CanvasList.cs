@@ -33,4 +33,3 @@ namespace SmartQuant.Charting
         }
     }
 }
-

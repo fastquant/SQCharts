@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: SmartQuant.Charting.Draw3D.TFunction
-// Assembly: SmartQuant.Charting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=23953e483e363d68
-// MVID: F3B55EE9-4DBA-4875-B18A-7BD8DFCF4D88
-// Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll
-
-using SmartQuant.Charting;
+﻿using SmartQuant.Charting;
 using System.Drawing;
 using System.Drawing.Imaging;
 

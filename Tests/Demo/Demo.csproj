@@ -35,9 +35,6 @@
     <Reference Include="SmartQuant">
       <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
     </Reference>
-    <Reference Include="SmartQuant.FinChart">
-      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.FinChart.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -60,6 +57,10 @@
     <ProjectReference Include="..\..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
       <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
       <Name>SmartQuant.Charting.WinForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.FinChart.WinForm\SmartQuant.FinChart.WinForm.csproj">
+      <Project>{F64EB5F7-68D6-4CAC-978E-BBAC43A4C2A6}</Project>
+      <Name>SmartQuant.FinChart.WinForm</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

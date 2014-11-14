@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D5411964-2550-458E-82EA-C91DE8282655}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DemoGtk</RootNamespace>
+    <AssemblyName>DemoGtk</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glade-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="SmartQuant">
+      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="gtk-dotnet, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\Demo\Backtest.cs">
+      <Link>Backtest.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\SmartQuant.Charting.Gtk\SmartQuant.Charting.Gtk.csproj">
+      <Project>{CB9A2ED5-FDF9-40F4-8C68-3BD763BE90C1}</Project>
+      <Name>SmartQuant.Charting.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.ChartViewers.Gtk\SmartQuant.ChartViewers.Gtk.csproj">
+      <Project>{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}</Project>
+      <Name>SmartQuant.ChartViewers.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.Controls.Gtk\SmartQuant.Controls.Gtk.csproj">
+      <Project>{26692FBA-DC22-41DA-838A-7DF6D1420637}</Project>
+      <Name>SmartQuant.Controls.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.FinChart.Gtk\SmartQuant.FinChart.Gtk.csproj">
+      <Project>{B650BE79-F2BA-4905-AE3A-1D35D125B7CE}</Project>
+      <Name>SmartQuant.FinChart.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Compatibility.Gtk\Compatibility.Gtk.csproj">
+      <Project>{83CE5610-A15C-488C-8D9F-909C2340107E}</Project>
+      <Name>Compatibility.Gtk</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

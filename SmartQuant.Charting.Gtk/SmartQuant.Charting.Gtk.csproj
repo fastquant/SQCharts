@@ -246,6 +246,9 @@
     <Compile Include="..\SmartQuant.Charting.WinForm\TPaintingBitmap.cs">
       <Link>TPaintingBitmap.cs</Link>
     </Compile>
+    <Compile Include="..\SmartQuant.Charting.WinForm\Extensions.cs">
+      <Link>Extensions.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

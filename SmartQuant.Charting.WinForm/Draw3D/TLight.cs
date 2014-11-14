@@ -11,7 +11,7 @@ namespace SmartQuant.Charting.Draw3D
     public class TLight
     {
         public TColor Ambient = new TColor(Color.PaleTurquoise);
-        public TLight.TSource[] ParallelBeams = new TLight.TSource[1]
+        public TSource[] ParallelBeams = new TSource[1]
         {
             new TLight.TSource(new TVec3(3.0, -2.0, 2.0), (TColor) Color.LightYellow)
         };
@@ -56,7 +56,7 @@ namespace SmartQuant.Charting.Draw3D
             this.ParallelBeams = tsourceArray;
         }
 
-        public virtual TColor Result(TVec3 r, TVec3 n, TColor Diffuse)
+        public virtual TColor Result(TVec3 r, TVec3 n, TColor diffuse)
         {
             TColor tcolor = this.Ambient;
             foreach (TLight.TSource tsource in this.ParallelBeams)
@@ -79,7 +79,7 @@ namespace SmartQuant.Charting.Draw3D
                     tcolor += num3 * tsource.c;
                 }
             }
-            return Diffuse * tcolor;
+            return diffuse * tcolor;
         }
 
         public struct TSource

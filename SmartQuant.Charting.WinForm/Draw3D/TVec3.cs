@@ -167,7 +167,7 @@ namespace SmartQuant.Charting.Draw3D
         public static Point[] PointArray(TVec3[] v)
         {
             var points = new Point[v.Length];
-            Parallel.For(0, v.Length - 1, i => points[i] = v[i]);
+            Parallel.For(0, v.Length, i => points[i] = v[i]);
             return points;
         }
     }

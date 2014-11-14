@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Gdk;
+//using Gdk;
 using Gtk;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using Image = Gdk.Image;
@@ -26,10 +26,10 @@ namespace Compatibility.Gtk
     {
     }
 
-    public class Form : Gdk.Window
+    public class Form : Window
     {
         public Form()
-            : base(null, Gdk.WindowAttr.Zero, 0)
+            : base(WindowType.Toplevel)
         {
         }
 
@@ -205,7 +205,7 @@ namespace Compatibility.Gtk
         public UserControl()
         {
             this.drawingArea = new DrawingArea();
-            this.drawingArea.Events = EventMask.AllEventsMask;
+            this.drawingArea.Events = Gdk.EventMask.AllEventsMask;
             var eb = new EventBox();
             eb.Add(this.drawingArea);
             var vp = new Viewport();
@@ -246,7 +246,7 @@ namespace Compatibility.Gtk
             this.drawingArea.ButtonPressEvent += (o, args) =>
             {
                 var evt = args.Event;
-                if (evt.Type == EventType.TwoButtonPress)
+                if (evt.Type == Gdk.EventType.TwoButtonPress)
                     this.OnDoubleClick(args);
                 else
                     this.OnMouseDown(args);
@@ -282,7 +282,7 @@ namespace Compatibility.Gtk
             QueueDraw();
         }
 
-        protected override bool OnKeyPressEvent(EventKey evnt)
+        protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
         {
             this.OnKeyPress(evnt);
             return base.OnKeyPressEvent(evnt);

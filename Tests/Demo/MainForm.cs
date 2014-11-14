@@ -16,10 +16,10 @@ namespace Demo
 
         public MainForm()
         {
+            InitializeComponent();
             var f = new Framework("Demo", true);
             f.IsDisposable = false;
             f.GroupDispatcher = new GroupDispatcher(f);
-            InitializeComponent();
             this.barChart.Init(f, null, null);
             this.barChart2.Init(f, null, null);
             this.barChart.ResumeUpdates();
@@ -27,19 +27,19 @@ namespace Demo
             this.timer = new System.Windows.Forms.Timer();
             this.timer.Interval = 500;
             this.timer.Tick += new EventHandler((sender, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        this.timer.Stop();
-                        barChart.UpdateGUI();
-                        barChart2.UpdateGUI();
-                        this.timer.Interval = 500;
-                        this.timer.Enabled = true;
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                });
+                    this.timer.Stop();
+                    barChart.UpdateGUI();
+                    barChart2.UpdateGUI();
+                    this.timer.Interval = 500;
+                    this.timer.Enabled = true;
+                }
+                catch (Exception)
+                {
+                }
+            });
             this.timer.Start();
         }
 
@@ -47,29 +47,31 @@ namespace Demo
         {
             base.OnShown(e);
             new Thread(new ThreadStart(() =>
-                    {
-                        Scenario scenario = new Backtest(Framework.Current);
-                        scenario.Run();
-                        Console.WriteLine("Done!");
-                        Reset();
-                    })).Start();
+            {
+                Scenario scenario = new Backtest(Framework.Current);
+                scenario.Run();
+                Reset();
+            })).Start();
         }
 
         private void Reset()
         {
-            this.portfolio = Framework.Current.PortfolioManager.Portfolios.GetByIndex(0);
-            if (this.portfolio == null)
-                return;
-            PortfolioPerformance performance = this.portfolio.Performance;
-            this.chart3.Reset();
-            this.chart3.SetMainSeries((ISeries)performance.EquitySeries, false, Color.White);
-            this.chart3.AddPad();
-            this.chart3.DrawSeries(performance.DrawdownSeries, 2, Color.White, SimpleDSStyle.Line, SearchOption.ExactFirst, SmoothingMode.HighSpeed);
-            this.chart3.UpdateStyle = ChartUpdateStyle.WholeRange;
-            performance.Updated += new EventHandler((sender, e) =>
+            this.Invoke((System.Action)delegate
+            {
+                this.portfolio = Framework.Current.PortfolioManager.Portfolios.GetByIndex(0);
+                if (this.portfolio == null)
+                    return;
+                PortfolioPerformance performance = this.portfolio.Performance;
+                this.chart3.Reset();
+                this.chart3.SetMainSeries(performance.EquitySeries, false, Color.White);
+                this.chart3.AddPad();
+                this.chart3.DrawSeries(performance.DrawdownSeries, 2, Color.White, SimpleDSStyle.Line, SearchOption.ExactFirst, SmoothingMode.HighSpeed);
+                this.chart3.UpdateStyle = ChartUpdateStyle.WholeRange;
+                performance.Updated += new EventHandler((sender, e) =>
                 {
                     this.chart3.OnItemAdedd(this.portfolio.Performance.EquitySeries.LastDateTime);
                 });
+            });
         }
     }
 }

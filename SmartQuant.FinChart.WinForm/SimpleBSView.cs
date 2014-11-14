@@ -8,54 +8,21 @@ namespace SmartQuant.FinChart
 {
     public class SimpleBSView : SeriesView
     {
-        private Color upColor = Color.Black;
-        private Color downColor = Color.Lime;
         private BarSeries series;
-        private SimpleBSStyle style;
 
         [Category("Drawing Style")]
-        public Color UpColor
-        {
-            get
-            {
-                return this.upColor;
-            }
-            set
-            {
-                this.upColor = value;
-            }
-        }
+        public Color UpColor { get; set; }
 
         [Category("Drawing Style")]
-        public Color DownColor
-        {
-            get
-            {
-                return this.downColor;
-            }
-            set
-            {
-                this.downColor = value;
-            }
-        }
+        public Color DownColor { get; set; }
 
-        public SimpleBSStyle Style
-        {
-            get
-            {
-                return this.style;
-            }
-            set
-            {
-                this.style = value;
-            }
-        }
+        public SimpleBSStyle Style { get; set; }
 
         public override ISeries MainSeries
         {
             get
             {
-                return (ISeries) this.series;
+                return this.series;
             }
         }
 
@@ -64,7 +31,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.downColor;
+                return DownColor;
             }
             set
             {
@@ -82,6 +49,8 @@ namespace SmartQuant.FinChart
         public SimpleBSView(Pad pad, BarSeries series)
             : base(pad)
         {
+            UpColor = Color.Black;
+            DownColor = Color.Lime;
             this.series = series;
         }
 
@@ -100,19 +69,19 @@ namespace SmartQuant.FinChart
 
         public override void Paint()
         {
-            Color color = this.downColor;
+            Color color = DownColor;
             Pen pen1 = new Pen(color);
             Pen pen2 = new Pen(color);
             Pen pen3 = new Pen(color);
-            Brush brush1 = (Brush) new SolidBrush(this.downColor);
-            Brush brush2 = (Brush) new SolidBrush(this.upColor);
+            Brush brush1 =  new SolidBrush(DownColor);
+            Brush brush2 =  new SolidBrush(UpColor);
             long num1 = -1L;
             long num2 = -1L;
             int index1 = this.series.GetIndex(this.firstDate, IndexOption.Null);
             int index2 = this.series.GetIndex(this.lastDate, IndexOption.Null);
             if (index1 == -1 || index2 == -1)
                 return;
-            int width = (int) Math.Max(2.0, (double) (int) this.pad.IntervalWidth / 1.4);
+            int width = (int)Math.Max(2.0, (double)(int)this.pad.IntervalWidth / 1.4);
             int num3 = 0;
             for (int index3 = index1; index3 <= index2; ++index3)
             {
@@ -122,7 +91,7 @@ namespace SmartQuant.FinChart
                 double low = bar.Low;
                 double open = bar.Open;
                 double close = bar.Close;
-                if (this.style == SimpleBSStyle.Candle)
+                if (Style == SimpleBSStyle.Candle)
                 {
                     this.pad.Graphics.DrawLine(pen1, num4, this.pad.ClientY(low), num4, this.pad.ClientY(high));
                     if (open != 0.0 && close != 0.0)
@@ -144,20 +113,20 @@ namespace SmartQuant.FinChart
                         }
                     }
                 }
-                if (this.style == SimpleBSStyle.Bar)
+                if (Style == SimpleBSStyle.Bar)
                 {
                     this.pad.Graphics.DrawLine(pen1, num4, this.pad.ClientY(low), num4, this.pad.ClientY(high));
                     this.pad.Graphics.DrawLine(pen1, num4 - width / 2, this.pad.ClientY(open), num4, this.pad.ClientY(open));
                     this.pad.Graphics.DrawLine(pen1, num4 + width / 2, this.pad.ClientY(close), num4, this.pad.ClientY(close));
                 }
-                if (this.style == SimpleBSStyle.Line)
+                if (Style == SimpleBSStyle.Line)
                 {
-                    long num5 = (long) num4;
+                    long num5 = (long)num4;
                     int num6 = this.pad.ClientY(bar.Close);
                     if (num1 != -1L && num2 != -1L)
-                        this.pad.Graphics.DrawLine(pen1, (float) num5, (float) num6, (float) num1, (float) num2);
+                        this.pad.Graphics.DrawLine(pen1, (float)num5, (float)num6, (float)num1, (float)num2);
                     num1 = num5;
-                    num2 = (long) num6;
+                    num2 = (long)num6;
                     ++num3;
                 }
             }
@@ -165,19 +134,15 @@ namespace SmartQuant.FinChart
 
         public override Distance Distance(int x, double y)
         {
-            Distance distance = new Distance();
-            Bar bar = this.series[this.pad.GetDateTime(x), IndexOption.Null];
-            distance.DX = 0.0;
-            if (y >= bar.Low && y <= bar.High)
-                distance.DY = 0.0;
-            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
-                return (Distance) null;
-            this.toolTipFormat = "{0} {2}\n\nH : {3:F*}\nL : {4:F*}\nO : {5:F*}\nC : {6:F*}\nV : {7}";
-            this.toolTipFormat = this.toolTipFormat.Replace("*", this.pad.Chart.LabelDigitsCount.ToString());
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(this.toolTipFormat, (object) this.series.Name, (object) this.series.Description, (object) bar.DateTime, (object) bar.High, (object) bar.Low, (object) bar.Open, (object) bar.Close, (object) bar.Volume);
-            distance.ToolTipText = ((object) stringBuilder).ToString();
-            return distance;
+            var d = new Distance();
+            var bar = this.series[this.pad.GetDateTime(x), IndexOption.Null];
+            d.DX = 0;
+            d.DY = bar.Low <= y && y <= bar.High ? 0 : d.DY;
+            if (d.DX == double.MaxValue || d.DY == double.MaxValue)
+                return null;
+            ToolTipFormat = "{0} {2}\n\nH : {3:F*}\nL : {4:F*}\nO : {5:F*}\nC : {6:F*}\nV : {7}".Replace("*", this.pad.Chart.LabelDigitsCount.ToString());
+            d.ToolTipText = string.Format(ToolTipFormat, this.series.Name, this.series.Description, bar.DateTime, bar.High, bar.Low, bar.Open, bar.Close, bar.Volume);
+            return d;
         }
     }
 }

@@ -82,9 +82,9 @@ namespace SmartQuant.Charting.Draw3D
 
         public void Clip()
         {
-            this.Clip(ref this.r);
-            this.Clip(ref this.g);
-            this.Clip(ref this.b);
+            Clip(ref this.r);
+            Clip(ref this.g);
+            Clip(ref this.b);
         }
 
         public static TColor Clip(TColor c)

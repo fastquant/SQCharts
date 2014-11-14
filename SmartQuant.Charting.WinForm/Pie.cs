@@ -165,7 +165,7 @@ namespace SmartQuant.Charting
                 num5 = num4;
             }
             int num8 = num5 / 10;
-            double num9 = 0.0;
+        //     double num9 ;
             double num10 = 0.0;
             for (int index = 0; index < Pieces.Count; ++index)
             {
@@ -178,7 +178,7 @@ namespace SmartQuant.Charting
             }
             if (EnableContour)
             {
-                num9 = 0.0;
+           //     num9 = 0.0;
                 double num11 = 0.0;
                 for (int index = 0; index < Pieces.Count; ++index)
                 {
@@ -190,7 +190,7 @@ namespace SmartQuant.Charting
                     pad.Graphics.DrawPie(pen, (float)(num2 + num6 + num8), (float)(num3 + num7 + num8), (float)(num4 - 2 * num8), (float)(num5 - 2 * num8), (float)num13, (float)num14);
                 }
             }
-            num9 = 0.0;
+     //       num9 = 0.0;
             double num15 = 0.0;
             for (int index = 0; index < Pieces.Count; ++index)
             {

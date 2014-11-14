@@ -274,20 +274,20 @@ namespace SmartQuant.FinChart
 
         public void AddPrimitive(IChartDrawable primitive)
         {
-            this.primitives.Add((object)primitive);
+            this.primitives.Add(primitive);
             if (primitive is IDateDrawable)
                 this.rangeList.Add(primitive as IDateDrawable);
             else
-                this.simplePrimitives.Add((object)primitive);
+                this.simplePrimitives.Add(primitive);
         }
 
         public void RemovePrimitive(IChartDrawable primitive)
         {
-            this.primitives.Remove((object)primitive);
+            this.primitives.Remove(primitive);
             if (primitive is IDateDrawable)
-                this.rangeList[(primitive as IDateDrawable).DateTime].Remove((object)primitive);
+                this.rangeList[(primitive as IDateDrawable).DateTime].Remove(primitive);
             else
-                this.simplePrimitives.Remove((object)primitive);
+                this.simplePrimitives.Remove(primitive);
         }
 
         public void ClearPrimitives()
@@ -599,15 +599,15 @@ namespace SmartQuant.FinChart
 
         private void DeleteMenuItem_Click(object sender, EventArgs e)
         {
-            this.primitives.Remove((object)this.selectedPrimitive);
-            this.simplePrimitives.Remove((object)this.selectedPrimitive);
+            this.primitives.Remove(this.selectedPrimitive);
+            this.simplePrimitives.Remove(this.selectedPrimitive);
             this.chart.ContentUpdated = true;
             this.chart.Invalidate();
         }
 
         public bool IsInRange(double x, double y)
         {
-            return x >= (double)this.x1 && x <= (double)this.x2 && (y >= (double)this.y1 && y <= (double)this.y2);
+            return this.x1 <= x && x <= this.x2 && this.y1 <= y && y <= this.y2;
         }
     }
 }

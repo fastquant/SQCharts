@@ -1,16 +1,10 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: SmartQuant.Charting.Draw3D.TAxisCalc
-// Assembly: SmartQuant.Charting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=23953e483e363d68
-// MVID: F3B55EE9-4DBA-4875-B18A-7BD8DFCF4D88
-// Assembly location: C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.Charting.dll
-
-using System;
+﻿using System;
 
 namespace SmartQuant.Charting.Draw3D
 {
     public class TAxisCalc
     {
-        private TAxisCalc.TTick[] ticks = new TAxisCalc.TTick[0];
+        private TTick[] ticks = new TTick[0];
         private TVec3 Origin;
         private TVec3 End;
         private double ValO;

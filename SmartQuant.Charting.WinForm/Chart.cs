@@ -5,8 +5,17 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Drawing.Text;
+using System.Linq;
+
 #if GTK
+using Gtk;
 using Compatibility.Gtk;
+
+
+
+
+
+
 #else
 using System.Windows.Forms;
 #endif
@@ -238,12 +247,8 @@ namespace SmartQuant.Charting
             set
             {
                 this.fPrintLayout = value;
-                if (this.fPrintDocument == null)
-                    return;
-                if (this.fPrintLayout == EPrintLayout.Landscape)
-                    this.fPrintDocument.DefaultPageSettings.Landscape = true;
-                else
-                    this.fPrintDocument.DefaultPageSettings.Landscape = false;
+                if (this.fPrintDocument != null)
+                    this.fPrintDocument.DefaultPageSettings.Landscape = this.fPrintLayout == EPrintLayout.Landscape;
             }
         }
 
@@ -285,8 +290,8 @@ namespace SmartQuant.Charting
             set
             {
                 this.fTransformationType = value;
-                this.fSessionStart = new TimeSpan(0, 0, 0, 0);
-                this.fSessionEnd = new TimeSpan(0, 24, 0, 0);
+                this.fSessionStart = TimeSpan.FromDays(0);
+                this.fSessionEnd = TimeSpan.FromDays(1);
                 foreach (Pad pad in this.fPads)
                     pad.TransformationType = value;
             }
@@ -359,15 +364,14 @@ namespace SmartQuant.Charting
         public event EventHandler PadSplitMouseUp;
 
         public Chart()
+            : this("")
         {
-            this.Init();
-            this.Name = "";
         }
 
-        public Chart(string Name)
+        public Chart(string name)
         {
-            this.Init();
-            this.Name = Name;
+            Init();
+            Name = name;
         }
 
         public Chart(DateTime date)
@@ -376,15 +380,15 @@ namespace SmartQuant.Charting
 
         protected virtual void Init()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             #if GTK
             #else
             this.ResizeRedraw = true;
-            this.SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick|ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick | ControlStyles.UserPaint, true);
             #endif
             this.fPadsForeColor = Color.White;
             this.fPads = new PadList();
-            this.AddPad(0.0, 0.0, 1.0, 1.0);
+            AddPad(0, 0, 1, 1);
             this.fPadSplit = false;
             this.fPadSplitIndex = 0;
             this.fDoubleBufferingEnabled = true;
@@ -403,12 +407,9 @@ namespace SmartQuant.Charting
 
         public Pad cd(int padIndex)
         {
-            if (padIndex < 1)
-                padIndex = 1;
-            if (padIndex > this.fPads.Count)
-                padIndex = this.fPads.Count;
-            Chart.fPad = this.fPads[padIndex - 1];
-            return Chart.fPad;
+            padIndex = Math.Max(1, padIndex);
+            padIndex = Math.Min(this.fPads.Count, padIndex);
+            return Chart.fPad = this.fPads[padIndex - 1];
         }
 
         public void Clear()
@@ -434,14 +435,14 @@ namespace SmartQuant.Charting
                 pad.SetRangeY(Min, Max);
         }
 
-        public virtual Pad AddPad(double X1, double Y1, double X2, double Y2)
+        public virtual Pad AddPad(double x1, double y1, double x2, double y2)
         {
-            Chart.fPad = new Pad(this, X1, Y1, X2, Y2);
-            Chart.fPad.Name = "Pad " + (this.fPads.Count + 1).ToString();
-            Chart.fPad.ForeColor = this.fPadsForeColor;
-            this.fPads.Add(Chart.fPad);
-            Chart.fPad.Zoom += new ZoomEventHandler(this.ZoomChanged);
-            return Chart.fPad;
+            var pad = new Pad(this, x1, y1, x2, y2);
+            pad.Name = string.Format("Pad {0}", this.fPads.Count + 1);
+            pad.ForeColor = this.fPadsForeColor;
+            pad.Zoom += new ZoomEventHandler(this.ZoomChanged);
+            this.fPads.Add(pad);
+            return Chart.fPad = pad;
         }
 
         public void Connect()
@@ -477,102 +478,79 @@ namespace SmartQuant.Charting
 
         private void AdaptLeftMargin()
         {
-            int val1 = 0;
+            int w = 0;
             foreach (Pad pad in this.fPads)
-                val1 = Math.Max(val1, pad.AxisLeft.LastValidAxisWidth);
+                w = Math.Max(w, pad.AxisLeft.LastValidAxisWidth);
             foreach (Pad pad in this.fPads)
-                pad.MarginLeft = val1 - pad.AxisLeft.LastValidAxisWidth;
+                pad.MarginLeft = w - pad.AxisLeft.LastValidAxisWidth;
         }
 
         private void AdaptRightMargin()
         {
-            int val1 = 0;
+            int w = 0;
             foreach (Pad pad in this.fPads)
-                val1 = Math.Max(val1, pad.AxisRight.LastValidAxisWidth);
+                w = Math.Max(w, pad.AxisRight.LastValidAxisWidth);
             foreach (Pad pad in this.fPads)
-                pad.MarginRight = val1 - pad.AxisRight.LastValidAxisWidth;
+                pad.MarginRight = w - pad.AxisRight.LastValidAxisWidth;
         }
 
-        public void Divide(int X, int Y)
+        public void Divide(int x, int y)
+        {
+            var widths = Enumerable.Range(1, x).Select(i => i / (double)x).ToArray();
+            var heights = Enumerable.Range(1, y).Select(i => i / (double)y).ToArray();
+            Divide(x, y, widths, heights);
+        }
+
+        public void Divide(int x, int y, double[] widths, double[] heights)
         {
             this.fPads.Clear();
-            double num1 = 1.0 / (double) X;
-            double num2 = 1.0 / (double) Y;
-            for (int index1 = 0; index1 < Y; ++index1)
-            {
-                for (int index2 = 0; index2 < X; ++index2)
-                {
-                    double X1 = (double) index2 * num1;
-                    double X2 = (double) (index2 + 1) * num1;
-                    double Y1 = (double) index1 * num2;
-                    double Y2 = (double) (index1 + 1) * num2;
-                    this.AddPad(X1, Y1, X2, Y2);
-                }
-            }
+            var xs = Enumerable.Concat(new double[] { 0 }, widths).CumulativeSum().ToArray();
+            var ys = Enumerable.Concat(new double[] { 0 }, heights).CumulativeSum().ToArray();
+            for (int i = 1; i < ys.Length; ++i)
+                for (int j = 1; j < xs.Length; ++j)
+                    AddPad(xs[j - 1], ys[i - 1], xs[j], ys[i]);
         }
 
-        public void Divide(int X, int Y, double[] Widths, double[] Heights)
+        public void UpdatePads(Graphics padGraphics, int x, int y, int width, int height)
         {
-            this.fPads.Clear();
-            double Y1 = 0.0;
-            double Y2 = 0.0;
-            for (int index1 = 0; index1 < Y; ++index1)
-            {
-                if (index1 > 0)
-                    Y1 += Heights[index1 - 1];
-                Y2 += Heights[index1];
-                double X1 = 0.0;
-                double X2 = 0.0;
-                for (int index2 = 0; index2 < X; ++index2)
-                {
-                    if (index2 > 0)
-                        X1 = Widths[index2 - 1];
-                    X2 += Widths[index2];
-                    this.AddPad(X1, Y1, X2, Y2);
-                }
-            }
-        }
-
-        public void UpdatePads(Graphics PadGraphics, int X, int Y, int Width, int Height)
-        {
-            PadGraphics.Clear(this.BackColor);
-            if (this.SmoothingEnabled)
-                PadGraphics.SmoothingMode = SmoothingMode.AntiAlias;
-            if (this.AntiAliasingEnabled)
-                PadGraphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            padGraphics.Clear(BackColor);
+            if (SmoothingEnabled)
+                padGraphics.SmoothingMode = SmoothingMode.AntiAlias;
+            if (AntiAliasingEnabled)
+                padGraphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             foreach (Pad pad in this.fPads)
             {
-                pad.SetCanvas(Width, Height);
-                pad.X1 += X;
-                pad.X2 += X;
-                pad.Y1 += Y;
-                pad.Y2 += Y;
-                pad.Update(PadGraphics);
-                pad.X1 -= X;
-                pad.X2 -= X;
-                pad.Y1 -= Y;
-                pad.Y2 -= Y;
+                pad.SetCanvas(width, height);
+                pad.X1 += x;
+                pad.X2 += x;
+                pad.Y1 += y;
+                pad.Y2 += y;
+                pad.Update(padGraphics);
+                pad.X1 -= x;
+                pad.X2 -= x;
+                pad.Y1 -= y;
+                pad.Y2 -= y;
             }
         }
 
         public Bitmap GetBitmap()
         {
-            return new Bitmap((Image) this.GetMetafile(EmfType.EmfPlusOnly));
+            return new Bitmap(GetMetafile(EmfType.EmfPlusOnly));
         }
 
-        public Bitmap GetBitmap(float Dpi)
+        public Bitmap GetBitmap(float dpi)
         {
             Graphics graphics = this.CreateGraphics();
-            int num1 = (int) ((double) this.ClientRectangle.Width * (double) Dpi / (double) graphics.DpiX);
-            int num2 = (int) ((double) this.ClientRectangle.Height * (double) Dpi / (double) graphics.DpiY);
+            int num1 = (int)((double)this.ClientRectangle.Width * (double)dpi / (double)graphics.DpiX);
+            int num2 = (int)((double)this.ClientRectangle.Height * (double)dpi / (double)graphics.DpiY);
             Bitmap bitmap = new Bitmap(num1, num2);
-            bitmap.SetResolution(Dpi, Dpi);
-            Graphics Graphics = Graphics.FromImage((Image) bitmap);
-            Graphics.Clear(this.BackColor);
+            bitmap.SetResolution(dpi, dpi);
+            var g1 = Graphics.FromImage(bitmap);
+            g1.Clear(BackColor);
             if (this.SmoothingEnabled)
-                Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                g1.SmoothingMode = SmoothingMode.AntiAlias;
             if (this.AntiAliasingEnabled)
-                Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+                g1.TextRenderingHint = TextRenderingHint.AntiAlias;
             if (this.GroupLeftMarginEnabled)
                 this.AdaptLeftMargin();
             if (this.GroupRightMarginEnabled)
@@ -580,171 +558,168 @@ namespace SmartQuant.Charting
             foreach (Pad pad in this.fPads)
             {
                 pad.SetCanvas(num1, num2);
-                pad.Update(Graphics);
+                pad.Update(g1);
             }
-            Graphics.Dispose();
+            g1.Dispose();
             return bitmap;
         }
 
         public Metafile GetMetafile(EmfType type)
         {
-            int width = this.ClientRectangle.Width;
-            int height = this.ClientRectangle.Height;
-            Graphics graphics = this.CreateGraphics();
-            IntPtr hdc = graphics.GetHdc();
-            Metafile metafile = new Metafile(hdc, type);
-            graphics.ReleaseHdc(hdc);
-            graphics.Dispose();
-            Graphics Graphics = Graphics.FromImage((Image) metafile);
-            Graphics.Clear(this.BackColor);
-            if (this.SmoothingEnabled)
-                Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            if (this.AntiAliasingEnabled)
-                Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-            if (this.GroupLeftMarginEnabled)
-                this.AdaptLeftMargin();
-            if (this.GroupRightMarginEnabled)
-                this.AdaptRightMargin();
-            foreach (Pad pad in this.fPads)
+            int w = this.ClientRectangle.Width;
+            int h = this.ClientRectangle.Height;
+
+            Metafile metafile;
+            using (var g = this.CreateGraphics())
             {
-                pad.SetCanvas(width, height);
-                pad.Update(Graphics);
+                IntPtr hdc = g.GetHdc();
+                metafile = new Metafile(hdc, type);
+                g.ReleaseHdc(hdc);
+                g.Dispose();
             }
-            Graphics.Dispose();
+
+            using (var g = Graphics.FromImage(metafile))
+            {
+                g.Clear(BackColor);
+                if (SmoothingEnabled)
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                if (AntiAliasingEnabled)
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                if (GroupLeftMarginEnabled)
+                    AdaptLeftMargin();
+                if (GroupRightMarginEnabled)
+                    AdaptRightMargin();
+                foreach (Pad pad in this.fPads)
+                {
+                    pad.SetCanvas(w, h);
+                    pad.Update(g);
+                }
+            }
             return metafile;
         }
 
         public void SaveImage(string filename, ImageFormat format)
         {
-            Metafile metafile = this.GetMetafile(EmfType.EmfPlusOnly);
-            metafile.Save(filename, format);
-            metafile.Dispose();
+            using (var metafile = GetMetafile(EmfType.EmfPlusOnly))
+                metafile.Save(filename, format);
         }
 
         public void UpdatePads()
         {
-            this.Invalidate();
+            Invalidate();
             #if !GTK
             Application.DoEvents();
             #endif
         }
 
+        //TODO:rewrite it!
         public void UpdatePads(Graphics g)
         {
-            if (this.Disposing || this.fIsUpdating)
+            if (Disposing || this.fIsUpdating)
                 return;
             this.fIsUpdating = true;
             int width = this.ClientRectangle.Width;
             int height = this.ClientRectangle.Height;
-            Bitmap bitmap = (Bitmap) null;
-            Graphics Graphics;
+            Bitmap bitmap = null;
+            Graphics g1;
             try
             {
                 if (this.fDoubleBufferingEnabled)
                 {
                     bitmap = new Bitmap(width, height);
-                    Graphics = Graphics.FromImage((Image) bitmap);
+                    g1 = Graphics.FromImage(bitmap);
                 }
                 else
-                    Graphics = g;
+                    g1 = g;
             }
             catch
             {
                 this.fIsUpdating = false;
                 return;
             }
-            Graphics.Clear(this.BackColor);
-            if (this.SmoothingEnabled)
-                Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            if (this.AntiAliasingEnabled)
-                Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-            if (this.GroupLeftMarginEnabled)
-                this.AdaptLeftMargin();
-            if (this.GroupRightMarginEnabled)
-                this.AdaptRightMargin();
+            g1.Clear(BackColor);
+            if (SmoothingEnabled)
+                g1.SmoothingMode = SmoothingMode.AntiAlias;
+            if (AntiAliasingEnabled)
+                g1.TextRenderingHint = TextRenderingHint.AntiAlias;
+            if (GroupLeftMarginEnabled)
+                AdaptLeftMargin();
+            if (GroupRightMarginEnabled)
+                AdaptRightMargin();
             foreach (Pad pad in this.fPads)
             {
                 pad.SetCanvas(width, height);
-                pad.Update(Graphics);
+                pad.Update(g1);
             }
             if (this.fDoubleBufferingEnabled)
             {
-                Graphics graphics;
+                Graphics g2;
                 try
                 {
-                    graphics = g;
+                    g2 = g;
                 }
                 catch
                 {
                     this.fIsUpdating = false;
                     return;
                 }
-                if (graphics != null)
+                if (g2 != null)
                 {
-                    graphics.DrawImage((Image) bitmap, 0, 0);
+                    g2.DrawImage(bitmap, 0, 0);
                     if (this.fFileName != null)
-                        bitmap.Save(this.FileName, ImageFormat.Gif);
+                        bitmap.Save(FileName, ImageFormat.Gif);
                     bitmap.Dispose();
-                    graphics.Dispose();
+                    g2.Dispose();
                 }
             }
-            Graphics.Dispose();
+            g1.Dispose();
             this.fIsUpdating = false;
         }
 
         public virtual void Print()
         {
-            this.PrintDocument.Print();
+            PrintDocument.Print();
         }
 
         public virtual void PrintPreview()
         {
             #if !GTK
-            ((Control) new PrintPreviewDialog()
-            {
-                Document = this.PrintDocument
-            }).Show();
+            new PrintPreviewDialog() { Document = PrintDocument }.Show();
             #endif
         }
 
         public virtual void PrintSetup()
         {
             #if !GTK
-            int num = (int) new PrintDialog()
-            {
-                Document = this.PrintDocument
-            }.ShowDialog();
+            new PrintDialog() { Document = PrintDocument }.ShowDialog();
             #endif
         }
 
         public virtual void PrintPageSetup()
         {
             #if !GTK
-            int num = (int) new PageSetupDialog()
-            {
-                Document = this.PrintDocument
-            }.ShowDialog();
+            new PageSetupDialog() { Document = PrintDocument }.ShowDialog();
             #endif
         }
 
-        private void OnPrintPage(object sender, PrintPageEventArgs Args)
+        private void OnPrintPage(object sender, PrintPageEventArgs args)
         {
-            int X = this.fPrintX;
-            int Y = this.fPrintY;
+            int x = this.fPrintX;
+            int y = this.fPrintY;
             switch (this.fPrintAlign)
             {
                 case EPrintAlign.Veritcal:
-                    Y = (Args.PageBounds.Height - this.fPrintHeight) / 2;
+                    y = (args.PageBounds.Height - this.fPrintHeight) / 2;
                     break;
                 case EPrintAlign.Horizontal:
-                    X = (Args.PageBounds.Width - this.fPrintWidth) / 2;
+                    x = (args.PageBounds.Width - this.fPrintWidth) / 2;
                     break;
                 case EPrintAlign.Center:
-                    X = (Args.PageBounds.Width - this.fPrintWidth) / 2;
-                    Y = (Args.PageBounds.Height - this.fPrintHeight) / 2;
+                    x = (args.PageBounds.Width - this.fPrintWidth) / 2;
+                    y = (args.PageBounds.Height - this.fPrintHeight) / 2;
                     break;
             }
-            this.UpdatePads(Args.Graphics, X, Y, this.fPrintWidth, this.fPrintHeight);
+            UpdatePads(args.Graphics, x, y, this.fPrintWidth, this.fPrintHeight);
         }
 
         protected void InitializeComponent()
@@ -757,12 +732,13 @@ namespace SmartQuant.Charting
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            this.UpdatePads(pe.Graphics);
+            UpdatePads(pe.Graphics);
             base.OnPaint(pe);
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+            // no-op
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -772,22 +748,23 @@ namespace SmartQuant.Charting
                 Pad pad1 = this.fPads[this.fPadSplitIndex];
                 int width = this.ClientRectangle.Width;
                 int height = this.ClientRectangle.Height;
-                double num = (double) e.Y / (double) height;
+                double num = (double)e.Y / (double)height;
                 pad1.SetCanvas(pad1.CanvasX1, num, pad1.CanvasX2, pad1.CanvasY2, width, height);
                 if (this.fPadSplitIndex != 0)
                 {
                     Pad pad2 = this.fPads[this.fPadSplitIndex - 1];
                     pad2.SetCanvas(pad2.CanvasX1, pad2.CanvasY1, pad2.CanvasX2, num, width, height);
                 }
-                this.UpdatePads();
+                UpdatePads();
             }
             foreach (Pad pad in this.fPads)
             {
                 if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1)
                 {
                     #if GTK
+                    //Gdk.CursorType.
                     #else
-                    if (!(Cursor.Current != Cursors.HSplit))
+                    if (Cursor.Current == Cursors.HSplit)
                         return;
                     Cursor.Current = Cursors.HSplit;
                     #endif
@@ -795,20 +772,16 @@ namespace SmartQuant.Charting
                 }
             }
             foreach (Pad pad in this.fPads)
-            {
-                if (pad.X1 <= e.X && pad.X2 >= e.X && (pad.Y1 <= e.Y && pad.Y2 >= e.Y))
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
                     pad.MouseMove(e);
-            }
             base.OnMouseMove(e);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             foreach (Pad pad in this.fPads)
-            {
-                if (pad.X1 <= e.X && pad.X2 >= e.X && (pad.Y1 <= e.Y && pad.Y2 >= e.Y))
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
                     pad.MouseWheel(e);
-            }
             base.OnMouseWheel(e);
         }
 
@@ -824,10 +797,8 @@ namespace SmartQuant.Charting
                 }
             }
             foreach (Pad pad in this.fPads)
-            {
-                if (pad.X1 <= e.X && pad.X2 >= e.X && (pad.Y1 <= e.Y && pad.Y2 >= e.Y))
+                if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
                     pad.MouseDown(e);
-            }
             base.OnMouseDown(e);
         }
 
@@ -836,9 +807,9 @@ namespace SmartQuant.Charting
             if (this.fPadSplit)
             {
                 this.fPadSplit = false;
-                if (this.PadSplitMouseUp == null)
+                if (PadSplitMouseUp == null)
                     return;
-                this.PadSplitMouseUp((object) this, EventArgs.Empty);
+                this.PadSplitMouseUp(this, EventArgs.Empty);
             }
             else
             {
@@ -851,15 +822,14 @@ namespace SmartQuant.Charting
         protected override void OnDoubleClick(EventArgs e)
         {
             #if GTK
-            Point point = new Point(0, 0);
+            var evt = (e as ButtonPressEventArgs).Event;
+            var p = new Point((int)evt.X, (int)evt.Y);
             #else
-            Point point = this.PointToClient(Cursor.Position);
+            var p = this.PointToClient(Cursor.Position);
             #endif
             foreach (Pad pad in this.fPads)
-            {
-                if (pad.X1 <= point.X && pad.X2 >= point.X && (pad.Y1 <= point.Y && pad.Y2 >= point.Y))
-                    pad.DoubleClick(point.X, point.Y);
-            }
+                if (pad.X1 <= p.X && pad.X2 >= p.X && pad.Y1 <= p.Y && p.Y <= pad.Y2)
+                    pad.DoubleClick(p.X, p.Y); 
             base.OnDoubleClick(e);
         }
 

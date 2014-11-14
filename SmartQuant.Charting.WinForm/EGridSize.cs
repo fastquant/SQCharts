@@ -1,5 +1,6 @@
 ﻿// Licensed under the Apache License, Version 2.0. 
 // Copyright (c) Alex Lee. All rights reserved.
+
 using System;
 
 namespace SmartQuant.Charting
@@ -30,7 +31,7 @@ namespace SmartQuant.Charting
         month3 = 90 * day1,
         month4 = 120 * day1,
         month6 = 180 * day1,
-        year1 = 9460800000000000,
+        year1 = 365 * 3 * day1,
         year2 = 2 * year1,
         year3 = 3 * year1,
         year4 = 4 * year1,

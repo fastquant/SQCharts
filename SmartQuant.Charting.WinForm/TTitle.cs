@@ -73,21 +73,20 @@ namespace SmartQuant.Charting
 
         public void Paint()
         {
-            var solidBrush1 = new SolidBrush(Color);
+            var brush = new SolidBrush(Color);
             if (!string.IsNullOrEmpty(Text))
-                this.pad.Graphics.DrawString(Text, Font, (Brush)solidBrush1, X, Y);
+                this.pad.Graphics.DrawString(Text, Font, brush, X, Y);
             if (Strategy == ETitleStrategy.Smart && Text == "" && ItemsEnabled && Items.Count != 0)
-                this.pad.Graphics.DrawString(((TTitleItem)Items[0]).Text, Font, (Brush)new SolidBrush(Color), X, Y);
+                this.pad.Graphics.DrawString(((TTitleItem)Items[0]).Text, Font, brush, X, Y);
             if (!ItemsEnabled)
                 return;
             string str = Text;
-            foreach (TTitleItem ttitleItem in Items)
+            foreach (TTitleItem item in Items)
             {
-                var solidBrush2 = new SolidBrush(ttitleItem.Color);
                 string text = str + " ";
                 int num = X + (int)this.pad.Graphics.MeasureString(text, Font).Width;
-                this.pad.Graphics.DrawString(ttitleItem.Text, Font, solidBrush2, num, Y);
-                str = text + ttitleItem.Text;
+                this.pad.Graphics.DrawString(item.Text, Font, new SolidBrush(item.Color), num, Y);
+                str = text + item.Text;
             }
         }
     }

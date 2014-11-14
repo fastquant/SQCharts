@@ -423,16 +423,16 @@ namespace SmartQuant.Controls.BarChart
             this.chart.UpdatePads();
         }
 
-        private object GetComboBoxSelected()
+        private string GetComboBoxSelected()
         {
             #if GTK
             TreeIter iter;
             if (this.cbxSelector.GetActiveIter(out iter))
-            return this.cbxSelector.Model.GetValue(iter, 0);
+                return this.cbxSelector.Model.GetValue(iter, 0).ToString();
             else 
-            return null;
+                return String.Empty;
             #else
-            return this.cbxSelector.SelectedItem;
+            return this.cbxSelector.SelectedItem.ToString();
             #endif
         }
 

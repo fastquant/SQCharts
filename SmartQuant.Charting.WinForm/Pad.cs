@@ -17,8 +17,8 @@ namespace SmartQuant.Charting
     public class Pad
     {
         private Dictionary<System.Type, Viewer> viewers = new Dictionary<System.Type, Viewer>();
-        private List<Pad.ObjectViewer> objectViewers = new List<Pad.ObjectViewer>();
-        private Pad.TFeatures3D Features3D;
+        private List<ObjectViewer> objectViewers = new List<ObjectViewer>();
+        private TFeatures3D Features3D;
         [Browsable(false)]
         public bool Grid3D;
         protected int fX1;
@@ -111,11 +111,11 @@ namespace SmartQuant.Charting
         [NonSerialized]
         private MenuItem PropertiesMenuItem;
         #endif
-        private int TitleHeight;
-        private int AxisBottomHeight;
-        private int AxisTopHeight;
-        private int AxisRightWidth;
-        private int AxisLeftWidth;
+        private int titleHeight;
+        private int axisBottomHeight;
+        private int axisTopHeight;
+        private int axisRightWidth;
+        private int axisLeftWidth;
 
         [Browsable(false)]
         public bool For3D
@@ -1967,7 +1967,7 @@ namespace SmartQuant.Charting
         {
             this.fPrimitives = new ArrayList();
             Chart.Pad = this;
-            this.Features3D = new Pad.TFeatures3D(this);
+            this.Features3D = new TFeatures3D(this);
             this.fBackColor = Color.LightGray;
             this.fForeColor = Color.White;
             this.fX1 = 0;
@@ -1988,7 +1988,7 @@ namespace SmartQuant.Charting
             this.fTitleEnabled = true;
             this.fTitleOffsetX = 5;
             this.fTitleOffsetY = 5;
-            this.fTransformation = (IChartTransformation) new TIntradayTransformation();
+            this.fTransformation =  new TIntradayTransformation();
             this.fTransformationType = ETransformationType.Empty;
             this.fSessionGridColor = Color.Blue;
             this.fAxisLeft = new Axis(this, EAxisPosition.Left);
@@ -2008,7 +2008,7 @@ namespace SmartQuant.Charting
             this.fBorderColor = Color.Black;
             this.fBorderWidth = 1;
             this.SetRange(0.0, 100.0, 0.0, 100.0);
-            this.fGraphics = (Graphics) null;
+            this.fGraphics =  null;
             this.fOnAxis = false;
             this.fOnPrimitive = false;
             this.fMouseDown = false;
@@ -2407,43 +2407,43 @@ namespace SmartQuant.Charting
             if (flag2)
                 this.SetRangeY(val1_3 - (val1_4 - val1_3) / 20.0, val1_4 + (val1_4 - val1_3) / 20.0);
             this.fGraphics = Graphics;
-            this.TitleHeight = 0;
-            this.AxisBottomHeight = 0;
-            this.AxisTopHeight = 0;
-            this.AxisRightWidth = 0;
-            this.AxisLeftWidth = 0;
+            this.titleHeight = 0;
+            this.axisBottomHeight = 0;
+            this.axisTopHeight = 0;
+            this.axisRightWidth = 0;
+            this.axisLeftWidth = 0;
             if (this.fTitleEnabled)
             {
                 switch (this.fTitle.Position)
                 {
                     case ETitlePosition.Left:
-                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        this.titleHeight = this.Title.Height + this.fTitleOffsetY;
                         break;
                     case ETitlePosition.Right:
-                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        this.titleHeight = this.Title.Height + this.fTitleOffsetY;
                         break;
                     case ETitlePosition.Centre:
-                        this.TitleHeight = this.Title.Height + this.fTitleOffsetY;
+                        this.titleHeight = this.Title.Height + this.fTitleOffsetY;
                         break;
                     case ETitlePosition.InsideLeft:
-                        this.TitleHeight = 0;
+                        this.titleHeight = 0;
                         break;
                     case ETitlePosition.InsideRight:
-                        this.TitleHeight = 0;
+                        this.titleHeight = 0;
                         break;
                     case ETitlePosition.InsideCentre:
-                        this.TitleHeight = 0;
+                        this.titleHeight = 0;
                         break;
                 }
             }
             if (this.fAxisBottom.Enabled)
-                this.AxisBottomHeight = this.fAxisBottom.Height;
+                this.axisBottomHeight = this.fAxisBottom.Height;
             if (this.fAxisTop.Enabled)
-                this.AxisTopHeight = this.fAxisTop.Height;
+                this.axisTopHeight = this.fAxisTop.Height;
             if (this.fAxisRight.Enabled)
-                this.AxisRightWidth = this.fAxisRight.Width;
+                this.axisRightWidth = this.fAxisRight.Width;
             if (this.fAxisLeft.Enabled)
-                this.AxisLeftWidth = this.fAxisLeft.Width;
+                this.axisLeftWidth = this.fAxisLeft.Width;
             this.PaintAll(Graphics);
         }
 
@@ -2467,10 +2467,10 @@ namespace SmartQuant.Charting
                     Width = (float) this.fBorderWidth
                 }, this.fX1, this.fY1, width, height);
             }
-            this.fClientX = this.fX1 + this.AxisLeftWidth + this.fMarginLeft;
-            this.fClientY = this.fY1 + this.TitleHeight + this.AxisTopHeight + this.fMarginTop;
-            this.fClientWidth = this.fWidth - this.AxisLeftWidth - this.AxisRightWidth - this.fMarginLeft - this.fMarginRight;
-            this.fClientHeight = this.fHeight - this.TitleHeight - this.AxisTopHeight - this.AxisBottomHeight - this.fMarginTop - this.fMarginBottom;
+            this.fClientX = this.fX1 + this.axisLeftWidth + this.fMarginLeft;
+            this.fClientY = this.fY1 + this.titleHeight + this.axisTopHeight + this.fMarginTop;
+            this.fClientWidth = this.fWidth - this.axisLeftWidth - this.axisRightWidth - this.fMarginLeft - this.fMarginRight;
+            this.fClientHeight = this.fHeight - this.titleHeight - this.axisTopHeight - this.axisBottomHeight - this.fMarginTop - this.fMarginBottom;
             if (this.fClientWidth != 0 && this.fClientHeight != 0)
                 this.fGraphics.FillRectangle((Brush) new LinearGradientBrush(new RectangleF((float) this.fClientX, (float) this.fClientY, (float) this.fClientWidth, (float) this.fClientHeight), Color.FromArgb((int) byte.MaxValue, (int) byte.MaxValue, (int) byte.MaxValue), Color.FromArgb(200, 200, 200), LinearGradientMode.Vertical), this.fClientX, this.fClientY, this.fClientWidth, this.fClientHeight);
             if (this.fAxisBottom.Enabled)
@@ -2979,8 +2979,8 @@ namespace SmartQuant.Charting
 
             public ObjectViewer(object obj, Viewer viewer)
             {
-                this.Object = obj;
-                this.Viewer = viewer;
+                Object = obj;
+                Viewer = viewer;
             }
         }
 
@@ -2988,7 +2988,7 @@ namespace SmartQuant.Charting
         private class TFeatures3D
         {
             private Pad Pad;
-            private Pad.TFeatures3D.TAxes2D Axes2D;
+            private TAxes2D Axes2D;
             public Axis[] Axes;
             private bool fActive;
             public object View;
@@ -3054,20 +3054,20 @@ namespace SmartQuant.Charting
             [Serializable]
             private class TAxes2D
             {
-                private Pad Pad;
-                private bool Saved;
-                private Axis Top;
-                private Axis Bottom;
-                private Axis Left;
-                private Axis Right;
+                private Pad pad;
+                private bool saved;
+                private Axis top;
+                private Axis bottom;
+                private Axis left;
+                private Axis right;
 
-                public TAxes2D(Pad Pad)
+                public TAxes2D(Pad pad)
                 {
-                    this.Pad = Pad;
-                    this.Top = new Axis(Pad);
-                    this.Bottom = new Axis(Pad);
-                    this.Left = new Axis(Pad);
-                    this.Right = new Axis(Pad);
+                    this.pad = pad;
+                    this.top = new Axis(pad);
+                    this.bottom = new Axis(pad);
+                    this.left = new Axis(pad);
+                    this.right = new Axis(pad);
                 }
 
                 private void Copy(Axis dst, Axis src)
@@ -3088,36 +3088,36 @@ namespace SmartQuant.Charting
                     a.MinorTicksEnabled = false;
                     a.GridEnabled = false;
                     a.MinorGridEnabled = false;
-                    a.SetRange(0.0, 1.0);
+                    a.SetRange(0, 1);
                     a.Enabled = false;
                 }
 
                 public void Save()
                 {
-                    this.Copy(this.Top, this.Pad.fAxisTop);
-                    this.Copy(this.Bottom, this.Pad.fAxisBottom);
-                    this.Copy(this.Left, this.Pad.fAxisLeft);
-                    this.Copy(this.Right, this.Pad.fAxisRight);
-                    this.Saved = true;
+                    Copy(this.top, this.pad.fAxisTop);
+                    Copy(this.bottom, this.pad.fAxisBottom);
+                    Copy(this.left, this.pad.fAxisLeft);
+                    Copy(this.right, this.pad.fAxisRight);
+                    this.saved = true;
                 }
 
                 public void SetFor3D()
                 {
-                    this.Save();
-                    this.SetFor3D(this.Pad.AxisTop);
-                    this.SetFor3D(this.Pad.AxisBottom);
-                    this.SetFor3D(this.Pad.AxisLeft);
-                    this.SetFor3D(this.Pad.AxisRight);
+                    Save();
+                    SetFor3D(this.pad.AxisTop);
+                    SetFor3D(this.pad.AxisBottom);
+                    SetFor3D(this.pad.AxisLeft);
+                    SetFor3D(this.pad.AxisRight);
                 }
 
                 public void Restore()
                 {
-                    if (!this.Saved)
+                    if (!this.saved)
                         return;
-                    this.Copy(this.Pad.fAxisTop, this.Top);
-                    this.Copy(this.Pad.fAxisBottom, this.Bottom);
-                    this.Copy(this.Pad.fAxisLeft, this.Left);
-                    this.Copy(this.Pad.fAxisRight, this.Right);
+                    Copy(this.pad.fAxisTop, this.top);
+                    Copy(this.pad.fAxisBottom, this.bottom);
+                    Copy(this.pad.fAxisLeft, this.left);
+                    Copy(this.pad.fAxisRight, this.right);
                 }
             }
         }

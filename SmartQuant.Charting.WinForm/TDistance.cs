@@ -19,8 +19,7 @@ namespace SmartQuant.Charting
 
 		public TDistance ()
 		{
-			dX = double.MaxValue;
-			dY = double.MaxValue;
+			dX = dY= double.MaxValue;
 			ToolTipText = null;
 		}
 	}
