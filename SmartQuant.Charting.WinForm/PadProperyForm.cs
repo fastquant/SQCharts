@@ -1,10 +1,38 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Resources;
+#if GTK
+using Compatibility.Gtk;
+#else
 using System.Windows.Forms;
+#endif
 
 namespace SmartQuant.Charting
 {
+    #if GTK
+    public class PadProperyForm : Form
+    {
+        private object obj;
+        private Pad pad;
+        public PadProperyForm(object obj, Pad pad)
+        {
+            InitializeComponent();
+            this.obj = obj;
+            this.pad = pad;
+            Text = string.Format("{0}  properties", obj.GetType().Name);
+        }
+
+        private void InitializeComponent()
+        {
+        }
+
+        public int ShowDialog()
+        {
+            return 0;
+            //throw new System.NotImplementedException();
+        }
+    }
+    #else
     public class PadProperyForm : Form
     {
         private object obj;
@@ -22,6 +50,7 @@ namespace SmartQuant.Charting
 
         private void InitializeComponent()
         {
+
             ResourceManager resourceManager = new ResourceManager(typeof(PadProperyForm));
             this.propertyGrid = new PropertyGrid();
             this.SuspendLayout();
@@ -51,5 +80,7 @@ namespace SmartQuant.Charting
         {
             this.pad.Update();
         }
+       
     }
+    #endif
 }

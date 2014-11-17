@@ -54,26 +54,26 @@ namespace SmartQuant.FinChart.Objects
         public PathView(DrawingPath path, Pad pad)
         {
             this.path = path;
-            this.Pad = pad;
+            Pad = pad;
             this.toolTipEnabled = true;
             this.toolTipFormat = "{0} {1} {2} - {3:F6}";
         }
 
         public void Paint()
         {
-            GraphicsPath path = new GraphicsPath();
+            var path = new GraphicsPath();
             int x1 = int.MaxValue;
             int y1 = 0;
-            foreach (DrawingPoint drawingPoint in this.path.Points)
+            foreach (var point in this.path.Points)
             {
-                int x2 = this.Pad.ClientX(drawingPoint.X);
-                int y2 = this.Pad.ClientY(drawingPoint.Y);
+                int x2 = this.Pad.ClientX(point.X);
+                int y2 = this.Pad.ClientY(point.Y);
                 if (x1 != int.MaxValue)
                     path.AddLine(new Point(x1, y1), new Point(x2, y2));
                 x1 = x2;
                 y1 = y2;
             }
-            this.Pad.Graphics.DrawPath(new Pen(this.path.Color, (float) this.path.Width), path);
+            Pad.Graphics.DrawPath(new Pen(this.path.Color, this.path.Width), path);
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)

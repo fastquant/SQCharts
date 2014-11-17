@@ -23,7 +23,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.rangeY = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -36,7 +36,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.color = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -49,7 +49,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.wigth = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -64,7 +64,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.x = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -77,7 +77,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.y = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 

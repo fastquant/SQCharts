@@ -14,7 +14,7 @@ namespace SmartQuant.FinChart
         {
         }
 
-        public override PadRange GetPadRangeY(Pad Pad)
+        public override PadRange GetPadRangeY(Pad pad)
         {
             double max = MainSeries.GetMax(this.firstDate, this.lastDate);
             double min = MainSeries.GetMin(this.firstDate, this.lastDate);
@@ -29,17 +29,15 @@ namespace SmartQuant.FinChart
 
         public override Distance Distance(int x, double y)
         {
-            Distance distance = new Distance();
-            Bar bar = (this.MainSeries as BarSeries)[this.pad.GetDateTime(x), IndexOption.Null];
-            distance.DX = 0.0;
-            if (y >= bar.Low && y <= bar.High)
-                distance.DY = 0.0;
-            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
-                return   null;
-
-            distance.ToolTipText = string.Format(this.toolTipFormat, (object) this.MainSeries.Name, (object) this.MainSeries.Description, (object) this.ToolTipDateTimeFormat, (object) bar.High, (object) bar.Low, (object) bar.Open, (object) bar.Close, (object) bar.Volume);
-            return distance;
-
+            var d = new Distance();
+            var bar = (MainSeries as BarSeries)[this.pad.GetDateTime(x), IndexOption.Null];
+            d.DX = 0.0;
+            if (bar.Low <= y && y <= bar.High)
+                d.DY = 0.0;
+            if (d.DX == double.MaxValue || d.DY == double.MaxValue)
+                return null;
+            d.ToolTipText = string.Format(ToolTipFormat, MainSeries.Name, MainSeries.Description, ToolTipDateTimeFormat, bar.High, bar.Low, bar.Open, bar.Close, bar.Volume);
+            return d;
         }
     }
 }

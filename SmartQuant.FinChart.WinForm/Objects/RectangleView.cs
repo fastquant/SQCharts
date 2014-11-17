@@ -53,7 +53,7 @@ namespace SmartQuant.FinChart.Objects
         public RectangleView(DrawingRectangle rect, Pad pad)
         {
             this.rect = rect;
-            this.Pad = pad;
+            Pad = pad;
             this.toolTipEnabled = true;
             this.toolTipFormat = "{0} {1} {2} - {3:F6}";
         }

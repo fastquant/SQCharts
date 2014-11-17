@@ -16,7 +16,7 @@ namespace Demo
 
         public MainForm()
         {
-            InitializeComponent();
+            InitComponent();
             var f = new Framework("Demo", true);
             f.IsDisposable = false;
             f.GroupDispatcher = new GroupDispatcher(f);
@@ -24,6 +24,7 @@ namespace Demo
             this.barChart2.Init(f, null, null);
             this.barChart.ResumeUpdates();
             this.barChart2.ResumeUpdates();
+
             this.timer = new System.Windows.Forms.Timer();
             this.timer.Interval = 500;
             this.timer.Tick += new EventHandler((sender, e) =>
@@ -56,7 +57,7 @@ namespace Demo
 
         private void Reset()
         {
-            this.Invoke((System.Action)delegate
+            Invoke((System.Action)delegate
             {
                 this.portfolio = Framework.Current.PortfolioManager.Portfolios.GetByIndex(0);
                 if (this.portfolio == null)
@@ -75,4 +76,3 @@ namespace Demo
         }
     }
 }
-

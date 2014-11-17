@@ -1,29 +1,113 @@
 ﻿using System;
-
-//using Gdk;
 using Gtk;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using Image = Gdk.Image;
 using Gtk.DotNet;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace Compatibility.Gtk
 {
-    public static class GraphicsExtention
+    class TooltipWindow : Window
     {
-        public static System.Drawing.Rectangle ToStandardRectangle(this Gdk.Rectangle rect)
+        internal Label Label;
+        public TooltipWindow()
+            : base(WindowType.Popup)
         {
-            return new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+            SkipPagerHint = true;
+            SkipTaskbarHint = true;
+            Decorated = false;
+            BorderWidth = 2;
+            TypeHint = Gdk.WindowTypeHint.Tooltip;
+            AllowShrink = false;
+            AllowGrow = false;
+            Title = "tooltip"; 
+            //fake widget name for stupid theme engines
+            Name = "gtk-tooltip";
+            this.Label = new Label();
+            Add(Label);
         }
 
-        public static System.Drawing.Size ToStandardSize(this Gdk.Size size)
+        protected override bool OnExposeEvent(Gdk.EventExpose evnt)
         {
-            return new System.Drawing.Size(size.Width, size.Height);
+            int winWidth, winHeight;
+            GetSize(out winWidth, out winHeight);
+            Style.PaintFlatBox(Style, GdkWindow, StateType.Normal, ShadowType.Out, evnt.Area, this, "tooltip", 0, 0, winWidth, winHeight);
+            foreach (var child in Children)
+                PropagateExpose(child, evnt);
+            return false;
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+//            if (NudgeHorizontal || NudgeVertical) {
+//                int x, y;
+//                this.GetPosition (out x, out y);
+//                int oldY = y, oldX = x;
+//                const int edgeGap = 2;
+//
+////                Gdk.Rectangle geometry = DesktopService.GetUsableMonitorGeometry (Screen, Screen.GetMonitorAtPoint (x, y));
+////                if (NudgeHorizontal) {
+////                    if (allocation.Width <= geometry.Width && x + allocation.Width >= geometry.Left + geometry.Width - edgeGap)
+////                        x = geometry.Left + (geometry.Width - allocation.Width - edgeGap);
+////                    if (x <= geometry.Left + edgeGap)
+////                        x = geometry.Left + edgeGap;
+////                }
+////
+////                if (NudgeVertical) {
+////                    if (allocation.Height <= geometry.Height && y + allocation.Height >= geometry.Top + geometry.Height - edgeGap)
+////                        y = geometry.Top + (geometry.Height - allocation.Height - edgeGap);
+////                    if (y <= geometry.Top + edgeGap)
+////                        y = geometry.Top + edgeGap;
+////                }
+////
+////                if (y != oldY || x != oldX)
+////                    Move (x, y);
+//            }
+//
+            base.OnSizeAllocated(allocation);
         }
     }
 
-    public class ToolTip
+    public class ToolTip : Component
     {
+        TooltipWindow window;
+
+        public ToolTip()
+        {
+            window = new TooltipWindow();
+        }
+
+        public ToolTip(IContainer container):this()
+        {
+            container.Add(this);
+        }
+
+        public void SetToolTip(UserControl control, string caption)
+        {
+            this.window.Label.Text = caption;
+        }
+
+        public bool Active
+        {
+            get
+            {
+                return window.Visible;
+            }
+            set
+            { 
+                if (value)
+                    window.ShowAll();
+                else
+                    window.Hide();
+            }
+        }
+
+        public new void Dispose()
+        {   
+            window.Destroy();
+            base.Dispose();
+        }
     }
 
     public class Form : Window
@@ -32,8 +116,6 @@ namespace Compatibility.Gtk
             : base(WindowType.Toplevel)
         {
         }
-
-        public string Name { get; set; }
 
         public string Text { get; set; }
 
@@ -138,7 +220,7 @@ namespace Compatibility.Gtk
         }
     }
 
-    public class UserControl : ScrolledWindow
+    public class UserControl : EventBox
     {
         public string Text { get; set; }
 
@@ -166,7 +248,6 @@ namespace Compatibility.Gtk
             {
                 return Allocation.ToStandardRectangle();
             }
-           
         }
 
         public int Width
@@ -195,24 +276,18 @@ namespace Compatibility.Gtk
             }
         }
 
-        public bool InvokeRequired { get; set; }
-
         public System.Drawing.Color BackColor { get; private set; }
 
         private Tooltip tooltip;
-        private DrawingArea drawingArea;
+        protected internal DrawingArea drawingArea;
 
         public UserControl()
         {
+            Font = SystemFonts.DefaultFont;
             this.drawingArea = new DrawingArea();
             this.drawingArea.Events = Gdk.EventMask.AllEventsMask;
-            var eb = new EventBox();
-            eb.Add(this.drawingArea);
-            var vp = new Viewport();
-            vp.ShadowType = ShadowType.None;
-            vp.Add(eb);
-            this.Add(vp);
-            Child.ShowAll();
+            Add(drawingArea);
+            ShowAll();
 
             this.drawingArea.ExposeEvent += (o, args) =>
             {
@@ -262,19 +337,10 @@ namespace Compatibility.Gtk
                 this.OnResize(args);
             };
 
-//            this.drawingArea.KeyPressEvent += (o, args) =>
-//            {
-//                Console.WriteLine("KeyPressEvent");
-//                this.OnKeyPress(args);
-//            };
-
-            Hide();
-        }
-
-        public object Invoke(Delegate method, params object[] args)
-        {
-            //Gtk.Application
-            return null;
+            this.drawingArea.KeyPressEvent += (o, args) =>
+            {
+                this.OnKeyPress(args);
+            };
         }
 
         public void Invalidate()
@@ -344,6 +410,23 @@ namespace Compatibility.Gtk
 
         protected virtual void Dispose(bool disposing)
         {
+        }
+    }
+
+    public class ScrolledUserControl : UserControl
+    {
+        protected internal HScrollbar scrollbar;
+
+        public ScrolledUserControl()
+            : base()
+        {   
+            Remove(this.drawingArea);
+            this.scrollbar = new HScrollbar(new Adjustment(0, 0, 100, 1, 20, 20));
+            var vb = new VBox();
+            vb.PackStart(this.drawingArea, true, true, 0);
+            vb.PackStart(this.scrollbar, false, true, 0);
+            Add(vb);
+            ShowAll();
         }
     }
 }

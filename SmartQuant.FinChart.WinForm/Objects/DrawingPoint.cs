@@ -19,7 +19,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.x = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -32,7 +32,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.y = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 

@@ -15,41 +15,41 @@ namespace SmartQuant.Controls
 
         protected internal void SetEnumValue<T>(string key, T value) where T : struct
         {
-            this.SetValue(key, value.ToString());
+            SetValue(key, value.ToString());
         }
 
         protected internal void SetValue(string key, bool value)
         {
-            this.SetValue(key, value.ToString());
+            SetValue(key, value.ToString());
         }
 
         protected internal void SetValue(string key, byte value)
         {
-            this.SetValue(key, value.ToString());
+            SetValue(key, value.ToString());
         }
 
         protected internal string GetStringValue(string key, string defaultValue)
         {
             string str;
-            return this.TryGetValue(key, out str) ? str : defaultValue;
+            return TryGetValue(key, out str) ? str : defaultValue;
         }
 
         protected internal T GetEnumValue<T>(string key, T defaultValue) where T : struct
         {
             T result;
-            return Enum.TryParse<T>(this.GetStringValue(key, defaultValue.ToString()), out result)? result : defaultValue;
+            return Enum.TryParse<T>(GetStringValue(key, defaultValue.ToString()), out result) ? result : defaultValue;
         }
 
         protected internal bool GetBooleanValue(string key, bool defaultValue)
         {
             bool result;
-            return bool.TryParse(this.GetStringValue(key, defaultValue.ToString()), out result) ? result : defaultValue;
+            return bool.TryParse(GetStringValue(key, defaultValue.ToString()), out result) ? result : defaultValue;
         }
 
         protected internal byte GetByteValue(string key, byte defaultValue)
         {
             byte result;
-            return byte.TryParse(this.GetStringValue(key, defaultValue.ToString()), out result) ? result : defaultValue;
+            return byte.TryParse(GetStringValue(key, defaultValue.ToString()), out result) ? result : defaultValue;
         }
     }
 }

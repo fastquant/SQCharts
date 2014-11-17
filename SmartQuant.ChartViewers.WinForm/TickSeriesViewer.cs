@@ -50,17 +50,17 @@ namespace SmartQuant.ChartViewers
 
         public override void Paint(object obj, Pad pad)
         {
-            TickSeries tickSeries = obj as TickSeries;
+            var tickSeries = obj as TickSeries;
             if (tickSeries.Count == 0)
                 return;
             double xmin = pad.XMin;
             double xmax = pad.XMax;
             double ymin = pad.YMin;
             double ymax = pad.YMax;
-            List<Viewer.Property> list = (List<Viewer.Property>)null;
+            List<Property> list = null;
             if (this.metadata.TryGetValue(obj, out list))
             {
-                foreach (Viewer.Property property in list)
+                foreach (var property in list)
                 {
                     if (property.Name == "Color")
                         this.Color = (Color)property.Value;
@@ -68,7 +68,7 @@ namespace SmartQuant.ChartViewers
                         this.DrawWidth = (int)property.Value;
                 }
             }
-            Pen pen = new Pen(this.Color, (float)this.DrawWidth);
+            var pen = new Pen(Color, DrawWidth);
             int num1 = 0;
             double num2 = 0.0;
             double num3 = 0.0;

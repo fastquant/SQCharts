@@ -5,7 +5,6 @@ namespace TestGtk
 {
     public partial class MainWindow: Gtk.Window
     {
-
         public MainWindow()
             : base(Gtk.WindowType.Toplevel)
         {
@@ -15,7 +14,7 @@ namespace TestGtk
             hb.PackStart(chart1);
             hb.PackStart(chart2);
             this.Add(hb);
-            this.SetDefaultSize(400, 300);
+            this.SetDefaultSize(624, 362);
             this.ShowAll();
             this.DeleteEvent += new DeleteEventHandler((sender, e) =>
             {

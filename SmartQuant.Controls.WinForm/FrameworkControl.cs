@@ -4,15 +4,21 @@
 using System;
 using SmartQuant;
 using System.ComponentModel;
+
 #if GTK
 using Compatibility.Gtk;
+
 #else
 using System.Windows.Forms;
 #endif
 
 namespace SmartQuant.Controls
 {
+    #if GTK
+    public class FrameworkControl : NoPaintUserControl
+    #else
     public class FrameworkControl : UserControl
+    #endif
     {
         protected Framework framework;
         protected ControlSettings settings;
@@ -31,6 +37,7 @@ namespace SmartQuant.Controls
         public event EventHandler<ShowPropertiesEventArgs> ShowProperties;
 
         protected FrameworkControl()
+            : base()
         {
         }
 
@@ -39,12 +46,12 @@ namespace SmartQuant.Controls
             this.framework = framework;
             this.settings = settings;
             this.args = args;
-            this.OnInit();
+            OnInit();
         }
 
         public void Close(CancelEventArgs args)
         {
-            this.OnClosing(args);
+            OnClosing(args);
         }
 
         protected virtual void OnInit()
@@ -57,14 +64,14 @@ namespace SmartQuant.Controls
 
         public void SuspendUpdates()
         {
-            FrameworkControl.UpdatedSuspened = true;
-            this.OnSuspendUpdates();
+            UpdatedSuspened = true;
+            OnSuspendUpdates();
         }
 
         public void ResumeUpdates()
         {
-            FrameworkControl.UpdatedSuspened = false;
-            this.OnResumeUpdates();
+            UpdatedSuspened = false;
+            OnResumeUpdates();
         }
 
         protected virtual void OnSuspendUpdates()
@@ -77,17 +84,23 @@ namespace SmartQuant.Controls
 
         protected void OnShowProperties(bool focus)
         {
-
             if (ShowProperties != null)
                 ShowProperties(this, new ShowPropertiesEventArgs(focus));
         }
 
         protected void InvokeAction(Action action)
         {
-            if (this.InvokeRequired)
-                this.Invoke(action);
+            #if GTK
+            Gtk.Application.Invoke((sender, e) =>
+            {
+                action();
+            });
+            #else
+            if (InvokeRequired)
+                Invoke(action);
             else
                 action();
+            #endif
         }
 
         protected string GetMessageBoxCaption()

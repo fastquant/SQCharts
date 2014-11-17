@@ -77,8 +77,8 @@ namespace SmartQuant.ChartViewers
 
         public override void Paint(object obj, Pad pad)
         {
-            BarSeries barSeries = obj as BarSeries;
-            if (barSeries.Count == 0)
+            var bs = obj as BarSeries;
+            if (bs == null || bs.Count == 0)
                 return;
             double xmin = pad.XMin;
             double xmax = pad.XMax;
@@ -103,13 +103,13 @@ namespace SmartQuant.ChartViewers
             int num10 = 0;
             DateTime datetime1 = new DateTime((long)xmin);
             DateTime datetime2 = new DateTime((long)xmax);
-            int num11 = !(datetime1 < barSeries.FirstDateTime) ? barSeries.GetIndex(datetime1, IndexOption.Prev) : 0;
-            int num12 = !(datetime2 > barSeries.LastDateTime) ? barSeries.GetIndex(datetime2, IndexOption.Next) : barSeries.Count - 1;
+            int num11 = !(datetime1 < bs.FirstDateTime) ? bs.GetIndex(datetime1, IndexOption.Prev) : 0;
+            int num12 = !(datetime2 > bs.LastDateTime) ? bs.GetIndex(datetime2, IndexOption.Next) : bs.Count - 1;
             if (num11 == -1 || num12 == -1)
                 return;
             for (int index = num11; index <= num12; ++index)
             {
-                Bar bar = barSeries[index];
+                Bar bar = bs[index];
                 long num13 = bar.OpenDateTime.Ticks;
                 long num14 = bar.CloseDateTime.Ticks;
                 double num15 = (double)(num13 + (num14 - num13) / 2L);

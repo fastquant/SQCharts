@@ -2905,7 +2905,7 @@ namespace SmartQuant.Charting
                 {
                     if (!this.fMousePrimitivePropertiesEnabled)
                         return;
-                    int num = (int) new PadProperyForm((object) this.fSelectedPrimitive, this).ShowDialog();
+                    new PadProperyForm(this.fSelectedPrimitive, this).ShowDialog();
                 }
                 else
                 {
@@ -2921,7 +2921,7 @@ namespace SmartQuant.Charting
             {
                 if (!this.fMousePadPropertiesEnabled)
                     return;
-                int num = (int) new PadProperyForm((object) this, this).ShowDialog();
+                new PadProperyForm(this, this).ShowDialog();
             }
         }
 
@@ -2968,7 +2968,7 @@ namespace SmartQuant.Charting
 
         private void PropertiesMenuItem_Click(object sender, EventArgs e)
         {
-            int num = (int) new PadProperyForm((object) this.fSelectedPrimitive, this).ShowDialog();
+             new PadProperyForm(this.fSelectedPrimitive, this).ShowDialog();
         }
 
         private class ObjectViewer

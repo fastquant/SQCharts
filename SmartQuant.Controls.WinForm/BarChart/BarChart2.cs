@@ -7,7 +7,7 @@ using System.Drawing.Drawing2D;
 
 #if GTK
 using Gtk;
-
+using Compatibility.Gtk;
 #else
 using System.Windows.Forms;
 #endif
@@ -27,7 +27,7 @@ namespace SmartQuant.Controls.BarChart
 
         public BarChart2()
         {
-            this.InitComponent();
+            InitComponent();
             this.table = new Dictionary<int, GroupItem2>();
             this.groupIdsBySelectorKey = new Dictionary<string, List<int>>();
             this.eventsBySelectorKey = new Dictionary<object, List<GroupEvent>>();
@@ -35,25 +35,25 @@ namespace SmartQuant.Controls.BarChart
 
         protected override void OnInit()
         {
-            this.Queue = new PermanentQueue<Event>();
-            this.Queue.AddReader(this);
-            this.Reset(true);
-            this.framework.EventManager.Dispatcher.FrameworkCleared += new FrameworkEventHandler(this.Dispatcher_FrameworkCleared);
-            this.framework.GroupDispatcher.AddListener((IGroupListener)this);
+            Queue = new PermanentQueue<Event>();
+            Queue.AddReader(this);
+            Reset(true);
+            this.framework.EventManager.Dispatcher.FrameworkCleared += new FrameworkEventHandler(OnFrameworkCleared);
+            this.framework.GroupDispatcher.AddListener(this);
             this.eventsBySelectorKey[""] = new List<GroupEvent>();
         }
 
         protected override void OnClosing(CancelEventArgs args)
         {
-            this.Queue.RemoveReader(this);
+            Queue.RemoveReader(this);
         }
 
-        private void Dispatcher_FrameworkCleared(object sender, FrameworkEventArgs args)
+        private void OnFrameworkCleared(object sender, FrameworkEventArgs args)
         {
             InvokeAction(delegate
             {
                 #if GTK
-                this.cbxSelector.Model = null;
+                this.cbxSelector.ClearTexts();
                 #else
                 this.cbxSelector.Items.Clear();
                 #endif
@@ -67,7 +67,7 @@ namespace SmartQuant.Controls.BarChart
         {
             if (!group.Fields.ContainsKey("Pad"))
                 return false;
-            GroupItem2 gi = new GroupItem2(group);
+            var gi = new GroupItem2(group);
             this.table[group.Id] = gi;
             if (this.groupIdsBySelectorKey.ContainsKey(gi.SelectorKey))
             {
@@ -75,34 +75,39 @@ namespace SmartQuant.Controls.BarChart
                     this.groupIdsBySelectorKey[gi.SelectorKey].Add(group.Id);
             }
             else
-                this.groupIdsBySelectorKey[gi.SelectorKey] = new List<int>()
-                {
-                    group.Id
-                };
-            this.InvokeAction((System.Action)(() =>
+                this.groupIdsBySelectorKey[gi.SelectorKey] = new List<int>() { group.Id };
+            InvokeAction(delegate 
             {
                 #if GTK
-                #else
-                if (this.cbxSelector.Items.Contains((object)gi.SelectorKey))
+                if (cbxSelector.ContainsText(gi.SelectorKey))
                     return;
-                this.cbxSelector.Items.Add((object)gi.SelectorKey);
-                this.eventsBySelectorKey[(object)gi.SelectorKey] = new List<GroupEvent>();
+                this.cbxSelector.AppendText(gi.SelectorKey);
+                this.eventsBySelectorKey[gi.SelectorKey] = new List<GroupEvent>();
+                this.freezeUpdate = true;
+                if (this.cbxSelector.Model.IterNChildren() == 1)
+                    this.cbxSelector.Active = 0;
+                #else
+                if (this.cbxSelector.Items.Contains(gi.SelectorKey))
+                    return;
+                this.cbxSelector.Items.Add(gi.SelectorKey);
+                this.eventsBySelectorKey[gi.SelectorKey] = new List<GroupEvent>();
                 this.freezeUpdate = true;
                 if (this.cbxSelector.Items.Count == 1)
                     this.cbxSelector.SelectedIndex = 0;
                 #endif
                 this.freezeUpdate = false;
-            }));
+            });
             return true;
         }
 
         public void OnNewGroupUpdate(GroupUpdate groupUpdate)
         {
+            // no-op
         }
 
         public void OnNewGroupEvent(GroupEvent groupEvent)
         {
-            GroupItem2 groupItem2 = this.table[groupEvent.Group.Id];
+            var groupItem2 = this.table[groupEvent.Group.Id];
             object obj;
             groupItem2.Table.TryGetValue((int)groupEvent.Obj.TypeId, out obj);
             switch (groupEvent.Obj.TypeId)
@@ -110,7 +115,7 @@ namespace SmartQuant.Controls.BarChart
                 case DataObjectType.Bar:
                     if (obj == null)
                     {
-                        obj = (object)new BarSeries(groupItem2.Name, "", -1);
+                        obj = new BarSeries(groupItem2.Name, "", -1);
                         groupItem2.Table.Add((int)groupEvent.Obj.TypeId, obj);
                     }
                     (obj as BarSeries).Add(groupEvent.Obj as Bar);
@@ -118,7 +123,7 @@ namespace SmartQuant.Controls.BarChart
                 case DataObjectType.Fill:
                     if (obj == null)
                     {
-                        obj = (object)new FillSeries(groupItem2.Name);
+                        obj = new FillSeries(groupItem2.Name);
                         groupItem2.Table.Add((int)groupEvent.Obj.TypeId, obj);
                     }
                     (obj as FillSeries).Add(groupEvent.Obj as Fill);
@@ -126,7 +131,7 @@ namespace SmartQuant.Controls.BarChart
                 case DataObjectType.TimeSeriesItem:
                     if (obj == null)
                     {
-                        obj = (object)new TimeSeries(groupItem2.Name, "");
+                        obj = new TimeSeries(groupItem2.Name, "");
                         groupItem2.Table.Add((int)groupEvent.Obj.TypeId, obj);
                     }
                     (obj as TimeSeries).Add((groupEvent.Obj as TimeSeriesItem).DateTime, (groupEvent.Obj as TimeSeriesItem).Value);
@@ -136,15 +141,15 @@ namespace SmartQuant.Controls.BarChart
 
         public void UpdateGUI()
         {
-            if (FrameworkControl.UpdatedSuspened && this.framework.Mode != FrameworkMode.Realtime)
+            if (FrameworkControl.UpdatedSuspened && this.framework.Mode == FrameworkMode.Simulation)
                 return;
-            Event[] eventArray = this.Queue.DequeueAll((object)this);
-            if (eventArray == null)
+            var evnts = Queue.DequeueAll(this);
+            if (evnts == null)
                 return;
-            List<GroupEvent> list1 = new List<GroupEvent>();
-            for (int index = 0; index < eventArray.Length; ++index)
+            var list1 = new List<GroupEvent>();
+            for (int i = 0; i < evnts.Length; ++i)
             {
-                Event e = eventArray[index];
+                Event e = evnts[i];
                 if (e.TypeId == EventType.GroupEvent)
                 {
                     GroupEvent groupEvent = e as GroupEvent;
@@ -153,18 +158,18 @@ namespace SmartQuant.Controls.BarChart
                     if (selected == null && string.IsNullOrWhiteSpace(groupItem2.SelectorKey) || selected != null && selected == groupItem2.SelectorKey)
                         list1.Add(groupEvent);
                     List<GroupEvent> list2;
-                    if (this.eventsBySelectorKey.TryGetValue((object)groupItem2.SelectorKey, out list2))
+                    if (this.eventsBySelectorKey.TryGetValue(groupItem2.SelectorKey, out list2))
                         list2.Add(groupEvent);
                 }
                 else if (e.TypeId == EventType.OnFrameworkCleared)
                 {
                     list1.Clear();
-                    this.Reset(false);
+                    Reset(false);
                 }
             }
-            for (int index = 0; index < list1.Count; ++index)
-                this.ProcessEvent(list1[index], index == list1.Count - 1);
-            this.SetSeries();
+            for (int i = 0; i < list1.Count; ++i)
+                ProcessEvent(list1[i], i == list1.Count - 1);
+            SetSeries();
         }
 
         public void Crosshair(bool isChecked)
@@ -184,41 +189,41 @@ namespace SmartQuant.Controls.BarChart
 
         private void ProcessEvent(GroupEvent groupEvent, bool lastEvent)
         {
-            this.OnNewGroupEvent(groupEvent);
+            OnNewGroupEvent(groupEvent);
         }
 
         private void SetSeries()
         {
             List<int> list;
-            var selected = (string)GetComboBoxSelected();
+            var selected = GetComboBoxSelected();
             if (selected == null || !this.groupIdsBySelectorKey.TryGetValue(selected, out list))
                 return;
             this.chart.Reset();
-            for (int index1 = 0; index1 < list.Count; ++index1)
+            for (int i = 0; i < list.Count; ++i)
             {
-                GroupItem2 groupItem2 = this.table[list[index1]];
-                foreach (int index2 in groupItem2.Table.Keys)
+                var item = this.table[list[i]];
+                foreach (int key in item.Table.Keys)
                 {
-                    this.EnsurePadExists(groupItem2.PadNumber, groupItem2.Format);
-                    int padNumber = this.chart.VolumePadVisible || groupItem2.PadNumber <= 1 ? groupItem2.PadNumber : groupItem2.PadNumber + 1;
-                    if (index2 == DataObjectType.Bar)
+                    EnsurePadExists(item.PadNumber, item.Format);
+                    int padNumber = this.chart.VolumePadVisible || item.PadNumber <= 1 ? item.PadNumber : item.PadNumber + 1;
+                    if (key == DataObjectType.Bar)
                     {
-                        if (groupItem2.IsColor)
-                            this.chart.SetMainSeries((ISeries)(groupItem2.Table[index2] as BarSeries), true, groupItem2.Color);
+                        if (item.IsColor)
+                            this.chart.SetMainSeries(item.Table[key] as BarSeries, true, item.Color);
                         else
-                            this.chart.SetMainSeries((ISeries)(groupItem2.Table[index2] as BarSeries));
+                            this.chart.SetMainSeries(item.Table[key] as BarSeries);
                     }
-                    if (index2 == DataObjectType.TimeSeriesItem)
+                    if (key == DataObjectType.TimeSeriesItem)
                     {
-                        Color color = groupItem2.IsColor ? groupItem2.Color : Color.White;
-                        if (groupItem2.IsStyle)
-                            this.chart.DrawSeries(groupItem2.Table[index2] as TimeSeries, padNumber, color, groupItem2.Style);
+                        var color = item.IsColor ? item.Color : Color.White;
+                        if (item.IsStyle)
+                            this.chart.DrawSeries(item.Table[key] as TimeSeries, padNumber, color, item.Style);
                         else
-                            this.chart.DrawSeries(groupItem2.Table[index2] as TimeSeries, padNumber, color);
+                            this.chart.DrawSeries(item.Table[key] as TimeSeries, padNumber, color);
                     }
-                    if (groupItem2.Table[index2] is FillSeries)
+                    if (item.Table[key] is FillSeries)
                     {
-                        foreach (Fill fill in groupItem2.Table[index2] as FillSeries)
+                        foreach (Fill fill in item.Table[key] as FillSeries)
                             this.chart.DrawFill(fill, padNumber);
                     }
                 }
@@ -242,8 +247,8 @@ namespace SmartQuant.Controls.BarChart
             }
             else
             {
-                foreach (GroupItem2 groupItem2 in this.table.Values)
-                    groupItem2.Table.Clear();
+                foreach (var item in this.table.Values)
+                    item.Table.Clear();
             }
             this.chart.Reset();
         }
@@ -252,22 +257,23 @@ namespace SmartQuant.Controls.BarChart
         {
             if (this.freezeUpdate)
                 return;
-            this.Reset(false);
+            Reset(false);
             var selected = GetComboBoxSelected();
             var list = this.eventsBySelectorKey[selected];
             if (list.Count <= 0)
                 return;
-            for (int index = 0; index < list.Count; ++index)
-                this.ProcessEvent(list[index], index == list.Count - 1);
-            this.SetSeries();
+            for (int i = 0; i < list.Count; ++i)
+                ProcessEvent(list[i], i == list.Count - 1);
+            SetSeries();
         }
 
         private void InitComponent()
         {
-            #if GTK
             this.chart = new Chart();
-            this.cbxSelector = new ComboBox();
+            #if GTK
+            this.cbxSelector = ComboBox.NewText();
             this.cbxSelector.Changed += OnSelectorValueChanged;
+            InitChartCommon();
             VBox vb = new VBox();
             vb.PackStart(this.cbxSelector, false, true, 0);
             vb.PackEnd(this.chart, true, true, 0);
@@ -275,18 +281,26 @@ namespace SmartQuant.Controls.BarChart
             ShowAll();
             #else
             this.cbxSelector = new ComboBox();
-            this.chart = new Chart();
             this.SuspendLayout();
             this.cbxSelector.Dock = DockStyle.Top;
             this.cbxSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             this.cbxSelector.FormattingEnabled = true;
-            this.cbxSelector.Location = new Point(0, 0);
-            this.cbxSelector.Name = "cbxSelector";
-            this.cbxSelector.Size = new Size(725, 21);
             this.cbxSelector.TabIndex = 1;
-            this.cbxSelector.SelectedIndexChanged += new EventHandler(this.OnSelectorValueChanged);
-            this.chart.ActionType = ChartActionType.None;
+            this.cbxSelector.SelectedIndexChanged += new EventHandler(OnSelectorValueChanged);
+            this.chart.Dock = DockStyle.Fill;
             this.chart.AutoScroll = true;
+            this.chart.TabIndex = 0;
+            InitChartCommon();
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.Controls.Add(this.chart);
+            this.Controls.Add(this.cbxSelector);
+            this.ResumeLayout(false);
+            #endif
+        }
+
+        private void InitChartCommon()
+        {
+            this.chart.ActionType = ChartActionType.None;
             this.chart.BarSeriesStyle = BSStyle.Candle;
             this.chart.BorderColor = Color.Gray;
             this.chart.BottomAxisGridColor = Color.LightGray;
@@ -297,16 +311,13 @@ namespace SmartQuant.Controls.BarChart
             this.chart.CrossColor = Color.DarkGray;
             this.chart.DateTipRectangleColor = Color.LightGray;
             this.chart.DateTipTextColor = Color.Black;
-            this.chart.Dock = DockStyle.Fill;
             this.chart.DrawItems = false;
             this.chart.Font = new Font("Microsoft Sans Serif", 7f, FontStyle.Regular, GraphicsUnit.Point, (byte)204);
             this.chart.ItemTextColor = Color.LightGray;
             this.chart.LabelDigitsCount = 2;
-            this.chart.Location = new Point(0, 0);
             this.chart.MinNumberOfBars = 125;
-            this.chart.Name = "chart";
-            this.chart.PrimitiveDeleteImage = (Image)null;
-            this.chart.PrimitivePropertiesImage = (Image)null;
+            this.chart.PrimitiveDeleteImage = null;
+            this.chart.PrimitivePropertiesImage = null;
             this.chart.RightAxesFontSize = 7;
             this.chart.RightAxisGridColor = Color.DimGray;
             this.chart.RightAxisMajorTicksColor = Color.LightGray;
@@ -319,32 +330,18 @@ namespace SmartQuant.Controls.BarChart
             this.chart.SessionGridColor = Color.Empty;
             this.chart.SessionGridEnabled = false;
             this.chart.SessionStart = TimeSpan.Parse("00:00:00");
-            this.chart.Size = new Size(725, 400);
             this.chart.SmoothingMode = SmoothingMode.Default;
             this.chart.SplitterColor = Color.LightGray;
-            this.chart.TabIndex = 0;
             this.chart.UpdateStyle = ChartUpdateStyle.Trailing;
             this.chart.ValTipRectangleColor = Color.LightGray;
             this.chart.ValTipTextColor = Color.Black;
             this.chart.VolumePadVisible = false;
-            this.AutoScaleDimensions = new SizeF(6f, 13f);
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.Controls.Add((Control)this.chart);
-            this.Controls.Add((Control)this.cbxSelector);
-            this.Name = "BarChart2";
-            this.Size = new Size(725, 400);
-            this.ResumeLayout(false);
-            #endif
         }
 
         private string GetComboBoxSelected()
         {
             #if GTK
-            TreeIter iter;
-            string value = null;
-            if (this.cbxSelector.GetActiveIter(out iter))
-                value = this.cbxSelector.Model.GetValue(iter, 0).ToString();
-            return value;
+            return this.cbxSelector.ActiveText;
             #else
             return this.cbxSelector.SelectedItem.ToString();
             #endif        

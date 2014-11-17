@@ -10,51 +10,23 @@ namespace SmartQuant.FinChart
 {
     public class DSView : SeriesView
     {
-        private Color color = Color.White;
-        private SearchOption option = SearchOption.ExactFirst;
-        private SmoothingMode smoothing = SmoothingMode.AntiAlias;
         private TimeSeries series;
-        private SimpleDSStyle style;
-
-        public SearchOption Option
-        {
-            get
-            {
-                return this.option;
-            }
-        }
-
-        public SimpleDSStyle Style
-        {
-            get
-            {
-                return this.style;
-            }
-            set
-            {
-                this.style = value;
-            }
-        }
 
         public override ISeries MainSeries
         {
             get
             {
-                return (ISeries) this.series;
+                return this.series;
             }
         }
 
-        public override Color Color
-        {
-            get
-            {
-                return this.color;
-            }
-            set
-            {
-                this.color = value;
-            }
-        }
+        public SearchOption Option { get; private set; }
+
+        internal SmoothingMode SmoothingMode { get; set; }
+
+        public SimpleDSStyle Style { get; set; }
+
+        public override Color Color { get; set; }
 
         public int DrawWidth { get; set; }
 
@@ -64,57 +36,45 @@ namespace SmartQuant.FinChart
             {
                 if (this.series.Count == 0 || this.lastDate < this.series.FirstDateTime)
                     return double.NaN;
-                if (this.option == SearchOption.ExactFirst)
+                if (Option == SearchOption.ExactFirst)
                     return this.series[this.lastDate, SearchOption.Prev];
-                if (this.option == SearchOption.Next)
-                    return this.series[this.lastDate.AddTicks(1L), SearchOption.Next];
+                if (Option == SearchOption.Next)
+                    return this.series[this.lastDate.AddTicks(1), SearchOption.Next];
                 else
-                    return -1.0;
+                    return -1;
             }
         }
 
         public DSView(Pad pad, TimeSeries series)
             : this(pad, series, SearchOption.ExactFirst)
         {
-            this.series = series;
-            this.toolTipFormat = "{0}\n{2} - {3:F*}";
-            this.toolTipFormat = this.toolTipFormat.Replace("*", pad.Chart.LabelDigitsCount.ToString());
         }
 
         public DSView(Pad pad, TimeSeries series, Color color)
             : this(pad, series, color, SearchOption.ExactFirst, SmoothingMode.AntiAlias)
         {
-            this.series = series;
-            this.color = color;
-            this.toolTipFormat = "{0}\n{2} - {3:F*}";
-            this.toolTipFormat = this.toolTipFormat.Replace("*", pad.Chart.LabelDigitsCount.ToString());
         }
 
         public DSView(Pad pad, TimeSeries series, SearchOption option)
-            : base(pad)
+            : this(pad, series, Color.White, option, SmoothingMode.AntiAlias)
         {
-            this.series = series;
-            this.option = option;
-            this.toolTipFormat = "{0}\n{2} - {3:F*}";
-            this.toolTipFormat = this.toolTipFormat.Replace("*", pad.Chart.LabelDigitsCount.ToString());
         }
 
         public DSView(Pad pad, TimeSeries series, Color color, SearchOption option, SmoothingMode smoothing)
             : base(pad)
         {
             this.series = series;
-            this.option = option;
-            this.color = color;
-            this.smoothing = smoothing;
-            this.toolTipFormat = "{0}\n{2} - {3:F*}";
-            this.toolTipFormat = this.toolTipFormat.Replace("*", pad.Chart.LabelDigitsCount.ToString());
+            Option = option;
+            Color = color;
+            SmoothingMode = smoothing;
+            ToolTipFormat = "{0}\n{2} - {3:F*}".Replace("*", pad.Chart.LabelDigitsCount.ToString());
         }
 
         public override PadRange GetPadRangeY(Pad Pad)
         {
             DateTime datetime1;
             DateTime datetime2;
-            if (this.option == SearchOption.ExactFirst)
+            if (Option == SearchOption.ExactFirst)
             {
                 datetime1 = this.firstDate;
                 datetime2 = this.lastDate;
@@ -145,7 +105,7 @@ namespace SmartQuant.FinChart
 
         public override void Paint()
         {
-            Pen pen = new Pen(this.Color, (float) this.DrawWidth);
+            Pen pen = new Pen(Color, DrawWidth);
             int num1 = 0;
             GraphicsPath path = new GraphicsPath();
             List<Point> list = new List<Point>();
@@ -162,27 +122,27 @@ namespace SmartQuant.FinChart
             int num6 = 0;
             int index1 = this.pad.MainSeries.GetIndex(this.firstDate, IndexOption.Null);
             int index2 = this.pad.MainSeries.GetIndex(this.lastDate, IndexOption.Null);
-            ArrayList arrayList = (ArrayList) null;
+            ArrayList arrayList = (ArrayList)null;
             int val2_1 = this.pad.ClientY(0.0);
             int val2_2 = this.pad.ClientY(this.pad.MaxValue);
             int val2_3 = this.pad.ClientY(this.pad.MinValue);
             if (this.selected)
                 arrayList = new ArrayList();
-            int num7 = (int) Math.Max(2.0, (double) (int) this.pad.IntervalWidth / 1.2);
+            int num7 = (int)Math.Max(2.0, (double)(int)this.pad.IntervalWidth / 1.2);
             for (int index3 = index1; index3 <= index2; ++index3)
             {
                 DateTime dateTime = this.pad.MainSeries.GetDateTime(index3);
                 if (this.selected)
-                    arrayList.Add((object) dateTime);
+                    arrayList.Add((object)dateTime);
                 long ticks2 = dateTime.Ticks;
-                if (this.option == SearchOption.ExactFirst)
+                if (Option == SearchOption.ExactFirst)
                 {
                     if (this.series.Contains(dateTime))
                         worldY1 = this.series[dateTime, SearchOption.Next];
                     else
                         continue;
                 }
-                if (this.option == SearchOption.Next)
+                if (Option == SearchOption.Next)
                 {
                     if (this.series.Contains(dateTime.AddTicks(1L)))
                         worldY1 = this.series[dateTime.AddTicks(1L), 0, SearchOption.ExactFirst];
@@ -191,7 +151,7 @@ namespace SmartQuant.FinChart
                     else
                         continue;
                 }
-                if (this.style == SimpleDSStyle.Line)
+                if (Style == SimpleDSStyle.Line)
                 {
                     if (num1 != 0)
                     {
@@ -210,75 +170,74 @@ namespace SmartQuant.FinChart
                     worldY2 = worldY1;
                     list.Add(new Point(this.pad.ClientX(new DateTime(ticks1)), this.pad.ClientY(worldY2)));
                 }
-                if (this.style == SimpleDSStyle.Bar)
+                if (Style == SimpleDSStyle.Bar)
                 {
                     x1 = this.pad.ClientX(new DateTime(ticks2));
                     num2 = this.pad.ClientY(worldY1);
-                    float y = (float) Math.Max(Math.Min(num2, val2_1), val2_2);
-                    float num8 = (float) Math.Min(Math.Max(num2, val2_1), val2_3);
-                    this.pad.Graphics.FillRectangle((Brush) new SolidBrush(this.Color), (float) (x1 - num7 / 2), y, (float) num7, Math.Abs(y - num8));
+                    float y = (float)Math.Max(Math.Min(num2, val2_1), val2_2);
+                    float num8 = (float)Math.Min(Math.Max(num2, val2_1), val2_3);
+                    this.pad.Graphics.FillRectangle((Brush)new SolidBrush(this.Color), (float)(x1 - num7 / 2), y, (float)num7, Math.Abs(y - num8));
                 }
-                if (this.style == SimpleDSStyle.Circle)
+                if (Style == SimpleDSStyle.Circle)
                 {
                     x1 = this.pad.ClientX(new DateTime(ticks2));
                     num2 = this.pad.ClientY(worldY1);
                     Math.Max(Math.Min(num2, val2_1), val2_2);
                     Math.Min(Math.Max(num2, val2_1), val2_3);
-                    this.pad.Graphics.FillEllipse((Brush) new SolidBrush(this.Color), x1 - this.DrawWidth, num2 - this.DrawWidth, this.DrawWidth * 2, this.DrawWidth * 2);
+                    this.pad.Graphics.FillEllipse((Brush)new SolidBrush(this.Color), x1 - this.DrawWidth, num2 - this.DrawWidth, this.DrawWidth * 2, this.DrawWidth * 2);
                 }
                 ++num1;
             }
             if (this.selected)
             {
-                int num8 = Math.Max(1, (int) Math.Round((double) arrayList.Count / 8.0));
+                int num8 = Math.Max(1, (int)Math.Round((double)arrayList.Count / 8.0));
                 int index3 = 1;
                 while (index3 < arrayList.Count)
                 {
-                    int num9 = this.pad.ClientX(new DateTime(((DateTime) arrayList[index3]).Ticks));
-                    if (this.series.Contains((DateTime) arrayList[index3]))
+                    int num9 = this.pad.ClientX(new DateTime(((DateTime)arrayList[index3]).Ticks));
+                    if (this.series.Contains((DateTime)arrayList[index3]))
                     {
-                        int num10 = this.pad.ClientY(this.series[(DateTime) arrayList[index3], 0, SearchOption.ExactFirst]);
+                        int num10 = this.pad.ClientY(this.series[(DateTime)arrayList[index3], 0, SearchOption.ExactFirst]);
                         Color midnightBlue = Color.MidnightBlue;
-                        this.pad.Graphics.FillRectangle((Brush) new SolidBrush(Color.FromArgb((int) midnightBlue.R ^ (int) byte.MaxValue, (int) midnightBlue.G ^ (int) byte.MaxValue, (int) midnightBlue.B ^ (int) byte.MaxValue)), num9 - 2, num10 - 2, 4, 4);
+                        this.pad.Graphics.FillRectangle((Brush)new SolidBrush(Color.FromArgb((int)midnightBlue.R ^ (int)byte.MaxValue, (int)midnightBlue.G ^ (int)byte.MaxValue, (int)midnightBlue.B ^ (int)byte.MaxValue)), num9 - 2, num10 - 2, 4, 4);
                     }
                     index3 += num8;
                 }
             }
-            if (this.style != SimpleDSStyle.Line)
+            if (Style != SimpleDSStyle.Line)
                 return;
             SmoothingMode smoothingMode = this.pad.Graphics.SmoothingMode;
-            this.pad.Graphics.SmoothingMode = this.smoothing;
+            this.pad.Graphics.SmoothingMode = SmoothingMode;
             this.pad.Graphics.DrawPath(pen, path);
             this.pad.Graphics.SmoothingMode = smoothingMode;
         }
 
         public override Distance Distance(int x, double y)
         {
-            Distance distance = new Distance();
+            var d = new Distance();
             DateTime dateTime = this.pad.GetDateTime(x);
             double num = 0.0;
-            if (this.option == SearchOption.ExactFirst)
+            if (Option == SearchOption.ExactFirst)
             {
                 if (!this.series.Contains(dateTime))
-                    return (Distance) null;
+                    return null;
                 num = this.series[dateTime, SearchOption.ExactFirst];
             }
-            if (this.option == SearchOption.Next)
+            if (Option == SearchOption.Next)
             {
-                if (this.series.LastDateTime < dateTime.AddTicks(1L))
-                    return (Distance) null;
-                num = this.series[dateTime.AddTicks(1L), SearchOption.Next];
+                if (this.series.LastDateTime < dateTime.AddTicks(1))
+                    return null;
+                num = this.series[dateTime.AddTicks(1), SearchOption.Next];
             }
-            distance.X = (double) x;
-            distance.Y = num;
-            distance.DX = 0.0;
-            distance.DY = Math.Abs(y - num);
-            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
-                return (Distance) null;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(this.toolTipFormat, (object) this.series.Name, (object) this.series.Description, (object) dateTime.ToString(), (object) distance.Y);
-            distance.ToolTipText = ((object) stringBuilder).ToString();
-            return distance;
+            d.X = x;
+            d.Y = num;
+            d.DX = 0;
+            d.DY = Math.Abs(y - num);
+
+            if (d.DX == double.MaxValue || d.DY == double.MaxValue)
+                return null;
+            d.ToolTipText = string.Format(ToolTipFormat, this.series.Name, this.series.Description, dateTime, d.Y);
+            return d;
         }
     }
 }

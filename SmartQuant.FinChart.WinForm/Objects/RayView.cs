@@ -72,16 +72,16 @@ namespace SmartQuant.FinChart.Objects
             int num2 = this.Pad.ClientY(y);
             if (num2 > this.Pad.Y2)
                 return;
-            Math.Max(2.0, (double) (int) this.Pad.IntervalWidth / 1.2);
-            Pen pen = new Pen(this.ray.Color, (float) this.ray.Width);
-            double val1_1 = (double) this.Pad.ClientX(this.firstDate);
-            double val1_2 = (double) this.Pad.ClientX(this.lastDate);
+            Math.Max(2.0, this.Pad.IntervalWidth / 1.2);
+            Pen pen = new Pen(this.ray.Color, (float)this.ray.Width);
+            double val1_1 = (double)this.Pad.ClientX(this.firstDate);
+            double val1_2 = (double)this.Pad.ClientX(this.lastDate);
             double val2 = val1_2;
-            float x1 = (float) Math.Max(val1_1, (double) num1);
-            float x2 = (float) Math.Min(val1_2, val2);
-            if ((double) x1 > (double) x2)
+            float x1 = (float)Math.Max(val1_1, (double)num1);
+            float x2 = (float)Math.Min(val1_2, val2);
+            if (x1 > x2)
                 return;
-            this.Pad.Graphics.DrawLine(pen, x1, (float) num2, x2, (float) num2);
+            Pad.Graphics.DrawLine(pen, x1, num2, x2, num2);
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
@@ -91,23 +91,20 @@ namespace SmartQuant.FinChart.Objects
         }
 
         public Distance Distance(int x, double y)
-        {
-           
-            Distance distance = new Distance();
-            DateTime dateTime = this.Pad.GetDateTime(x);
+        { 
+            var d = new Distance();
+            var dateTime = this.Pad.GetDateTime(x);
             double y1 = this.ray.Y;
-            distance.X = (double) x;
-            distance.Y = y1;
+            d.X = (double)x;
+            d.Y = y1;
             int num = this.Pad.ClientX(this.chartFirstDate);
             int x2 = this.Pad.X2;
-            distance.DX = num > x || x2 < x ? double.MaxValue : 0.0;
-            distance.DY = Math.Abs(y - this.ray.Y);
-            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
-                return (Distance) null;
-            distance.ToolTipText = string.Format(ToolTipFormat, "Ray", this.ray.Name, dateTime, this.ray.Y);
-
-            return distance;
-
+            d.DX = num > x || x2 < x ? double.MaxValue : 0.0;
+            d.DY = Math.Abs(y - this.ray.Y);
+            if (d.DX == double.MaxValue || d.DY == double.MaxValue)
+                return null;
+            d.ToolTipText = string.Format(ToolTipFormat, "Ray", this.ray.Name, dateTime, this.ray.Y);
+            return d;
         }
 
         public void Select()
@@ -120,7 +117,7 @@ namespace SmartQuant.FinChart.Objects
 
         public PadRange GetPadRangeY(Pad pad)
         {
-            return new PadRange(this.ray.Y * 0.999, this.ray.Y * 1.0001);
+            return new PadRange(this.ray.Y * 0.999, this.ray.Y * 1.001);
         }
     }
 }

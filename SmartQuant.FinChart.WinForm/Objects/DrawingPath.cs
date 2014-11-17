@@ -23,7 +23,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.rangeY = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -36,7 +36,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.color = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -49,7 +49,7 @@ namespace SmartQuant.FinChart.Objects
             set
             {
                 this.wigth = value;
-                this.EmitUpdated();
+                EmitUpdated();
             }
         }
 
@@ -74,19 +74,19 @@ namespace SmartQuant.FinChart.Objects
         public void Add(DateTime x, double y)
         {
             this.points.Add(new DrawingPoint(x, y));
-            this.EmitUpdated();
+            EmitUpdated();
         }
 
         public void RemoveAt(int index)
         {
             this.points.RemoveAt(index);
-            this.EmitUpdated();
+            EmitUpdated();
         }
 
         public void Insert(int index, DateTime x, double y)
         {
             this.points.Insert(index, new DrawingPoint(x, y));
-            this.EmitUpdated();
+            EmitUpdated();
         }
 
         private void EmitUpdated()

@@ -53,17 +53,17 @@ namespace SmartQuant.ChartViewers
 
         public override void Paint(object obj, Pad pad)
         {
-            TimeSeries timeSeries = obj as TimeSeries;
-            if (timeSeries.Count == 0)
+            var ts = obj as TimeSeries;
+            if (ts == null || ts.Count == 0)
                 return;
             double xmin = pad.XMin;
             double xmax = pad.XMax;
             double ymin = pad.YMin;
             double ymax = pad.YMax;
-            List<Viewer.Property> list = (List<Viewer.Property>)null;
+            List<Property> list = null;
             if (this.metadata.TryGetValue(obj, out list))
             {
-                foreach (Viewer.Property property in list)
+                foreach (var property in list)
                 {
                     if (property.Name == "Color")
                         this.Color = (Color)property.Value;
@@ -80,7 +80,7 @@ namespace SmartQuant.ChartViewers
                     }
                 }
             }
-            Pen pen = new Pen(this.Color, (float)this.DrawWidth);
+            var pen = new Pen(Color, DrawWidth);
             int num1 = 0;
             double num2 = 0.0;
             double num3 = 0.0;
@@ -94,13 +94,13 @@ namespace SmartQuant.ChartViewers
             int num11 = 0;
             DateTime datetime1 = new DateTime((long)xmin);
             DateTime datetime2 = new DateTime((long)xmax);
-            int num12 = !(datetime1 < timeSeries.FirstDateTime) ? timeSeries.GetIndex(datetime1, IndexOption.Prev) : 0;
-            int num13 = !(datetime2 > timeSeries.LastDateTime) ? timeSeries.GetIndex(datetime2, IndexOption.Next) : timeSeries.Count - 1;
+            int num12 = !(datetime1 < ts.FirstDateTime) ? ts.GetIndex(datetime1, IndexOption.Prev) : 0;
+            int num13 = !(datetime2 > ts.LastDateTime) ? ts.GetIndex(datetime2, IndexOption.Next) : ts.Count - 1;
             if (num12 == -1 || num13 == -1)
                 return;
             for (int index = num12; index <= num13; ++index)
             {
-                TimeSeriesItem timeSeriesItem = timeSeries.GetItem(index);
+                TimeSeriesItem timeSeriesItem = ts.GetItem(index);
                 double num14 = (double)timeSeriesItem.DateTime.Ticks;
                 pad.ClientX(num14);
                 double num15 = timeSeriesItem.Value;

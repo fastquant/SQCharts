@@ -54,8 +54,8 @@ namespace SmartQuant.FinChart.Objects
         {
             this.rect = rect;
             Pad = pad;
-            this.toolTipEnabled = true;
-            this.toolTipFormat = "{0} {1} {2} - {3:F6}";
+            ToolTipEnabled = true;
+            ToolTipFormat = "{0} {1} {2} - {3:F6}";
         }
 
         public void Paint()
@@ -64,8 +64,7 @@ namespace SmartQuant.FinChart.Objects
             int x2 = this.Pad.ClientX(this.rect.X2);
             int y1 = this.Pad.ClientY(this.rect.Y1);
             int y2 = this.Pad.ClientY(this.rect.Y2);
-            this.Pad.Graphics.DrawEllipse(new Pen(this.rect.Color, this.rect.Width), Math.Min(x1, x2), Math.Min(y1, y2), Math.Abs(x2 - x1), Math.Abs(y2 - y1));
-
+            Pad.Graphics.DrawEllipse(new Pen(this.rect.Color, this.rect.Width), Math.Min(x1, x2), Math.Min(y1, y2), Math.Abs(x2 - x1), Math.Abs(y2 - y1));
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)

@@ -52,9 +52,9 @@ namespace SmartQuant.FinChart.Objects
         public ImageView(DrawingImage image, Pad pad)
         {
             this.image = image;
-            this.Pad = pad;
-            this.toolTipEnabled = true;
-            this.toolTipFormat = "{0} {1} {2} - {3:F6}";
+            Pad = pad;
+            ToolTipEnabled = true;
+            ToolTipFormat = "{0} {1} {2} - {3:F6}";
         }
 
         public void Paint()

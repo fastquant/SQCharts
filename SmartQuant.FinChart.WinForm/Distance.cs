@@ -17,7 +17,7 @@ namespace SmartQuant.FinChart
 
         public Distance()
         {
-            X = Y = double.MaxValue;
+            DX = DY = double.MaxValue;
             ToolTipText = null;
         }
     }

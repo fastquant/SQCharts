@@ -5,6 +5,7 @@ using System.Drawing;
 
 #if GTK
 using Compatibility.Gtk;
+
 #else
 using System.Windows.Forms;
 #endif
@@ -13,50 +14,24 @@ namespace SmartQuant.FinChart
 {
     public class Pad
     {
-        private bool drawGrid = true;
         private Chart chart;
-        private AxisRight axis;
-        private ArrayList primitives;
         private ArrayList simplePrimitives;
         private SortedRangeList rangeList;
         private SortedRangeList intervalLeftList;
         private SortedRangeList intervalRightList;
-        private int axisGap;
         private object selectedObject;
-        private int x1;
-        private int x2;
-        private int y1;
-        private int y2;
         private int width;
         private int height;
         private int marginLeft;
         private int marginRight;
-        private double maxValue;
-        private double minValue;
-        private Graphics graphics;
-        private IChartDrawable selectedPrimitive;
         private bool onPrimitive;
         private bool outlineEnabled;
         private Rectangle outlineRectangle;
-        private PadScaleStyle scaleStyle;
         private string axisLabelFormat;
-        private bool drawItems;
 
-        public AxisRight Axis
-        {
-            get
-            {
-                return this.axis;
-            }
-        }
+        public AxisRight Axis { get; private set; }
 
-        internal int AxisGap
-        {
-            get
-            {
-                return this.axisGap;
-            }
-        }
+        internal int AxisGap { get; private set; }
 
         internal Chart Chart
         {
@@ -66,26 +41,13 @@ namespace SmartQuant.FinChart
             }
         }
 
-        public bool DrawItems
-        {
-            get
-            {
-                return this.drawItems;
-            }
-            set
-            {
-                this.drawItems = value;
-            }
-        }
+        public bool DrawItems { get; set; }
 
         public string AxisLabelFormat
         {
             get
             {
-                if (this.axisLabelFormat == null)
-                    return "F" + this.chart.LabelDigitsCount.ToString();
-                else
-                    return this.axisLabelFormat;
+                return this.axisLabelFormat != null ? this.axisLabelFormat : string.Format("F{0}", chart.LabelDigitsCount);
             }
             set
             {
@@ -93,89 +55,23 @@ namespace SmartQuant.FinChart
             }
         }
 
-        internal IChartDrawable SelectedPrimitive
-        {
-            get
-            {
-                return this.selectedPrimitive;
-            }
-            set
-            {
-                this.selectedPrimitive = value;
-            }
-        }
+        internal IChartDrawable SelectedPrimitive { get; set; }
 
-        public bool DrawGrid
-        {
-            get
-            {
-                return this.drawGrid;
-            }
-            set
-            {
-                this.drawGrid = value;
-            }
-        }
+        public bool DrawGrid { get; set; }
 
-        public PadScaleStyle ScaleStyle
-        {
-            get
-            {
-                return this.scaleStyle;
-            }
-            set
-            {
-                this.scaleStyle = value;
-            }
-        }
+        public PadScaleStyle ScaleStyle { get; set; }
 
-        public int X1
-        {
-            get
-            {
-                return this.x1;
-            }
-        }
+        public int X1 { get; private set; }
 
-        public int X2
-        {
-            get
-            {
-                return this.x2;
-            }
-        }
+        public int X2 { get; private set; }
 
-        public int Y1
-        {
-            get
-            {
-                return this.y1;
-            }
-        }
+        public int Y1 { get; private set; }
 
-        public int Y2
-        {
-            get
-            {
-                return this.y2;
-            }
-        }
+        public int Y2 { get; private set; }
 
-        public double MaxValue
-        {
-            get
-            {
-                return this.maxValue;
-            }
-        }
+        public double MaxValue { get; private set; }
 
-        public double MinValue
-        {
-            get
-            {
-                return this.minValue;
-            }
-        }
+        public double MinValue { get; private set; }
 
         internal int Width
         {
@@ -186,8 +82,8 @@ namespace SmartQuant.FinChart
             set
             {
                 this.width = value;
-                this.x2 = this.x1 + this.width;
-                this.axis.SetBounds(this.x2, this.y1, this.y2);
+                X2 = X1 + this.width;
+                Axis.SetBounds(X2, Y1, Y2);
             }
         }
 
@@ -231,27 +127,20 @@ namespace SmartQuant.FinChart
             }
         }
 
-        public Graphics Graphics
-        {
-            get
-            {
-                return this.graphics;
-            }
-        }
+        public Graphics Graphics { get; private set; }
 
-        public ArrayList Primitives
-        {
-            get
-            {
-                return this.primitives;
-            }
-        }
+        public ArrayList Primitives { get; private set; }
 
         public Pad(Chart chart, int x1, int x2, int y1, int y2)
         {
             this.chart = chart;
-            this.SetCanvas(x1, x2, y1, y2);
-            this.primitives = ArrayList.Synchronized(new ArrayList());
+            this.marginLeft = this.marginRight = 0;
+            this.onPrimitive = false;
+            this.outlineEnabled = false;
+            this.outlineRectangle = Rectangle.Empty;
+            DrawGrid = true;
+            SetCanvas(x1, x2, y1, y2);
+            Primitives = ArrayList.Synchronized(new ArrayList());
             this.simplePrimitives = new ArrayList();
             this.rangeList = new SortedRangeList();
             this.intervalLeftList = new SortedRangeList();
@@ -260,21 +149,21 @@ namespace SmartQuant.FinChart
 
         public void SetCanvas(int x1, int x2, int y1, int y2)
         {
-            this.y1 = y1;
-            this.y2 = y2;
-            this.x1 = x1 + this.marginLeft;
-            this.x2 = x2 - this.marginRight;
-            this.width = this.x2 - this.x1;
-            this.height = this.y2 - this.y1;
-            if (this.axis == null)
-                this.axis = new AxisRight(this.chart, this, x2, y1, y2);
+            X1 = x1 + this.marginLeft;
+            X2 = x2 - this.marginRight;
+            Y1 = y1;
+            Y2 = y2;
+            this.width = X2 - X1;
+            this.height = Y2 - Y1;
+            if (Axis == null)
+                Axis = new AxisRight(this.chart, this, x2, y1, y2);
             else
-                this.axis.SetBounds(x2, y1, y2);
+                Axis.SetBounds(x2, y1, y2);
         }
 
         public void AddPrimitive(IChartDrawable primitive)
         {
-            this.primitives.Add(primitive);
+            Primitives.Add(primitive);
             if (primitive is IDateDrawable)
                 this.rangeList.Add(primitive as IDateDrawable);
             else
@@ -283,7 +172,7 @@ namespace SmartQuant.FinChart
 
         public void RemovePrimitive(IChartDrawable primitive)
         {
-            this.primitives.Remove(primitive);
+            Primitives.Remove(primitive);
             if (primitive is IDateDrawable)
                 this.rangeList[(primitive as IDateDrawable).DateTime].Remove(primitive);
             else
@@ -292,7 +181,7 @@ namespace SmartQuant.FinChart
 
         public void ClearPrimitives()
         {
-            this.primitives.Clear();
+            Primitives.Clear();
             this.rangeList.Clear();
             this.simplePrimitives.Clear();
         }
@@ -304,90 +193,89 @@ namespace SmartQuant.FinChart
 
         internal void Reset()
         {
-            this.ClearPrimitives();
+            ClearPrimitives();
         }
 
         public int ClientX(DateTime dateTime)
         {
-            double num = (double)this.width / (double)(this.LastIndex - this.FirstIndex + 1);
-            return this.x1 + (int)((double)(this.MainSeries.GetIndex(dateTime, IndexOption.Null) - this.FirstIndex) * num + num / 2.0);
+            double num = (double)Width / (double)(this.LastIndex - this.FirstIndex + 1);
+            return X1 + (int)((double)(MainSeries.GetIndex(dateTime, IndexOption.Null) - FirstIndex) * num + num / 2.0);
         }
 
         public int ClientY(double worldY)
         {
-            if (this.scaleStyle == PadScaleStyle.Log)
-                return this.y1 + (int)((1.0 - (Math.Log10(worldY) - Math.Log10(this.minValue)) / (Math.Log10(this.maxValue) - Math.Log10(this.minValue))) * (double)this.height);
+            if (ScaleStyle == PadScaleStyle.Log)
+                return Y1 + (int)((1.0 - (Math.Log10(worldY) - Math.Log10(MinValue)) / (Math.Log10(MaxValue) - Math.Log10(MinValue))) * (double)this.height);
             else
-                return this.y1 + (int)((1.0 - (worldY - this.minValue) / (this.maxValue - this.minValue)) * (double)this.height);
+                return Y1 + (int)((1.0 - (worldY - MinValue) / (MaxValue - MinValue)) * (double)this.height);
         }
 
         public void SetInterval(DateTime minDate, DateTime maxDate)
         {
-            foreach (IChartDrawable chartDrawable in this.primitives)
-                chartDrawable.SetInterval(minDate, maxDate);
+            foreach (IChartDrawable drawable in Primitives)
+                drawable.SetInterval(minDate, maxDate);
         }
 
         public void DrawHorizontalGrid(Pen pen, double y)
         {
-            if (!this.drawGrid)
-                return;
-            this.graphics.DrawLine(pen, this.x1, this.ClientY(y), this.x2, this.ClientY(y));
+            if (DrawGrid)
+                Graphics.DrawLine(pen, X1, this.ClientY(y), X2, this.ClientY(y));
         }
 
         public void DrawHorizontalTick(Pen pen, double x, double y, int length)
         {
-            this.graphics.DrawLine(pen, (int)x, this.ClientY(y), (int)x + length, this.ClientY(y));
+            Graphics.DrawLine(pen, (int)x, this.ClientY(y), (int)x + length, this.ClientY(y));
         }
 
         internal void PrepareForUpdate()
         {
-            this.axisGap = -1;
+            AxisGap = -1;
             if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0)
                 return;
-            this.maxValue = double.MinValue;
-            this.minValue = double.MaxValue;
+            MaxValue = double.MinValue;
+            MinValue = double.MaxValue;
             ArrayList arrayList;
-            lock (this.primitives.SyncRoot)
-                arrayList = new ArrayList((ICollection)this.primitives);
+            lock (Primitives.SyncRoot)
+                arrayList = new ArrayList(Primitives);
             foreach (IChartDrawable chartDrawable in arrayList)
             {
-                if ((this.drawItems || chartDrawable is SeriesView) && chartDrawable is IZoomable)
+                if ((DrawItems || chartDrawable is SeriesView) && chartDrawable is IZoomable)
                 {
                     PadRange padRangeY = (chartDrawable as IZoomable).GetPadRangeY(this);
                     if (padRangeY.IsValid)
                     {
-                        if (this.maxValue < padRangeY.Max)
-                            this.maxValue = padRangeY.Max;
-                        if (this.minValue > padRangeY.Min)
-                            this.minValue = padRangeY.Min;
+                        if (MaxValue < padRangeY.Max)
+                            MaxValue = padRangeY.Max;
+                        if (MinValue > padRangeY.Min)
+                            MinValue = padRangeY.Min;
                     }
                 }
             }
-            if (this.minValue != double.MaxValue && this.maxValue != double.MinValue)
+            if (MinValue != double.MaxValue && MaxValue != double.MinValue)
             {
-                this.minValue -= (this.maxValue - this.minValue) / 10.0;
-                this.maxValue += (this.maxValue - this.minValue) / 10.0;
-                this.axisGap = this.axis.GetAxisGap();
+                MinValue -= (MaxValue - MinValue) / 10.0;
+                MaxValue += (MaxValue - MinValue) / 10.0;
+                AxisGap = Axis.GetAxisGap();
             }
             else
-                this.axisGap = -1;
+                AxisGap = -1;
         }
 
-        internal void Update(Graphics graphics)
+        internal void Update(Graphics g)
         {
             if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0)
                 return;
-            this.graphics = graphics;
-            if (this.minValue != double.MaxValue && this.maxValue != double.MinValue)
+            Graphics = g;
+            if (MinValue != double.MaxValue && MaxValue != double.MinValue)
             {
-                this.axis.Paint();
-                graphics.SetClip(new Rectangle(this.x1, this.y1, this.width, this.height));
-                foreach (IChartDrawable chartDrawable in this.simplePrimitives)
+                Axis.Paint();
+                g.SetClip(new Rectangle(X1, Y1, this.width, this.height));
+                foreach (IChartDrawable drawable in this.simplePrimitives)
                 {
-                    if (this.drawItems || chartDrawable is SeriesView)
-                        chartDrawable.Paint();
+                    if (DrawItems || drawable is SeriesView)
+                        drawable.Paint();
                 }
-                if (this.drawItems)
+                if (DrawItems)
                 {
                     int nextIndex = this.rangeList.GetNextIndex(this.chart.MainSeries.GetDateTime(this.chart.FirstIndex));
                     int prevIndex = this.rangeList.GetPrevIndex(this.chart.MainSeries.GetDateTime(this.chart.LastIndex));
@@ -395,20 +283,20 @@ namespace SmartQuant.FinChart
                     {
                         for (int index = nextIndex; index <= prevIndex; ++index)
                         {
-                            foreach (IChartDrawable chartDrawable in this.rangeList[index])
-                                chartDrawable.Paint();
+                            foreach (IChartDrawable drawable in this.rangeList[index])
+                                drawable.Paint();
                         }
                     }
                 }
-                graphics.ResetClip();
+                g.ResetClip();
             }
             bool flag = true;
-            float num = (float)(this.x1 + 2);
-            foreach (IChartDrawable chartDrawable in this.simplePrimitives)
+            float num = (float)(X1 + 2);
+            foreach (IChartDrawable drawable in this.simplePrimitives)
             {
-                if (chartDrawable is SeriesView)
+                if (drawable is SeriesView)
                 {
-                    SeriesView seriesView = chartDrawable as SeriesView;
+                    SeriesView seriesView = drawable as SeriesView;
                     if (seriesView.DisplayNameEnabled)
                     {
                         string str;
@@ -419,16 +307,15 @@ namespace SmartQuant.FinChart
                         }
                         else
                             str = " " + seriesView.DisplayName;
-                        SizeF sizeF = graphics.MeasureString(str, this.chart.Font);
-                        graphics.FillRectangle((Brush)new SolidBrush(this.chart.CanvasColor), num + 2f, (float)(this.y1 + 2), sizeF.Width, sizeF.Height);
-                        graphics.DrawString(str, this.chart.Font, (Brush)new SolidBrush(seriesView.Color), num + 2f, (float)(this.y1 + 2));
+                        SizeF sizeF = g.MeasureString(str, this.chart.Font);
+                        g.FillRectangle(new SolidBrush(this.chart.CanvasColor), num + 2f, (float)(Y1 + 2), sizeF.Width, sizeF.Height);
+                        g.DrawString(str, this.chart.Font, new SolidBrush(seriesView.Color), num + 2f, (float)(Y1 + 2));
                         num += sizeF.Width;
                     }
                 }
             }
-            if (!this.outlineEnabled)
-                return;
-            graphics.DrawRectangle(new Pen(Color.Green), this.outlineRectangle);
+            if (this.outlineEnabled)
+                g.DrawRectangle(new Pen(Color.Green), this.outlineRectangle);
         }
 
         public DateTime GetDateTime(int x)
@@ -438,18 +325,18 @@ namespace SmartQuant.FinChart
 
         public double WorldY(int y)
         {
-            if (this.scaleStyle == PadScaleStyle.Log)
-                return Math.Pow(10.0, (double)(this.y2 - y) / (double)(this.y2 - this.y1) * (Math.Log10(this.maxValue) - Math.Log10(this.minValue))) * this.minValue;
+            if (ScaleStyle == PadScaleStyle.Log)
+                return Math.Pow(10.0, (double)(Y2 - y) / (double)(Y2 - Y1) * (Math.Log10(MaxValue) - Math.Log10(MinValue))) * MinValue;
             else
-                return this.minValue + (this.maxValue - this.minValue) * (double)(this.y2 - y) / (double)(this.y2 - this.y1);
+                return MinValue + (MaxValue - MinValue) * (double)(Y2 - y) / (double)(Y2 - Y1);
         }
 
         public virtual void MouseDown(MouseEventArgs Event)
         {
-            if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0 || (Event.X <= this.x1 || Event.X >= this.x2))
+            if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0 || (Event.X <= X1 || Event.X >= X2))
                 return;
             double num1 = 10.0;
-            double num2 = (this.maxValue - this.minValue) / 20.0;
+            double num2 = (MaxValue - MinValue) / 20.0;
             int x = Event.X;
             double y = this.WorldY(Event.Y);
             foreach (IChartDrawable primitive in this.simplePrimitives)
@@ -466,12 +353,12 @@ namespace SmartQuant.FinChart
                             this.chart.ContentUpdated = true;
                             this.chart.Invalidate();
                             this.chart.ShowProperties(primitive as DSView, this, false);
-                            this.selectedPrimitive = primitive;
+                            SelectedPrimitive = primitive;
                             if (!this.chart.ContextMenuEnabled || Event.Button != System.Windows.Forms.MouseButtons.Right)
                                 break;
                             #if GTK
                             #else
-                            this.InitContextMenu(primitive).Show((Control)this.chart, new Point(Event.X, Event.Y));
+                            InitContextMenu(primitive).Show(this.chart, new Point(Event.X, Event.Y));
                             #endif
                             break;
                         }
@@ -488,10 +375,10 @@ namespace SmartQuant.FinChart
 
         public virtual void MouseMove(MouseEventArgs Event)
         {
-            if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0 || (Event.X <= this.x1 || Event.X >= this.x2))
+            if (this.chart.MainSeries == null || this.chart.MainSeries.Count == 0 || (Event.X <= X1 || Event.X >= X2))
                 return;
             double num1 = 10.0;
-            double num2 = (this.maxValue - this.minValue) / 20.0;
+            double num2 = (MaxValue - MinValue) / 20.0;
             int x = Event.X;
             double y = this.WorldY(Event.Y);
             bool flag = false;
@@ -499,7 +386,7 @@ namespace SmartQuant.FinChart
             this.onPrimitive = false;
             foreach (IChartDrawable chartDrawable in this.simplePrimitives)
             {
-                if (this.drawItems || chartDrawable is SeriesView)
+                if (DrawItems || chartDrawable is SeriesView)
                 {
                     Distance distance = chartDrawable.Distance(x, y);
                     if (distance != null && distance.DX < num1 && distance.DY < num2)
@@ -520,7 +407,7 @@ namespace SmartQuant.FinChart
                     }
                 }
             }
-            if (this.drawItems)
+            if (DrawItems)
             {
                 int num3 = 0;
                 int index1 = this.chart.MainSeries.GetIndex(this.GetDateTime(Event.X), IndexOption.Null);
@@ -560,8 +447,6 @@ namespace SmartQuant.FinChart
                     }
                 }
             }
-            #if GTK
-            #else
             if (flag)
             {
                 this.chart.ToolTip.SetToolTip(this.chart, caption);
@@ -569,7 +454,6 @@ namespace SmartQuant.FinChart
             }
             else
                 this.chart.ToolTip.Active = false;
-            #endif
         }
 
         #if GTK
@@ -592,22 +476,23 @@ namespace SmartQuant.FinChart
             return contextMenuStrip;
         }
         #endif
+
         private void PropertiesMenuItem_Click(object sender, EventArgs e)
         {
-            this.chart.ShowProperties(this.selectedPrimitive as DSView, this, true);
+            this.chart.ShowProperties(SelectedPrimitive as DSView, this, true);
         }
 
         private void DeleteMenuItem_Click(object sender, EventArgs e)
         {
-            this.primitives.Remove(this.selectedPrimitive);
-            this.simplePrimitives.Remove(this.selectedPrimitive);
+            Primitives.Remove(SelectedPrimitive);
+            this.simplePrimitives.Remove(SelectedPrimitive);
             this.chart.ContentUpdated = true;
             this.chart.Invalidate();
         }
 
         public bool IsInRange(double x, double y)
         {
-            return this.x1 <= x && x <= this.x2 && this.y1 <= y && y <= this.y2;
+            return X1 <= x && x <= X2 && Y1 <= y && y <= Y2;
         }
     }
 }

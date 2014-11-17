@@ -22,7 +22,7 @@ namespace SmartQuant.FinChart
         {
             get
             {
-                return this.MainSeries.Name;
+                return MainSeries.Name;
             }
         }
 

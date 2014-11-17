@@ -42,17 +42,17 @@ namespace SmartQuant.ChartViewers
 
         public override void Paint(object obj, Pad pad)
         {
-            FillSeries fillSeries = obj as FillSeries;
-            if (fillSeries.Count == 0)
+            var fs = obj as FillSeries;
+            if (fs == null || fs.Count == 0)
                 return;
             double xmin = pad.XMin;
             double xmax = pad.XMax;
             double ymin = pad.YMin;
             double ymax = pad.YMax;
-            List<Viewer.Property> list = (List<Viewer.Property>)null;
+            List<Viewer.Property> list =  null;
             if (this.metadata.TryGetValue(obj, out list))
             {
-                foreach (Viewer.Property property in list)
+                foreach (var property in list)
                 {
                     if (property.Name == "BuyColor")
                         this.BuyColor = (Color)property.Value;
@@ -64,17 +64,17 @@ namespace SmartQuant.ChartViewers
             }
             DateTime datetime1 = new DateTime((long)xmin);
             DateTime datetime2 = new DateTime((long)xmax);
-            int num1 = !(datetime1 < fillSeries[0].DateTime) ? fillSeries.GetIndex(datetime1, IndexOption.Prev) : 0;
-            int num2 = !(datetime2 > fillSeries[fillSeries.Count - 1].DateTime) ? fillSeries.GetIndex(datetime2, IndexOption.Next) : fillSeries.Count - 1;
+            int num1 = !(datetime1 < fs[0].DateTime) ? fs.GetIndex(datetime1, IndexOption.Prev) : 0;
+            int num2 = !(datetime2 > fs[fs.Count - 1].DateTime) ? fs.GetIndex(datetime2, IndexOption.Next) : fs.Count - 1;
             if (num1 == -1 || num2 == -1)
                 return;
             for (int index = num1; index <= num2; ++index)
             {
-                Fill fill = fillSeries[index];
+                Fill fill = fs[index];
                 int x = pad.ClientX((double)fill.DateTime.Ticks);
                 int y = pad.ClientY(fill.Price);
                 float num3 = 12f;
-                string str = string.Format("{0} {1}  @ {2} {3}", fill.Side, fill.Qty, fill.Price.ToString(fill.Instrument.PriceFormat), fill.Text);
+                string str = string.Format("{0} {1} @ {2} {3}", fill.Side, fill.Qty, fill.Price.ToString(fill.Instrument.PriceFormat), fill.Text);
                 Font font = new Font("Arial", 8f);
                 switch (fill.Side)
                 {

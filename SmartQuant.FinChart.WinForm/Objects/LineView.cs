@@ -95,7 +95,7 @@ namespace SmartQuant.FinChart.Objects
             if (this.chartFirstDate > this.lastDate || this.chartLastDate < this.firstDate)
                 return null;
 
-            Distance distance = new Distance();
+            var d = new Distance();
             DateTime dateTime = this.pad.GetDateTime(x);
             double num;
             if (dateTime == this.chartFirstDate)
@@ -110,15 +110,14 @@ namespace SmartQuant.FinChart.Objects
                     return (Distance) null;
                 num = this.GetLineValueAt(this.pad.MainSeries.GetIndex(dateTime, IndexOption.Null));
             }
-            distance.X = (double) x;
-            distance.Y = num;
-            distance.DX = 0.0;
-            distance.DY = Math.Abs(y - num);
-            if (distance.DX == double.MaxValue || distance.DY == double.MaxValue)
+            d.X = x;
+            d.Y = num;
+            d.DX = 0.0;
+            d.DY = Math.Abs(y - num);
+            if (d.DX == double.MaxValue || d.DY == double.MaxValue)
                 return  null;
- 
-            distance.ToolTipText = string.Format(ToolTipFormat, "Line", this.line.Name, dateTime, num);
-            return distance;
+            d.ToolTipText = string.Format(ToolTipFormat, "Line", this.line.Name, dateTime, num);
+            return d;
         }
 
         public void Select()
@@ -139,7 +138,6 @@ namespace SmartQuant.FinChart.Objects
             double num1 = (double) this.pad.MainSeries.GetIndex(this.line.X1, IndexOption.Null);
             double num2 = (double) this.pad.MainSeries.GetIndex(this.line.X2, IndexOption.Null);
             return this.line.Y1 + ((double) x - num1) / (num2 - num1) * (this.line.Y2 - this.line.Y1);
-
         }
     }
 }

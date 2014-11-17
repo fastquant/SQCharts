@@ -49,12 +49,13 @@ namespace SmartQuant.FinChart
         public SimpleBSView(Pad pad, BarSeries series)
             : base(pad)
         {
+            this.series = series;
             UpColor = Color.Black;
             DownColor = Color.Lime;
-            this.series = series;
+            ToolTipFormat = "{0} {2}\n\nH : {3:F*}\nL : {4:F*}\nO : {5:F*}\nC : {6:F*}\nV : {7}".Replace("*", this.pad.Chart.LabelDigitsCount.ToString());
         }
 
-        public override PadRange GetPadRangeY(Pad Pad)
+        public override PadRange GetPadRangeY(Pad pad)
         {
             double min = this.series.LowestLow(this.firstDate, this.lastDate);
             double max = this.series.HighestHigh(this.firstDate, this.lastDate);
@@ -83,10 +84,10 @@ namespace SmartQuant.FinChart
                 return;
             int width = (int)Math.Max(2.0, (double)(int)this.pad.IntervalWidth / 1.4);
             int num3 = 0;
-            for (int index3 = index1; index3 <= index2; ++index3)
+            for (int i = index1; i <= index2; ++i)
             {
-                int num4 = this.pad.ClientX(this.series[index3].DateTime);
-                Bar bar = this.series[index3];
+                int num4 = this.pad.ClientX(this.series[i].DateTime);
+                Bar bar = this.series[i];
                 double high = bar.High;
                 double low = bar.Low;
                 double open = bar.Open;
@@ -123,8 +124,8 @@ namespace SmartQuant.FinChart
                 {
                     long num5 = (long)num4;
                     int num6 = this.pad.ClientY(bar.Close);
-                    if (num1 != -1L && num2 != -1L)
-                        this.pad.Graphics.DrawLine(pen1, (float)num5, (float)num6, (float)num1, (float)num2);
+                    if (num1 != -1 && num2 != -1)
+                        this.pad.Graphics.DrawLine(pen1, num5, num6, num1, num2);
                     num1 = num5;
                     num2 = (long)num6;
                     ++num3;
@@ -140,7 +141,6 @@ namespace SmartQuant.FinChart
             d.DY = bar.Low <= y && y <= bar.High ? 0 : d.DY;
             if (d.DX == double.MaxValue || d.DY == double.MaxValue)
                 return null;
-            ToolTipFormat = "{0} {2}\n\nH : {3:F*}\nL : {4:F*}\nO : {5:F*}\nC : {6:F*}\nV : {7}".Replace("*", this.pad.Chart.LabelDigitsCount.ToString());
             d.ToolTipText = string.Format(ToolTipFormat, this.series.Name, this.series.Description, bar.DateTime, bar.High, bar.Low, bar.Open, bar.Close, bar.Volume);
             return d;
         }

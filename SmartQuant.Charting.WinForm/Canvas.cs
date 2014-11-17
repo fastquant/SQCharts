@@ -322,7 +322,7 @@ namespace SmartQuant.Charting
             this.chart.AntiAliasingEnabled = false;
             this.chart.Dock = DockStyle.Fill;
             this.chart.DoubleBufferingEnabled = true;
-            this.chart.FileName = (string) null;
+            this.chart.FileName = null;
             this.chart.GroupLeftMarginEnabled = false;
             this.chart.GroupZoomEnabled = false;
             this.chart.ImeMode = ImeMode.Off;

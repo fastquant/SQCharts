@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Licensed under the Apache License, Version 2.0. 
+// Copyright (c) Alex Lee. All rights reserved.
+
+using System;
 using System.Collections.Generic;
 using SmartQuant.Charting;
 
@@ -15,7 +18,7 @@ namespace SmartQuant.Controls
         public GroupItem(Group group)
         {
             Table = new Dictionary<int, Tuple<Viewer, object>>();
-            PadNumber = (int) group.Fields["Pad"].Value;
+            PadNumber = (int)group.Fields["Pad"].Value;
             Format = group.Fields.ContainsKey("Format") ? (string)group.Fields["Format"].Value : "F2";
         }
     }

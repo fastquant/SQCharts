@@ -1,4 +1,5 @@
-﻿using SmartQuant.Controls.BarChart;
+﻿using SmartQuant.Controls;
+using SmartQuant.Controls.BarChart;
 using SmartQuant.FinChart;
 using System.Windows.Forms;
 
@@ -6,31 +7,7 @@ namespace Demo
 {
     partial class MainForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
+        private void InitComponent()
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -108,10 +85,10 @@ namespace Demo
             // 
             // chart3
             // 
-            this.chart3.ActionType = SmartQuant.FinChart.ChartActionType.None;
+            this.chart3.ActionType = ChartActionType.Cross;
             this.chart3.AutoScroll = true;
             this.chart3.AutoSize = true;
-            this.chart3.BarSeriesStyle = SmartQuant.FinChart.BSStyle.Candle;
+            this.chart3.BarSeriesStyle = BSStyle.Candle;
             this.chart3.BorderColor = System.Drawing.Color.Gray;
             this.chart3.BottomAxisGridColor = System.Drawing.Color.LightGray;
             this.chart3.BottomAxisLabelColor = System.Drawing.Color.LightGray;
@@ -168,8 +145,6 @@ namespace Demo
             this.ResumeLayout(false);
 
         }
-
-        #endregion
 
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;

@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+
 #if GTK
 using Compatibility.Gtk;
 #else
@@ -13,6 +14,17 @@ using System.Windows.Forms;
 namespace SmartQuant.FinChart
 {
     #if GTK
+    public class PropertyForm : Form
+    {
+        public PropertyForm(object properties)
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+        }
+    }
     #else
     public class PropertyForm : Form
     {
@@ -21,8 +33,8 @@ namespace SmartQuant.FinChart
 
         public PropertyForm(object properties)
         {
-            this.InitializeComponent();
-            this.propertyGrid.SelectedObject = properties;
+            InitializeComponent();
+            propertyGrid.SelectedObject = properties;
         }
 
         private void InitializeComponent()
