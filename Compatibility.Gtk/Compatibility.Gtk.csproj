@@ -58,6 +58,9 @@
     <Compile Include="UserControl.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="NoPaintUserControl.cs" />
+    <Compile Include="ToolTip.cs" />
+    <Compile Include="Form.cs" />
+    <Compile Include="GtkWorkarounds.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,7 +7,6 @@ using System.ComponentModel;
 
 #if GTK
 using Compatibility.Gtk;
-
 #else
 using System.Windows.Forms;
 #endif

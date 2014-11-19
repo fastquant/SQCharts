@@ -10,6 +10,7 @@ using System.Drawing.Drawing2D;
 #if GTK
 using Compatibility.Gtk;
 using Gtk;
+
 #else
 using System.Windows.Forms;
 #endif
@@ -150,11 +151,11 @@ namespace SmartQuant.Controls.BarChart
                     {
                         obj3 = new TimeSeries();
                         int padNumber = item.PadNumber;
-                        this.EnsurePadExists(padNumber, item.Format);
+                        EnsurePadExists(padNumber, item.Format);
                         int viewerIndex = this.GetViewerIndex(groupEvent.Group, padNumber);
                         Viewer viewer = this.chart.Pads[padNumber].Insert(viewerIndex, obj3);
-                        foreach (var keyValuePair in groupEvent.Group.Fields)
-                            viewer.Set(obj3, keyValuePair.Value.Name, keyValuePair.Value.Value);
+                        foreach (var kv in groupEvent.Group.Fields)
+                            viewer.Set(obj3, kv.Value.Name, kv.Value.Value);
                         if (groupEvent.Group.Fields.ContainsKey("Color"))
                             this.chart.Pads[padNumber].Legend.Add(groupEvent.Group.Name, (Color)groupEvent.Group.Fields["Color"].Value);
                         else
@@ -221,15 +222,16 @@ namespace SmartQuant.Controls.BarChart
                 item.PadNumber = newPad;
                 item.Format = labelFormat;
             }
-            if (groupUpdate.FieldName != "Color")
-                return;
-            Color color = (Color)groupUpdate.Value;
-            foreach (var kv in item.Table)
+            if (groupUpdate.FieldName == "Color")
             {
-                if (kv.Value.Item1 is TimeSeriesViewer)
-                    (kv.Value.Item1 as TimeSeriesViewer).Color = color;
+                Color color = (Color)groupUpdate.Value;
+                foreach (var kv in item.Table)
+                {
+                    if (kv.Value.Item1 is TimeSeriesViewer)
+                        (kv.Value.Item1 as TimeSeriesViewer).Color = color;
+                }
+                this.chart.UpdatePads();
             }
-            this.chart.UpdatePads();
         }
 
         public void OnNewGroupUpdate(GroupUpdate groupUpdate)
@@ -251,7 +253,7 @@ namespace SmartQuant.Controls.BarChart
         {
             for (int count = this.chart.Pads.Count; count <= newPad; ++count)
             {
-                Pad pad = this.AddPad();
+                var pad = AddPad();
                 pad.RegisterViewer(new BarSeriesViewer());
                 pad.RegisterViewer(new TimeSeriesViewer());
                 pad.RegisterViewer(new FillSeriesViewer());
@@ -358,7 +360,7 @@ namespace SmartQuant.Controls.BarChart
                     var selected = GetComboBoxSelected();
                     if (groupEvent.Group.Fields.TryGetValue("SelectorKey", out groupField))
                         key = groupField.Value;
-                    if (selected == null && string.IsNullOrEmpty(key.ToString()) || selected.Equals(key))
+                    if (selected == null && string.IsNullOrEmpty(key.ToString()) || (selected != null && selected.Equals(key)))
                         list1.Add(groupEvent);
                     List<GroupEvent> list2;
                     if (this.eventsBySelectorKey.TryGetValue(key, out list2))

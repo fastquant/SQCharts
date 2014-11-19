@@ -8,132 +8,10 @@ using System.ComponentModel;
 
 namespace Compatibility.Gtk
 {
-    class TooltipWindow : Window
-    {
-        internal Label Label;
-        public TooltipWindow()
-            : base(WindowType.Popup)
-        {
-            SkipPagerHint = true;
-            SkipTaskbarHint = true;
-            Decorated = false;
-            BorderWidth = 2;
-            TypeHint = Gdk.WindowTypeHint.Tooltip;
-            AllowShrink = false;
-            AllowGrow = false;
-            Title = "tooltip"; 
-            //fake widget name for stupid theme engines
-            Name = "gtk-tooltip";
-            this.Label = new Label();
-            Add(Label);
-        }
-
-        protected override bool OnExposeEvent(Gdk.EventExpose evnt)
-        {
-            int winWidth, winHeight;
-            GetSize(out winWidth, out winHeight);
-            Style.PaintFlatBox(Style, GdkWindow, StateType.Normal, ShadowType.Out, evnt.Area, this, "tooltip", 0, 0, winWidth, winHeight);
-            foreach (var child in Children)
-                PropagateExpose(child, evnt);
-            return false;
-        }
-
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-//            if (NudgeHorizontal || NudgeVertical) {
-//                int x, y;
-//                this.GetPosition (out x, out y);
-//                int oldY = y, oldX = x;
-//                const int edgeGap = 2;
-//
-////                Gdk.Rectangle geometry = DesktopService.GetUsableMonitorGeometry (Screen, Screen.GetMonitorAtPoint (x, y));
-////                if (NudgeHorizontal) {
-////                    if (allocation.Width <= geometry.Width && x + allocation.Width >= geometry.Left + geometry.Width - edgeGap)
-////                        x = geometry.Left + (geometry.Width - allocation.Width - edgeGap);
-////                    if (x <= geometry.Left + edgeGap)
-////                        x = geometry.Left + edgeGap;
-////                }
-////
-////                if (NudgeVertical) {
-////                    if (allocation.Height <= geometry.Height && y + allocation.Height >= geometry.Top + geometry.Height - edgeGap)
-////                        y = geometry.Top + (geometry.Height - allocation.Height - edgeGap);
-////                    if (y <= geometry.Top + edgeGap)
-////                        y = geometry.Top + edgeGap;
-////                }
-////
-////                if (y != oldY || x != oldX)
-////                    Move (x, y);
-//            }
-//
-            base.OnSizeAllocated(allocation);
-        }
-    }
-
-    public class ToolTip : Component
-    {
-        TooltipWindow window;
-
-        public ToolTip()
-        {
-            window = new TooltipWindow();
-        }
-
-        public ToolTip(IContainer container):this()
-        {
-            container.Add(this);
-        }
-
-        public void SetToolTip(UserControl control, string caption)
-        {
-            this.window.Label.Text = caption;
-        }
-
-        public bool Active
-        {
-            get
-            {
-                return window.Visible;
-            }
-            set
-            { 
-                if (value)
-                    window.ShowAll();
-                else
-                    window.Hide();
-            }
-        }
-
-        public new void Dispose()
-        {   
-            window.Destroy();
-            base.Dispose();
-        }
-    }
-
-    public class Form : Window
-    {
-        public Form()
-            : base(WindowType.Toplevel)
-        {
-        }
-
-        public string Text { get; set; }
-
-        public int Height { get; set; }
-
-        public int Width { get; set; }
-
-        public void Update()
-        {
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-        }
-    }
-
     public class MouseEventArgs : EventArgs
     {
+        public Gdk.EventButton GdkEventButton { get; set; }
+
         public MouseButtons Button { get; private set; }
 
         public int Clicks { get; private set; }
@@ -171,7 +49,10 @@ namespace Compatibility.Gtk
 
         public static implicit operator MouseEventArgs(global::Gtk.ScrollEventArgs args)
         {
-            return new MouseEventArgs((int)args.Event.X, (int)args.Event.Y);
+            var evt = args.Event;
+            var me = new MouseEventArgs((int)evt.X, (int)evt.Y);
+            me.Delta = evt.Direction == Gdk.ScrollDirection.Up ? 120 : -120;
+            return me;
         }
 
         public static implicit operator MouseEventArgs(global::Gtk.ButtonPressEventArgs args)
@@ -186,7 +67,12 @@ namespace Compatibility.Gtk
 
         public static MouseEventArgs FromEventButton(global::Gdk.EventButton evt)
         {
-            return new MouseEventArgs((int)evt.X, (int)evt.Y);
+            var me = new MouseEventArgs((int)evt.X, (int)evt.Y) { GdkEventButton = evt };
+            if (evt.Button == 1)
+                me.Button = System.Windows.Forms.MouseButtons.Left;
+            if (evt.Button == 3)
+                me.Button = System.Windows.Forms.MouseButtons.Right;
+             return me;
         }
     }
 
@@ -220,8 +106,27 @@ namespace Compatibility.Gtk
         }
     }
 
+    public sealed class Cursor
+    {
+        public Point Position { get; set; }
+
+        public Size Size { get; set; }
+
+        public Cursor()
+        {
+            Position = Point.Empty;
+            Size = Size.Empty;
+        }
+    }
+
     public class UserControl : EventBox
     {
+        public static Gdk.Cursor CrossCursor = new Gdk.Cursor(Gdk.CursorType.Cross);
+        public static Gdk.Cursor VSplitterCursor = new Gdk.Cursor(Gdk.CursorType.SbVDoubleArrow);
+        public static Gdk.Cursor HandCursor = new Gdk.Cursor(Gdk.CursorType.Hand1);
+
+        public Cursor Cursor { get; set; }
+
         public string Text { get; set; }
 
         public virtual System.Drawing.Font Font { get; set; }
@@ -283,6 +188,7 @@ namespace Compatibility.Gtk
 
         public UserControl()
         {
+            Cursor = new Cursor();
             Font = SystemFonts.DefaultFont;
             this.drawingArea = new DrawingArea();
             this.drawingArea.Events = Gdk.EventMask.AllEventsMask;
@@ -310,6 +216,8 @@ namespace Compatibility.Gtk
 
             this.drawingArea.MotionNotifyEvent += (o, args) =>
             {
+                var e = args.Event;
+                Cursor.Position = new Point((int)e.XRoot, (int)e.YRoot + 16);
                 this.OnMouseMove(args);
             };
 
@@ -321,7 +229,7 @@ namespace Compatibility.Gtk
             this.drawingArea.ButtonPressEvent += (o, args) =>
             {
                 var evt = args.Event;
-                if (evt.Type == Gdk.EventType.TwoButtonPress)
+                if (evt.Button == 1 && evt.Type == Gdk.EventType.TwoButtonPress)
                     this.OnDoubleClick(args);
                 else
                     this.OnMouseDown(args);

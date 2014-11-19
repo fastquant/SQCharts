@@ -106,14 +106,14 @@ namespace SmartQuant.Charting.Draw3D
         {
             this.m = new TRotZ(angleXY);
             this.m = new TRotX(viewAngle) * this.m;
-            this.ms = TView.ToScreenCoords * this.m;
+            this.ms = ToScreenCoords * this.m;
         }
 
         public void SetProjectionSpecial(double angleXY, double viewAngle)
         {
             this.m = new TRotZ(angleXY);
             this.m = new TSpecialProjection(viewAngle) * this.m;
-            this.ms = TView.ToScreenCoords * this.m;
+            this.ms = ToScreenCoords * this.m;
         }
 
         public void CalculateAxes(Pad pad, int left, int top, int h)
@@ -359,7 +359,7 @@ namespace SmartQuant.Charting.Draw3D
             Graphics graphics = pad.Graphics;
             graphics.Clip = new Region(new Rectangle(pad.X1, pad.Y1, pad.Width + 1, pad.Height + 1));
             Pen pen = new Pen(Color.Black, 1f);
-            Brush brush = (Brush)new SolidBrush(Color.White);
+            Brush brush = new SolidBrush(Color.White);
             graphics.FillPolygon(brush, points1);
             graphics.FillPolygon(brush, points2);
             graphics.FillPolygon(brush, points3);

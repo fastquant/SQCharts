@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace SmartQuant.Charting.Draw3D
 {
     public class TAxisCalc
     {
         private TTick[] ticks = new TTick[0];
-        private TVec3 Origin;
-        private TVec3 End;
-        private double ValO;
-        private double ValEnd;
+        private TVec3 origin;
+        private TVec3 end;
+        private double valO;
+        private double valEnd;
         private int n;
         private double lastVal;
 
@@ -20,15 +21,18 @@ namespace SmartQuant.Charting.Draw3D
             }
         }
 
-        public TAxisCalc(TVec3 Origin, TVec3 End, double ValO, double ValEnd, int nTicks)
+        public TAxisCalc(TVec3 origin, TVec3 end, double valO, double valEnd, int nTicks)
         {
-            this.Origin = Origin;
-            this.End = End;
-            this.ValO = ValO;
-            this.ValEnd = ValEnd;
+            this.origin = origin;
+            this.end = end;
+            this.valO = valO;
+            this.valEnd = valEnd;
             this.n = nTicks;
-            this.SetTicks();
-            this.SetTickPositions();
+            SetTicks();
+
+            // Set tick positions
+            Parallel.ForEach(this.ticks, t => t.Position =  this.origin + (this.end - this.origin) * (t.Value - this.valO) / (this.valEnd - this.valO));
+
         }
 
         public double TickVal(int i)
@@ -41,66 +45,55 @@ namespace SmartQuant.Charting.Draw3D
             return new TVec3(this.ticks[i].Position);
         }
 
-        public bool TickPassed(ref TAxisCalc.TTick Tick, double Val)
+        public bool TickPassed(ref TTick tick, double val)
         {
-            foreach (TAxisCalc.TTick ttick in this.ticks)
+            foreach (var t in this.ticks)
             {
-                if (Val == ttick.Value || (Val - ttick.Value) * (this.lastVal - ttick.Value) < 0.0)
+                if (val == t.Value || (val - t.Value) * (this.lastVal - t.Value) < 0.0)
                 {
-                    Tick = ttick;
-                    this.lastVal = Val;
+                    tick = t;
+                    this.lastVal = val;
                     return true;
                 }
             }
-            this.lastVal = Val;
+            this.lastVal = val;
             return false;
         }
 
-        public bool TickPassed(double Val)
+        public bool TickPassed(double val)
         {
-            foreach (TAxisCalc.TTick ttick in this.ticks)
-            {
-                if (Val == ttick.Value || (Val - ttick.Value) * (this.lastVal - ttick.Value) < 0.0)
-                {
-                    this.lastVal = Val;
-                    return true;
-                }
-            }
-            this.lastVal = Val;
-            return false;
+            var tick = new TTick();
+            return TickPassed(ref tick, val);
         }
 
         public static double Round(double x)
         {
-            return Math.Pow(10.0, Math.Round(Math.Log10(x)));
+            return Math.Pow(10, Math.Round(Math.Log10(x)));
         }
 
         public static double Ceiling(double x, double d)
         {
-            if (x < 0.0)
-                return d * Math.Floor(x / d);
-            else
-                return d * Math.Ceiling(x / d);
+            return x < 0 ? d * Math.Floor(x / d) : d * Math.Ceiling(x / d);
         }
 
         private void SetTicks()
         {
-            double d = TAxisCalc.Round(Math.Abs(this.ValEnd - this.ValO) / (double) this.n);
-            double num1 = TAxisCalc.Ceiling(this.ValO, d);
-            this.n = (int) (Math.Abs(this.ValEnd - num1) / d) + 1;
+            double d = Round(Math.Abs(this.valEnd - this.valO) / this.n);
+            double num1 = Ceiling(this.valO, d);
+            this.n = (int) (Math.Abs(this.valEnd - num1) / d) + 1;
             if (this.n < 3)
                 this.n = 3;
-            this.ticks = new TAxisCalc.TTick[this.n];
+            this.ticks = new TTick[this.n];
             if (this.n == 3)
             {
-                this.ticks[0].Value = this.ValO;
-                this.ticks[1].Value = 0.5 * (this.ValO + this.ValEnd);
-                this.ticks[2].Value = this.ValEnd;
+                this.ticks[0].Value = this.valO;
+                this.ticks[1].Value = 0.5 * (this.valO + this.valEnd);
+                this.ticks[2].Value = this.valEnd;
             }
             else
             {
                 double num2 = num1;
-                if (this.ValEnd < this.ValO)
+                if (this.valEnd < this.valO)
                     d = -d;
                 int index = 0;
                 while (index < this.n)
@@ -110,12 +103,6 @@ namespace SmartQuant.Charting.Draw3D
                     num2 += d;
                 }
             }
-        }
-
-        private void SetTickPositions()
-        {
-            for (int index = 0; index < this.ticks.Length; ++index)
-                this.ticks[index].Position = this.Origin + (this.End - this.Origin) * (this.ticks[index].Value - this.ValO) / (this.ValEnd - this.ValO);
         }
 
         public struct TTick

@@ -84,12 +84,12 @@ namespace SmartQuant.FinChart
                 int index1 = this.series.GetIndex(this.firstDate.AddTicks(1L), IndexOption.Null);
                 int index2 = this.series.GetIndex(this.lastDate.AddTicks(1L), IndexOption.Next);
                 if (index1 == -1 || index2 == -1)
-                    return new PadRange(0.0, 0.0);
+                    return new PadRange(0, 0);
                 datetime1 = this.series.GetDateTime(index1);
                 datetime2 = this.series.GetDateTime(index2);
             }
             if (this.series.Count == 0 || !(this.series.LastDateTime >= datetime1) || !(this.series.FirstDateTime <= datetime2))
-                return new PadRange(0.0, 0.0);
+                return new PadRange(0, 0);
             int index3 = this.series.GetIndex(datetime1, IndexOption.Next);
             int index4 = this.series.GetIndex(datetime2, IndexOption.Prev);
             double min = this.series.GetMin(Math.Min(index3, index4), Math.Max(index3, index4));
@@ -105,7 +105,7 @@ namespace SmartQuant.FinChart
 
         public override void Paint()
         {
-            Pen pen = new Pen(Color, DrawWidth);
+            var pen = new Pen(Color, DrawWidth);
             int num1 = 0;
             GraphicsPath path = new GraphicsPath();
             List<Point> list = new List<Point>();

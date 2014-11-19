@@ -11,16 +11,13 @@ namespace SmartQuant.Charting.Draw3D
     public class TLight
     {
         public TColor Ambient = new TColor(Color.PaleTurquoise);
-        public TSource[] ParallelBeams = new TSource[1]
-        {
-            new TLight.TSource(new TVec3(3.0, -2.0, 2.0), (TColor) Color.LightYellow)
-        };
+        public TSource[] ParallelBeams = new TSource[] { new TSource(new TVec3(3.0, -2.0, 2.0), (TColor)Color.LightYellow) };
         public TLight.TSource[] NearSources = new TLight.TSource[0];
 
         public TLight()
         {
-            this.SetSfumatoDay();
-            this.SetShadowSources(0.25);
+            SetSfumatoDay();
+            SetShadowSources(0.25);
         }
 
         public void SetSfumatoDay()
@@ -31,14 +28,14 @@ namespace SmartQuant.Charting.Draw3D
 
         public void SetNormalDay()
         {
-            this.SetSfumatoDay();
+            SetSfumatoDay();
             this.Ambient *= 1.1;
             this.ParallelBeams[0].c *= 1.1;
         }
 
         public void SetVeryBrightDay()
         {
-            this.SetSfumatoDay();
+            SetSfumatoDay();
             this.Ambient *= 1.2;
             this.ParallelBeams[0].c *= 1.2;
         }

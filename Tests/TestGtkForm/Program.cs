@@ -11,7 +11,7 @@ namespace TestGtkForm
         {
             Events = Gdk.EventMask.AllEventsMask;
             var vb = new VBox();
-            var hScrollBar = new HScrollbar(new Adjustment(0, 0, 100, 1, 20, 20));
+            var hScrollBar = new HScrollbar(new Adjustment(1, 1, 100, 1, 20, 10));
             hScrollBar.ChangeValue += (o, args) =>
             {
                 //Console.WriteLine("Arg.Value: {0}", args.Args[1]);

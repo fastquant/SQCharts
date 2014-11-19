@@ -8,12 +8,21 @@ using System.Drawing.Drawing2D;
 
 #if GTK
 using Compatibility.Gtk;
+
 #else
 using System.Windows.Forms;
 #endif
 
 namespace SmartQuant.FinChart
 {
+    enum ChartCursorType
+    {
+        Default,
+        VSplitter,
+        Hand,
+        Cross
+    }
+
     public partial class Chart
     {
         private int prevMouseX = -1;
@@ -84,6 +93,7 @@ namespace SmartQuant.FinChart
         protected DateTime rightDateTime;
         protected bool volumePadShown;
         protected PadScaleStyle scaleStyle;
+
         private bool drawItems;
         internal Font RightAxesFont;
         private Color chartBackColor;
@@ -219,12 +229,12 @@ namespace SmartQuant.FinChart
                             if (this.mainSeries.Count == 0)
                                 this.firstIndex = -1;
                             if (this.lastIndex >= 0)
-                                this.SetIndexInterval(this.firstIndex, this.lastIndex);
+                                SetIndexInterval(this.firstIndex, this.lastIndex);
                         }
                         this.contentUpdated = true;
                     }
-                    this.EmitBarSeriesStyleChanged();
-                    this.Invalidate();
+                    EmitBarSeriesStyleChanged();
+                    Invalidate();
                 }
             }
         }
@@ -672,13 +682,6 @@ namespace SmartQuant.FinChart
         public Chart()
         {
             InitializeComponent();
-            #if GTK
-            #else
-            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer, true);
-            UpdateStyles();
-            this.MouseWheel += new MouseEventHandler(this.Chart_MouseWheel);
-            this.scrollBar.Minimum = 0;
-            #endif
             RightAxesFont = new Font(Font.FontFamily, this.rightAxesFontSize);
             this.canvasLeftOffset = 10;
             this.canvasTopOffset = 10;
@@ -704,20 +707,20 @@ namespace SmartQuant.FinChart
             base.Dispose(disposing);
         }
 
-        internal void DrawVerticalTick(Pen Pen, long X, int Length)
+        internal void DrawVerticalTick(Pen Pen, long x, int length)
         {
-            this.graphics.DrawLine(Pen, this.ClientX(new DateTime(X)), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset), this.ClientX(new DateTime(X)), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset) + Length);
+            this.graphics.DrawLine(Pen, this.ClientX(new DateTime(x)), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset), this.ClientX(new DateTime(x)), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset) + length);
         }
 
-        internal void DrawVerticalGrid(Pen Pen, long X)
+        internal void DrawVerticalGrid(Pen pen, long x)
         {
-            int x1 = this.ClientX(new DateTime(X));
-            this.graphics.DrawLine(Pen, x1, this.canvasTopOffset, this.ClientX(new DateTime(X)), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset));
+            int x1 = ClientX(new DateTime(x));
+            this.graphics.DrawLine(pen, x1, this.canvasTopOffset, x1, this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset));
         }
 
-        internal void DrawSessionGrid(Pen Pen, long X)
+        internal void DrawSessionGrid(Pen pen, long x)
         {
-            this.graphics.DrawLine(Pen, (int)((double)this.ClientX(new DateTime(X)) - this.intervalWidth / 2.0), this.canvasTopOffset, (int)((double)this.ClientX(new DateTime(X)) - this.intervalWidth / 2.0), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset));
+            this.graphics.DrawLine(pen, (int)((double)ClientX(new DateTime(x)) - this.intervalWidth / 2.0), this.canvasTopOffset, (int)((double)this.ClientX(new DateTime(x)) - this.intervalWidth / 2.0), this.canvasTopOffset + this.Height - (this.canvasBottomOffset + this.canvasTopOffset));
         }
 
         public void DrawSeries(TimeSeries series, int padNumber, Color color)
@@ -731,9 +734,9 @@ namespace SmartQuant.FinChart
             {
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
-                DSView local_0 = new DSView(this.pads[padNumber], series, color, option, this.TimeSeriesSmoothingMode);
-                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
-                local_0.SetInterval(this.leftDateTime, this.rightDateTime);
+                var view = new DSView(this.pads[padNumber], series, color, option, this.TimeSeriesSmoothingMode);
+                this.pads[padNumber].AddPrimitive(view);
+                view.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
             }
         }
@@ -756,11 +759,17 @@ namespace SmartQuant.FinChart
                     --padNumber;
                 DSView local_0 = new DSView(this.pads[padNumber], series, color, option, smoothingMode);
                 local_0.Style = style;
-                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
+                this.pads[padNumber].AddPrimitive(local_0);
                 local_0.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
                 return local_0;
             }
+        }
+
+        private void OnPrimitiveUpdated(object sender, EventArgs e)
+        {
+            this.contentUpdated = true;
+            Invalidate();
         }
 
         public void DrawFill(Fill fill, int padNumber)
@@ -769,16 +778,10 @@ namespace SmartQuant.FinChart
             {
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
-                FillView local_0 = new FillView(fill, this.pads[padNumber]);
-                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
-                local_0.SetInterval(this.leftDateTime, this.rightDateTime);
+                FillView view = new FillView(fill, this.pads[padNumber]);
+                this.pads[padNumber].AddPrimitive(view);
+                view.SetInterval(this.leftDateTime, this.rightDateTime);
             }
-        }
-
-        private void primitive_Updated(object sender, EventArgs e)
-        {
-            this.contentUpdated = true;
-            Invalidate();
         }
 
         public void DrawLine(DrawingLine line, int padNumber)
@@ -788,7 +791,7 @@ namespace SmartQuant.FinChart
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
                 LineView local_0 = new LineView(line, this.pads[padNumber]);
-                line.Updated += new EventHandler(this.primitive_Updated);
+                line.Updated += new EventHandler(this.OnPrimitiveUpdated);
                 this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
                 local_0.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
@@ -801,10 +804,10 @@ namespace SmartQuant.FinChart
             {
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
-                EllipseView local_0 = new EllipseView(circle, this.pads[padNumber]);
-                circle.Updated += new EventHandler(this.primitive_Updated);
-                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
-                local_0.SetInterval(this.leftDateTime, this.rightDateTime);
+                var view = new EllipseView(circle, this.pads[padNumber]);
+                circle.Updated += new EventHandler(this.OnPrimitiveUpdated);
+                this.pads[padNumber].AddPrimitive(view);
+                view.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
             }
         }
@@ -815,10 +818,10 @@ namespace SmartQuant.FinChart
             {
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
-                RectangleView local_0 = new RectangleView(rect, this.pads[padNumber]);
-                rect.Updated += new EventHandler(this.primitive_Updated);
-                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
-                local_0.SetInterval(this.leftDateTime, this.rightDateTime);
+                var view = new RectangleView(rect, this.pads[padNumber]);
+                rect.Updated += new EventHandler(this.OnPrimitiveUpdated);
+                this.pads[padNumber].AddPrimitive(view);
+                view.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
             }
         }
@@ -830,7 +833,7 @@ namespace SmartQuant.FinChart
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
                 PathView local_0 = new PathView(path, this.pads[padNumber]);
-                path.Updated += new EventHandler(this.primitive_Updated);
+                path.Updated += new EventHandler(this.OnPrimitiveUpdated);
                 this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
                 local_0.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
@@ -844,7 +847,7 @@ namespace SmartQuant.FinChart
                 if (!this.volumePadShown && padNumber > 1)
                     --padNumber;
                 ImageView local_0 = new ImageView(image, this.pads[padNumber]);
-                image.Updated += new EventHandler(this.primitive_Updated);
+                image.Updated += new EventHandler(this.OnPrimitiveUpdated);
                 this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
                 local_0.SetInterval(this.leftDateTime, this.rightDateTime);
                 this.contentUpdated = true;
@@ -861,14 +864,24 @@ namespace SmartQuant.FinChart
                     if (this.firstIndex < 0 || this.lastIndex <= 0)
                         return;
                     #if GTK
-                    if (this.scrollbar.Adjustment.Upper != this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollbar.Adjustment.PageIncrement - 1)
-                        this.scrollbar.Adjustment.Upper = this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollbar.Adjustment.PageIncrement - 1;
-//                    if (this.scrollbar.Value == this.firstIndex)
-//                        return;
-                   // this.scrollbar.Value = this.firstIndex;
+                    if (this.scrollbar.Adjustment.Upper != MainSeries.Count-1)
+                    this.scrollbar.Adjustment.Upper = MainSeries.Count-1;
+//                    if (this.scrollbar.Adjustment.Upper != this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollbar.Adjustment.PageIncrement - 1)
+//                        this.scrollbar.Adjustment.Upper = this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollbar.Adjustment.PageIncrement - 1;
+//                    Console.WriteLine("scrollvalue:{0} min:{1} max:{2}", this.scrollbar.Value,this.scrollbar.Adjustment.Lower,this.scrollbar.Adjustment.Upper );
+
+                     if (this.scrollbar.Value == this.firstIndex)
+                        return;
+                    this.scrollbar.Value = this.firstIndex;
+                    Console.WriteLine("this.firstIndex:{0} this.lastIndex:{1}", this.firstIndex, this.lastIndex);
+
                     #else
-                    if (this.scrollBar.Maximum != this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollBar.LargeChange - 1)
-                        this.scrollBar.Maximum = this.mainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollBar.LargeChange - 1;
+                    if (this.scrollBar.Maximum != MainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollBar.LargeChange - 1)
+                        this.scrollBar.Maximum = MainSeries.Count - (this.lastIndex - this.firstIndex + 1) + this.scrollBar.LargeChange - 1;
+                    Console.WriteLine("scrollvalue:{0} min:{1} max:{2}", this.scrollBar.Value, this.scrollBar.Minimum, this.scrollBar.Maximum);
+
+                    Console.WriteLine("this.firstIndex:{0} this.lastIndex:{1}", this.firstIndex, this.lastIndex);
+
                     if (this.scrollBar.Value == this.firstIndex)
                         return;
                     this.scrollBar.Value = this.firstIndex;
@@ -893,63 +906,56 @@ namespace SmartQuant.FinChart
                 if (this.bitmap != null)
                     this.bitmap.Dispose();
                 this.bitmap = new Bitmap(Width, Height);
-                var graphics1 = Graphics.FromImage(this.bitmap);
-                graphics1.SmoothingMode = this.smoothingMode;
-                graphics1.Clear(this.chartBackColor);
-                this.graphics = graphics1;
-                int val1 = int.MinValue;
-                foreach (Pad pad in this.pads)
+                using (var g = Graphics.FromImage(this.bitmap))
                 {
-                    pad.PrepareForUpdate();
-                    if (val1 < pad.AxisGap + 2)
-                        val1 = pad.AxisGap + 2;
-                }
-                this.canvasRightOffset = Math.Max(val1, this.minAxisGap);
-                foreach (Pad pad in this.pads)
-                {
-                    pad.DrawItems = this.drawItems;
-                    pad.Width = Width - this.canvasRightOffset - this.canvasLeftOffset;
-                }
-                graphics1.FillRectangle(new SolidBrush(this.canvasColor), this.canvasLeftOffset, this.canvasTopOffset, Width - this.canvasRightOffset - this.canvasLeftOffset, this.Height - this.canvasBottomOffset - this.canvasLeftOffset);
-                if (this.polosaDate != DateTime.MinValue)
-                {
-                    int num2 = this.ClientX(this.polosaDate);
-                    if (num2 > this.canvasLeftOffset && num2 < this.Width - this.canvasRightOffset)
-                        graphics1.FillRectangle(new SolidBrush(this.selectedFillHighlightColor), (float)num2 - (float)this.intervalWidth / 2f, (float)this.canvasTopOffset, (float)this.intervalWidth, (float)(this.Height - this.canvasBottomOffset - this.canvasLeftOffset));
-                }
-                graphics1.DrawRectangle(new Pen(this.borderColor), this.canvasLeftOffset, this.canvasTopOffset, this.Width - this.canvasRightOffset - this.canvasLeftOffset, this.Height - this.canvasBottomOffset - this.canvasLeftOffset);
-                if (this.mainSeries != null && this.mainSeries.Count != 0)
-                    this.axisBottom.PaintWithDates(this.mainSeries.GetDateTime(this.firstIndex), this.mainSeries.GetDateTime(this.lastIndex));
+                   
+                    g.SmoothingMode = SmoothingMode;
+                    g.Clear(ChartBackColor);
 
-                foreach (Pad pad in this.pads)
-                    pad.Update(graphics1);
-
-                for (int i = 1; i < this.pads.Count; ++i)
-                    graphics1.DrawLine(new Pen(this.splitterColor), this.pads[i].X1, this.pads[i].Y1, this.pads[i].X2, this.pads[i].Y1);
-                graphics1.Dispose();
+                    this.graphics = g;
+                    int val1 = int.MinValue;
+                    foreach (Pad pad in this.pads)
+                    {
+                        pad.PrepareForUpdate();
+                        val1 = Math.Max(val1, pad.AxisGap + 2);
+                    }
+                    this.canvasRightOffset = Math.Max(val1, this.minAxisGap);
+                    foreach (Pad pad in this.pads)
+                    {
+                        pad.DrawItems = DrawItems;
+                        pad.Width = Width - this.canvasRightOffset - this.canvasLeftOffset;
+                    }
+                    g.FillRectangle(new SolidBrush(this.canvasColor), this.canvasLeftOffset, this.canvasTopOffset, Width - this.canvasRightOffset - this.canvasLeftOffset, this.Height - this.canvasBottomOffset - this.canvasLeftOffset);
+                    if (this.polosaDate != DateTime.MinValue)
+                    {
+                        int num2 = this.ClientX(this.polosaDate);
+                        if (num2 > this.canvasLeftOffset && num2 < this.Width - this.canvasRightOffset)
+                            g.FillRectangle(new SolidBrush(this.selectedFillHighlightColor), (float)num2 - (float)this.intervalWidth / 2f, this.canvasTopOffset, (float)this.intervalWidth, Height - this.canvasBottomOffset - this.canvasLeftOffset);
+                    }
+                    g.DrawRectangle(new Pen(this.borderColor), this.canvasLeftOffset, this.canvasTopOffset, Width - this.canvasRightOffset - this.canvasLeftOffset, Height - this.canvasBottomOffset - this.canvasLeftOffset);
+                    if (this.mainSeries != null && this.mainSeries.Count != 0)
+                        this.axisBottom.PaintWithDates(this.mainSeries.GetDateTime(this.firstIndex), this.mainSeries.GetDateTime(this.lastIndex));
+                    foreach (Pad pad in this.pads)
+                        pad.Update(g);
+                    for (int i = 1; i < this.pads.Count; ++i)
+                        g.DrawLine(new Pen(this.splitterColor), this.pads[i].X1, this.pads[i].Y1, this.pads[i].X2, this.pads[i].Y1);
+                }
                 this.contentUpdated = false;
             }
 
-            if (this.mainSeries != null && this.mainSeries.Count != 0 && (this.actionType == ChartActionType.Cross && this.isMouseOverCanvas) && this.bitmap != null)
+            // Draw date and value tips
+            if (MainSeries != null && MainSeries.Count != 0 && ActionType == ChartActionType.Cross && this.isMouseOverCanvas && this.bitmap != null)
             {
                 graphics.DrawImage(this.bitmap, 0, 0);
-                graphics.SmoothingMode = this.smoothingMode;
-                #if GTK
-                //GdkWindow.Cursor.
-                var point = new Point(0, 0);
-                #else
-                var point = this.PointToClient(Cursor.Position);
-                #endif
-                this.mouseX = point.X;
-                this.mouseY = point.Y;
-                graphics.DrawLine(new Pen(this.crossColor, 0.5f), this.canvasLeftOffset, this.mouseY, this.mouseX - 10, this.mouseY);
-                graphics.DrawLine(new Pen(this.crossColor, 0.5f), this.mouseX + 10, this.mouseY, this.Width - this.canvasRightOffset, this.mouseY);
-                graphics.DrawLine(new Pen(this.crossColor, 0.5f), this.mouseX, this.canvasTopOffset, this.mouseX, this.mouseY - 10);
-                graphics.DrawLine(new Pen(this.crossColor, 0.5f), this.mouseX, this.mouseY + 10, this.mouseX, this.Height - this.canvasBottomOffset);
-                string str1 = GetDateTime(this.mouseX).ToString();
-                SizeF sizeF1 = graphics.MeasureString(str1, this.Font);
-                graphics.FillRectangle(new SolidBrush(this.dateTipRectangleColor), (float)((double)this.mouseX - (double)sizeF1.Width / 2.0 - 2.0), (float)(this.Height - this.canvasBottomOffset), sizeF1.Width, sizeF1.Height + 2f);
-                graphics.DrawString(str1, Font, new SolidBrush(this.dateTipTextColor), (float)((double)this.mouseX - (double)sizeF1.Width / 2.0 - 1.0), (float)(this.Height - this.canvasBottomOffset + 2));
+                graphics.SmoothingMode = SmoothingMode;
+                graphics.DrawLine(new Pen(CrossColor, 0.5f), this.canvasLeftOffset, this.mouseY, this.mouseX - 10, this.mouseY);
+                graphics.DrawLine(new Pen(CrossColor, 0.5f), this.mouseX + 10, this.mouseY, Width - this.canvasRightOffset, this.mouseY);
+                graphics.DrawLine(new Pen(CrossColor, 0.5f), this.mouseX, this.canvasTopOffset, this.mouseX, this.mouseY - 10);
+                graphics.DrawLine(new Pen(CrossColor, 0.5f), this.mouseX, this.mouseY + 10, this.mouseX, Height - this.canvasBottomOffset);
+                string dateTip = GetDateTime(this.mouseX).ToString();
+                var dateTipSize = graphics.MeasureString(dateTip, this.Font);
+                graphics.FillRectangle(new SolidBrush(DateTipRectangleColor), this.mouseX - dateTipSize.Width / 2 - 2f, Height - this.canvasBottomOffset, dateTipSize.Width, dateTipSize.Height + 2f);
+                graphics.DrawString(dateTip, Font, new SolidBrush(DateTipTextColor), this.mouseX - dateTipSize.Width / 2 - 1f, Height - this.canvasBottomOffset + 2f);
                 double num2 = 0.0;
                 for (int i = 0; i < this.pads.Count; ++i)
                 {
@@ -960,10 +966,10 @@ namespace SmartQuant.FinChart
                         break;
                     }
                 }
-                string str2 = num2.ToString("F" + this.labelDigitsCount);
-                SizeF sizeF2 = graphics.MeasureString(str2, this.Font);
-                graphics.FillRectangle(new SolidBrush(this.valTipRectangleColor), (float)(this.Width - this.canvasRightOffset), (float)((double)this.mouseY - (double)sizeF2.Height / 2.0 - 2.0), sizeF2.Width, sizeF2.Height + 2f);
-                graphics.DrawString(str2, this.Font, new SolidBrush(this.valTipTextColor), (float)(this.Width - this.canvasRightOffset + 2), (float)((double)this.mouseY - (double)sizeF2.Height / 2.0 - 1.0));
+                string valTip = num2.ToString("F" + this.labelDigitsCount);
+                var valTipSize = graphics.MeasureString(valTip, this.Font);
+                graphics.FillRectangle(new SolidBrush(ValTipRectangleColor),  Width - this.canvasRightOffset, this.mouseY - valTipSize.Height / 2 - 2f, valTipSize.Width, valTipSize.Height + 2f);
+                graphics.DrawString(valTip, Font, new SolidBrush(ValTipTextColor), Width - this.canvasRightOffset + 2f, this.mouseY - valTipSize.Height / 2 - 1f);
             }
             else
             {
@@ -976,7 +982,7 @@ namespace SmartQuant.FinChart
         {
         }
 
-        private void Chart_MouseDown(object sender, MouseEventArgs e)
+        private void OnChartMouseDown(object sender, MouseEventArgs e)
         {
             try
             {
@@ -1003,7 +1009,7 @@ namespace SmartQuant.FinChart
             }
         }
 
-        private void Chart_MouseUp(object sender, MouseEventArgs e)
+        private void OnChartMouseUp(object sender, MouseEventArgs e)
         {
             try
             {
@@ -1021,7 +1027,7 @@ namespace SmartQuant.FinChart
             }
         }
 
-        private void Chart_MouseWheel(object sender, MouseEventArgs e)
+        private void OnChartMouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta > 0)
                 ZoomIn(e.Delta / 20);
@@ -1041,22 +1047,17 @@ namespace SmartQuant.FinChart
                     if (this.canvasLeftOffset < e.X && e.X < Width - this.canvasRightOffset && this.canvasTopOffset < e.Y && e.Y < Height - this.canvasBottomOffset)
                     {
                         this.isMouseOverCanvas = true;
-                        #if GTK
-                        #else
                         if (this.actionType == ChartActionType.Cross)
-                            this.Cursor = Cursors.Cross;
-                        #endif
+                            SetCursor(ChartCursorType.Cross);
                     }
                     else
                     {
                         this.isMouseOverCanvas = false;
                         if (this.actionType == ChartActionType.Cross)
                             Invalidate();
-                        #if GTK
-                        #else
-                        this.Cursor = Cursors.Default;
-                        #endif
+                        SetCursor(ChartCursorType.Default);
                     }
+
                     if (this.padSplit && this.padSplitIndex != 0)
                     {
                         Pad pad1 = this.pads[this.padSplitIndex];
@@ -1076,27 +1077,19 @@ namespace SmartQuant.FinChart
                             pad2.SetCanvas(pad2.X1, pad2.X2, pad2.Y1, num1);
                         }
                         this.contentUpdated = true;
-                        this.Invalidate();
+                        Invalidate();
                     }
+
                     foreach (Pad pad in this.pads)
-                    {
-                        if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1 && (this.pads.IndexOf(pad) != 0))
-                        {
-                            #if GTK
-                        //    GdkWindow.Cursor = new Gdk.Cursor(Gdk.CursorType.SbVDoubleArrow);
-                            #else
-                            if (Cursor.Current != Cursors.HSplit)
-                                Cursor.Current = Cursors.HSplit;
-                            #endif
-                        }
-                    }
+                        if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1 && this.pads.IndexOf(pad) != 0)
+                            SetCursor(ChartCursorType.VSplitter);
+
                     foreach (Pad pad in this.pads)
-                    {
-                        if (pad.X1 <= e.X && pad.X2 >= e.X && (pad.Y1 <= e.Y && pad.Y2 >= e.Y))
+                        if (pad.X1 <= e.X && e.X <= pad.X2 && pad.Y1 <= e.Y && e.Y <= pad.Y2)
                             pad.MouseMove(e);
-                    }
+
                     if (this.isMouseOverCanvas && this.actionType == ChartActionType.Cross)
-                        this.Invalidate();
+                        Invalidate();
                 }
                 this.prevMouseX = this.mouseX;
                 this.prevMouseY = this.mouseY;
@@ -1106,7 +1099,7 @@ namespace SmartQuant.FinChart
             }
         }
 
-        private void Chart_MouseLeave(object sender, EventArgs e)
+        private void OnChartMouseLeave(object sender, EventArgs e)
         {
             this.isMouseOverCanvas = false;
             Invalidate();
@@ -1115,7 +1108,7 @@ namespace SmartQuant.FinChart
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            this.SetPadSizes();
+            SetPadSizes();
             this.contentUpdated = true;
             if (this.axisBottom != null)
                 this.axisBottom.SetBounds(this.canvasLeftOffset, Width - this.canvasRightOffset, Height - this.canvasBottomOffset);
@@ -1124,30 +1117,31 @@ namespace SmartQuant.FinChart
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
+            // no-op
         }
 
         private void ZoomIn(int delta)
         {
-            this.SetIndexInterval(Math.Min(this.firstIndex + delta, this.lastIndex - 1 + 1), this.lastIndex);
-            this.Invalidate();
+            SetIndexInterval(Math.Min(this.firstIndex + delta, this.lastIndex - 1 + 1), this.lastIndex);
+            Invalidate();
         }
 
         private void ZoomOut(int delta)
         {
-            if (this.mainSeries == null || this.mainSeries.Count == 0)
+            if (MainSeries == null || MainSeries.Count == 0)
                 return;
-            this.SetIndexInterval(Math.Max(0, this.firstIndex - delta), this.lastIndex);
-            this.Invalidate();
+            SetIndexInterval(Math.Max(0, this.firstIndex - delta), this.lastIndex);
+            Invalidate();
         }
 
         public void ZoomIn()
         {
-            this.ZoomIn((this.lastIndex - this.firstIndex) / 5);
+            ZoomIn((this.lastIndex - this.firstIndex) / 5);
         }
 
         public void ZoomOut()
         {
-            this.ZoomOut((this.lastIndex - this.firstIndex) / 10 + 1);
+            ZoomOut((this.lastIndex - this.firstIndex) / 10 + 1);
         }
 
         public void UnSelectAll()
@@ -1157,7 +1151,7 @@ namespace SmartQuant.FinChart
                 if (pad.SelectedPrimitive != null)
                 {
                     pad.SelectedPrimitive.UnSelect();
-                    pad.SelectedPrimitive = (IChartDrawable)null;
+                    pad.SelectedPrimitive = null;
                 }
             }
         }
@@ -1170,9 +1164,9 @@ namespace SmartQuant.FinChart
         {
             lock (this.lockObject)
             {
-                this.FillPadsHeightArray();
+                FillPadsHeightArray();
                 this.pads.Add(new Pad(this, this.canvasLeftOffset, this.Width - this.canvasRightOffset, this.canvasTopOffset, this.Height - this.canvasBottomOffset));
-                this.SetPadSizes();
+                SetPadSizes();
                 this.contentUpdated = true;
             }
         }
@@ -1180,7 +1174,7 @@ namespace SmartQuant.FinChart
         private void SetPadSizes()
         {
             int y1 = this.canvasTopOffset;
-            int num1 = this.Height - this.canvasBottomOffset - this.canvasTopOffset;
+            int num1 = Height - this.canvasBottomOffset - this.canvasTopOffset;
             int index = 0;
             double num2 = 0.0;
             foreach (Pad pad in this.pads)
@@ -1206,15 +1200,15 @@ namespace SmartQuant.FinChart
                 if (this.volumePadShown)
                     --count;
                 this.padsHeightArray[0] = (object)(3.0 / (double)(count + 2));
-                for (int index = 1; index < this.padsHeightArray.Count; ++index)
+                for (int i = 1; i < this.padsHeightArray.Count; ++i)
                 {
-                    if (this.volumePadShown && index == 1)
+                    if (this.volumePadShown && i == 1)
                     {
                         this.padsHeightArray[1] = (object)((double)this.padsHeightArray[0] / 6.0);
                         this.padsHeightArray[0] = (object)((double)this.padsHeightArray[1] * 5.0);
                     }
                     else
-                        this.padsHeightArray[index] = (object)(1.0 / (double)(count + 2));
+                        this.padsHeightArray[i] = (object)(1.0 / (double)(count + 2));
                 }
             }
         }
@@ -1235,7 +1229,7 @@ namespace SmartQuant.FinChart
 
         public DateTime GetDateTime(int x)
         {
-            double num = (double)(this.Width - this.canvasLeftOffset - this.canvasRightOffset) / (double)(this.lastIndex - this.firstIndex + 1);
+            double num = (double)(Width - this.canvasLeftOffset - this.canvasRightOffset) / (double)(this.lastIndex - this.firstIndex + 1);
             return this.mainSeries.GetDateTime((int)Math.Floor((double)(x - this.canvasLeftOffset) / num) + this.firstIndex);
         }
 
@@ -1243,27 +1237,25 @@ namespace SmartQuant.FinChart
         {
             lock (this.lockObject)
             {
-                foreach (Pad item_1 in this.pads)
+                foreach (Pad pad in this.pads)
                 {
-                    item_1.Reset();
-                    foreach (object item_0 in item_1.Primitives)
-                    {
-                        if (item_0 is IUpdatable)
-                            (item_0 as IUpdatable).Updated -= new EventHandler(this.primitive_Updated);
-                    }
+                    pad.Reset();
+                    foreach (object primitive in pad.Primitives)
+                        if (primitive is IUpdatable)
+                            (primitive as IUpdatable).Updated -= OnPrimitiveUpdated;
                 }
                 this.pads.Clear();
                 this.padsHeightArray.Clear();
                 this.volumePadShown = false;
-                this.AddPad();
+                AddPad();
                 this.firstIndex = -1;
                 this.lastIndex = -1;
-                this.mainSeries = (ISeries)null;
+                this.mainSeries = null;
                 this.polosaDate = DateTime.MinValue;
                 this.contentUpdated = true;
                 if (this.updateStyle == ChartUpdateStyle.Fixed)
                     this.UpdateStyle = ChartUpdateStyle.Trailing;
-                this.BarSeriesStyle = BSStyle.Candle;
+                BarSeriesStyle = BSStyle.Candle;
             }
         }
 
@@ -1279,14 +1271,12 @@ namespace SmartQuant.FinChart
                 ISeries temp_5 = this.mainSeries;
                 this.series = mainSeries;
                 if (mainSeries is BarSeries)
-                {
-                    this.SetBarSeriesStyle(this.barSeriesStyle, true);
-                }
+                    SetBarSeriesStyle(BarSeriesStyle, true);
                 else
                 {
                     this.mainSeries = this.series;
-                    this.mainSeriesView = (SeriesView)new DSView(this.pads[0], mainSeries as TimeSeries, color, SearchOption.ExactFirst, SmoothingMode.HighSpeed);
-                    this.pads[0].AddPrimitive((IChartDrawable)this.mainSeriesView);
+                    this.mainSeriesView = new DSView(this.pads[0], mainSeries as TimeSeries, color, SearchOption.ExactFirst, SmoothingMode.HighSpeed);
+                    this.pads[0].AddPrimitive(this.mainSeriesView);
                 }
                 this.pads[0].ScaleStyle = this.scaleStyle;
                 if (showVolumePad)
@@ -1296,20 +1286,20 @@ namespace SmartQuant.FinChart
                 if (mainSeries.Count == 0)
                     this.firstIndex = -1;
                 if (this.lastIndex >= 0)
-                    this.SetIndexInterval(this.firstIndex, this.lastIndex);
+                    SetIndexInterval(this.firstIndex, this.lastIndex);
                 this.contentUpdated = true;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
         private void SetIndexInterval(int firstIndex, int lastIndex)
         {
-            if (this.mainSeries == null || firstIndex < 0 || lastIndex > this.mainSeries.Count - 1)
+            if (MainSeries == null || firstIndex < 0 || lastIndex > MainSeries.Count - 1)
                 return;
             this.firstIndex = firstIndex;
             this.lastIndex = lastIndex;
-            this.leftDateTime = firstIndex >= 0 ? this.mainSeries.GetDateTime(this.firstIndex) : DateTime.MaxValue;
-            this.rightDateTime = lastIndex < 0 || lastIndex > this.mainSeries.Count - 1 ? DateTime.MinValue : this.mainSeries.GetDateTime(this.lastIndex);
+            this.leftDateTime = firstIndex >= 0 ? MainSeries.GetDateTime(this.firstIndex) : DateTime.MaxValue;
+            this.rightDateTime = lastIndex < 0 || lastIndex > MainSeries.Count - 1 ? DateTime.MinValue : MainSeries.GetDateTime(this.lastIndex);
             foreach (Pad pad in this.pads)
                 pad.SetInterval(this.leftDateTime, this.rightDateTime);
             this.contentUpdated = true;
@@ -1317,20 +1307,14 @@ namespace SmartQuant.FinChart
 
         private void SetDateInterval(DateTime firstDateTime, DateTime lastDateTime)
         {
-            this.SetIndexInterval(this.MainSeries.GetIndex(firstDateTime, IndexOption.Next), this.MainSeries.GetIndex(lastDateTime, IndexOption.Prev));
+            SetIndexInterval(MainSeries.GetIndex(firstDateTime, IndexOption.Next), MainSeries.GetIndex(lastDateTime, IndexOption.Prev));
         }
 
         #if GTK
-//        private void OnScrollBarScroll(object sender, EventArgs e)
-//        {
-//           // Console.WriteLine(e.Event.X);
-//            int delta = 0;
-//            SetIndexInterval(this.firstIndex + delta, this.lastIndex + delta);
-//            Invalidate();
-//        }
         #else
         private void OnScrollBarScroll(object sender, ScrollEventArgs e)
         {
+            Console.WriteLine("scrollvalue:{0} min:{1} max:{2}", e.NewValue, this.scrollBar.Minimum, this.scrollBar.Maximum);
             if (this.scrollBar.Value == e.NewValue)
                 return;
             int delta = e.NewValue - this.scrollBar.Value;
@@ -1350,36 +1334,23 @@ namespace SmartQuant.FinChart
                 switch (this.updateStyle)
                 {
                     case ChartUpdateStyle.WholeRange:
-                        try
-                        {
-                            this.SetIndexInterval(0, this.mainSeries.Count - 1);
+                            SetIndexInterval(0, MainSeries.Count - 1);
                             flag = true;
                             break;
-                        }
-                        catch (Exception)
-                        {
-                            break;
-                        }
                     case ChartUpdateStyle.Trailing:
                         if (this.lastIndex - this.firstIndex + 1 < this.minCountOfBars)
-                            this.SetIndexInterval(this.firstIndex, this.lastIndex + 1);
+                            SetIndexInterval(this.firstIndex, this.lastIndex + 1);
                         else
-                            this.SetIndexInterval(this.firstIndex + 1, this.lastIndex + 1);
+                            SetIndexInterval(this.firstIndex + 1, this.lastIndex + 1);
                         flag = true;
                         break;
                 }
             }
             if (flag)
-               Invalidate();
+                Invalidate();
             #if !GTK
             Application.DoEvents();
             #endif
-        }
-
-        private void mainSeries_Cleared(object sender, EventArgs e)
-        {
-            this.firstIndex = -1;
-            this.lastIndex = -1;
         }
 
         private bool SetBarSeriesStyle(BSStyle barSeriesStyle, bool force)
@@ -1389,12 +1360,12 @@ namespace SmartQuant.FinChart
             {
                 if (!(this.mainSeriesView is SimpleBSView) || force)
                 {
-                    this.pads[0].RemovePrimitive((IChartDrawable)this.mainSeriesView);
-                    this.mainSeriesView = (SeriesView)new SimpleBSView(this.pads[0], this.series as BarSeries);
+                    this.pads[0].RemovePrimitive(this.mainSeriesView);
+                    this.mainSeriesView = new SimpleBSView(this.pads[0], this.series as BarSeries);
                     (this.mainSeriesView as SimpleBSView).UpColor = this.candleUpColor;
                     (this.mainSeriesView as SimpleBSView).DownColor = this.candleDownColor;
                     this.mainSeries = this.mainSeriesView.MainSeries;
-                    this.pads[0].AddPrimitive((IChartDrawable)this.mainSeriesView);
+                    this.pads[0].AddPrimitive(this.mainSeriesView);
                 }
                 else
                     flag = false;
@@ -1440,29 +1411,94 @@ namespace SmartQuant.FinChart
 
         public void EnsureVisible(Fill fill)
         {
-            if (fill.DateTime < this.mainSeries.FirstDateTime)
+            if (fill.DateTime < MainSeries.FirstDateTime)
                 return;
-            int num = Math.Max(this.mainSeries.GetIndex(fill.DateTime, IndexOption.Prev), 0);
+            int num = Math.Max(MainSeries.GetIndex(fill.DateTime, IndexOption.Prev), 0);
             int val2 = this.lastIndex - this.firstIndex + 1;
-            int lastIndex = Math.Max(Math.Min(this.mainSeries.Count - 1, num + val2 / 5), val2);
-            this.SetIndexInterval(lastIndex - val2 + 1, lastIndex);
-            this.pads[0].SetSelectedObject((object)fill);
-            this.polosaDate = this.mainSeries.GetDateTime(this.mainSeries.GetIndex(fill.DateTime, IndexOption.Prev));
+            int lastIndex = Math.Max(Math.Min(MainSeries.Count - 1, num + val2 / 5), val2);
+            SetIndexInterval(lastIndex - val2 + 1, lastIndex);
+            this.pads[0].SetSelectedObject(fill);
+            this.polosaDate = MainSeries.GetDateTime(MainSeries.GetIndex(fill.DateTime, IndexOption.Prev));
             this.contentUpdated = true;
-            this.Invalidate();
+            Invalidate();
         }
 
         public int GetPadNumber(Point point)
         {
-            int y = point.Y;
-            for (int index = 0; index < this.pads.Count; ++index)
-            {
-                if (this.pads[index].Y1 <= y && this.pads[index].Y2 >= y)
-                    return index;
-            }
+            for (int i = 0; i < this.pads.Count; ++i)
+                if (this.pads[i].Y1 <= point.Y && point.Y <= this.pads[i].Y2)
+                    return i;
             return -1;
         }
 
         private delegate void SetIndexIntervalHandler(int firstIndex,int lastIndex);
+
+        #region Helper Methods
+
+        internal void SetCursor(ChartCursorType type)
+        {
+            #if GTK
+            switch(type)
+            {
+                case ChartCursorType.VSplitter:
+                    GdkWindow.Cursor = UserControl.VSplitterCursor;
+                    break;
+                case ChartCursorType.Cross:
+                    GdkWindow.Cursor = UserControl.CrossCursor;
+                    break;
+                case ChartCursorType.Hand:
+                    GdkWindow.Cursor = UserControl.HandCursor;
+                    break;
+                case ChartCursorType.Default:
+                    GdkWindow.Cursor = null;
+                    break;
+            }
+            #else
+            switch (type)
+            {
+                case ChartCursorType.VSplitter:
+                    Cursor.Current = Cursors.HSplit;
+                    break;
+                case ChartCursorType.Cross:
+                    Cursor.Current = Cursors.Cross;
+                    break;
+                case ChartCursorType.Hand:
+                    Cursor.Current = Cursors.Hand;
+                    break;
+                case ChartCursorType.Default:
+                default:
+                    Cursor.Current = Cursors.Default;
+                    break;
+            }
+            #endif
+        }
+        //        private void DrawUpdatableObject(IUpdatable obj, int padNumber)
+        //        {
+        //            lock (this.lockObject)
+        //            {
+        //                if (!this.volumePadShown && padNumber > 1)
+        //                    --padNumber;
+        //                IChartDrawable drawable;
+        //                if (obj is DrawingImage)
+        //                    drawable = new ImageView(obj, this.pads[padNumber]);
+        //                else if(obj is DrawingLine)
+        //                    drawable = new LineView(obj, this.pads[padNumber]);
+        //                else if(obj is DrawingEllipse)
+        //                    drawable = new EllipseView(obj, this.pads[padNumber]);
+        //                else if(obj is DrawingLine)
+        //                    drawable = new LineView(obj, this.pads[padNumber]);
+        //                else if(obj is DrawingLine)
+        //                    drawable = new LineView(obj, this.pads[padNumber]);
+        //                else if(obj is DrawingLine)
+        //                    drawable = new LineView(obj, this.pads[padNumber]);
+        //                ImageView local_0 = new ImageView(image, this.pads[padNumber]);
+        //                image.Updated += new EventHandler(this.primitive_Updated);
+        //                this.pads[padNumber].AddPrimitive((IChartDrawable)local_0);
+        //                local_0.SetInterval(this.leftDateTime, this.rightDateTime);
+        //                this.contentUpdated = true;
+        //            }
+        //        }
+
+        #endregion
     }
 }

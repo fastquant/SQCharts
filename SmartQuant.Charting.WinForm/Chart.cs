@@ -10,7 +10,6 @@ using System.Linq;
 #if GTK
 using Gtk;
 using Compatibility.Gtk;
-
 #else
 using System.Windows.Forms;
 #endif
@@ -24,7 +23,7 @@ namespace SmartQuant.Charting
         protected PadList fPads;
         protected bool fPadSplit;
         protected int fPadSplitIndex;
-//        protected bool fDoubleBufferingEnabled;
+        protected bool fDoubleBufferingEnabled;
         protected bool fSmoothingEnabled;
         protected bool fAntiAliasingEnabled;
         protected bool fIsUpdating;
@@ -378,9 +377,11 @@ namespace SmartQuant.Charting
         {
             InitializeComponent();
             #if GTK
+            this.fToolTip = new ToolTip(this);
             #else
             this.ResizeRedraw = true;
             this.SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick | ControlStyles.UserPaint, true);
+            this.fToolTip = new ToolTip();
             #endif
             this.fPadsForeColor = Color.White;
             this.fPads = new PadList();
@@ -389,8 +390,7 @@ namespace SmartQuant.Charting
             this.fPadSplitIndex = 0;
             DoubleBufferingEnabled = true;
             this.fSmoothingEnabled = false;
-            this.fAntiAliasingEnabled = false;
-            this.fToolTip = new ToolTip();
+            this.fAntiAliasingEnabled = false;       
             this.fIsUpdating = false;
             PrintX = 10;
             PrintY = 10;
@@ -436,7 +436,7 @@ namespace SmartQuant.Charting
             var pad = new Pad(this, x1, y1, x2, y2);
             pad.Name = string.Format("Pad {0}", this.fPads.Count + 1);
             pad.ForeColor = this.fPadsForeColor;
-            pad.Zoom += new ZoomEventHandler(this.ZoomChanged);
+            pad.Zoom += new ZoomEventHandler(ZoomChanged);
             this.fPads.Add(pad);
             return Chart.fPad = pad;
         }
@@ -455,7 +455,7 @@ namespace SmartQuant.Charting
 
         protected void ZoomChanged(object sender, ZoomEventArgs e)
         {
-            if (!this.GroupZoomEnabled)
+            if (!GroupZoomEnabled)
                 return;
             foreach (Pad pad in this.fPads)
             {
@@ -541,9 +541,8 @@ namespace SmartQuant.Charting
             int h = (int)(ClientRectangle.Height * dpi / graphics.DpiY);
             Bitmap bitmap = new Bitmap(w, h);
             bitmap.SetResolution(dpi, dpi);
-
-            using (var g1 = Graphics.FromImage(bitmap))
-                DoPaint(g1, w, h);
+            using (var g = Graphics.FromImage(bitmap))
+                DoPaint(g, w, h);
             return bitmap;
         }
 
@@ -551,7 +550,6 @@ namespace SmartQuant.Charting
         {
             int w = this.ClientRectangle.Width;
             int h = this.ClientRectangle.Height;
-
             Metafile metafile;
             using (var g = CreateGraphics())
             {
@@ -559,7 +557,6 @@ namespace SmartQuant.Charting
                 metafile = new Metafile(hdc, type);
                 g.ReleaseHdc(hdc);
             }
-
             using (var g = Graphics.FromImage(metafile))
                 DoPaint(g, w, h);
             return metafile;
@@ -732,10 +729,8 @@ namespace SmartQuant.Charting
                 if (pad.Y1 - 1 <= e.Y && e.Y <= pad.Y1 + 1)
                 {
                     #if GTK
-                    //Gdk.CursorType.
+                    GdkWindow.Cursor = new Gdk.Cursor(Gdk.CursorType.SbVDoubleArrow);
                     #else
-                    if (Cursor.Current == Cursors.HSplit)
-                        return;
                     Cursor.Current = Cursors.HSplit;
                     #endif
                     return;

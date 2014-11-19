@@ -2,6 +2,7 @@
 // Copyright (c) Alex Lee. All rights reserved.
 
 using System.Drawing;
+using System;
 
 namespace SmartQuant.Charting.Draw3D
 {
@@ -74,10 +75,8 @@ namespace SmartQuant.Charting.Draw3D
 
         private void Clip(ref double x)
         {
-            if (x < 1.0 / 254.0)
-                x = 1.0 / 254.0;
-            if (x > 1.0)
-                x = 1.0;
+            x = Math.Max(x, 1.0 / 254);
+            x = Math.Min(x, 1.0);
         }
 
         public void Clip()
@@ -89,9 +88,8 @@ namespace SmartQuant.Charting.Draw3D
 
         public static TColor Clip(TColor c)
         {
-            TColor tcolor = c;
-            tcolor.Clip();
-            return tcolor;
+            c.Clip();
+            return c;
         }
     }
 }

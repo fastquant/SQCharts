@@ -103,6 +103,7 @@ namespace SmartQuant.FinChart
             ToolTipFormat = "{0} {2} {1} @ {3} {4} {5}";
         }
 
+        //TODO: refine it
         public void Paint()
         {
             int index = this.pad.Series.GetIndex(this.fill.DateTime, IndexOption.Prev);
@@ -110,7 +111,7 @@ namespace SmartQuant.FinChart
             int num1 = this.pad.ClientY(this.fill.Price);
             if (this.pad.Series is BarSeries)
             {
-                Bar bar = (this.pad.Series as BarSeries)[index];
+                var bar = (this.pad.Series as BarSeries)[index];
                 if (bar.OpenDateTime != bar.CloseDateTime)
                 {
                     int num2 = Math.Max(2, (int)this.pad.IntervalWidth);

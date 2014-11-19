@@ -31,9 +31,8 @@ namespace SmartQuant.FinChart
         {
             var d = new Distance();
             var bar = (MainSeries as BarSeries)[this.pad.GetDateTime(x), IndexOption.Null];
-            d.DX = 0.0;
-            if (bar.Low <= y && y <= bar.High)
-                d.DY = 0.0;
+            d.DX = 0;
+            d.DY = bar.Low <= y && y <= bar.High ? 0 : d.DY;
             if (d.DX == double.MaxValue || d.DY == double.MaxValue)
                 return null;
             d.ToolTipText = string.Format(ToolTipFormat, MainSeries.Name, MainSeries.Description, ToolTipDateTimeFormat, bar.High, bar.Low, bar.Open, bar.Close, bar.Volume);

@@ -27,6 +27,7 @@ namespace SmartQuant.FinChart
             }
             set
             {
+                throw new NotSupportedException();
             }
         }
 
@@ -77,11 +78,12 @@ namespace SmartQuant.FinChart
 
         void IList.Insert(int index, object value)
         {
+            throw new NotSupportedException();
         }
 
         void IList.Remove(object value)
         {
-            this.Remove(value as Pad);
+            Remove(value as Pad);
         }
 
         bool IList.Contains(object value)
@@ -96,12 +98,12 @@ namespace SmartQuant.FinChart
 
         int IList.IndexOf(object value)
         {
-            return this.IndexOf(value as Pad);
+            return IndexOf(value as Pad);
         }
 
         int IList.Add(object value)
         {
-            return this.Add(value as Pad);
+            return Add(value as Pad);
         }
 
         public void CopyTo(Array array, int index)

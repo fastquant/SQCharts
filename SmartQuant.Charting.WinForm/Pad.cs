@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+
 #if GTK
+using Gtk;
 using MouseButtons = System.Windows.Forms.MouseButtons;
 using Compatibility.Gtk;
+
 #else
 using System.Windows.Forms;
 #endif
@@ -103,13 +106,16 @@ namespace SmartQuant.Charting
         protected IChartTransformation fTransformation;
         protected Color fSessionGridColor;
         #if GTK
+        private Menu primitiveContextMenu;
+        private MenuItem deleteMenuItem;
+        private MenuItem propertiesMenuItem;
         #else
         [NonSerialized]
-        private ContextMenu PrimitiveContextMenu;
+        private ContextMenu primitiveContextMenu;
         [NonSerialized]
-        private MenuItem DeleteMenuItem;
+        private MenuItem deleteMenuItem;
         [NonSerialized]
-        private MenuItem PropertiesMenuItem;
+        private MenuItem propertiesMenuItem;
         #endif
         private int titleHeight;
         private int axisBottomHeight;
@@ -1770,9 +1776,9 @@ namespace SmartQuant.Charting
                 double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
                 double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
                 if (this.fTransformationType == ETransformationType.Empty)
-                    this.fTransformation = (IChartTransformation) new TEmptyTransformation();
+                    this.fTransformation = (IChartTransformation)new TEmptyTransformation();
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    this.fTransformation = (IChartTransformation) new TIntradayTransformation();
+                    this.fTransformation = (IChartTransformation)new TIntradayTransformation();
                 this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
                 this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
                 this.Update();
@@ -1786,7 +1792,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return ((TIntradayTransformation) this.Transformation).SessionGridEnabled;
+                    return ((TIntradayTransformation)this.Transformation).SessionGridEnabled;
                 else
                     return false;
             }
@@ -1794,7 +1800,7 @@ namespace SmartQuant.Charting
             {
                 if (this.fTransformationType != ETransformationType.Intraday)
                     return;
-                ((TIntradayTransformation) this.Transformation).SessionGridEnabled = value;
+                ((TIntradayTransformation)this.Transformation).SessionGridEnabled = value;
             }
         }
 
@@ -1819,7 +1825,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).FirstSessionTick);
+                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).FirstSessionTick);
                 else
                     return new TimeSpan(0, 0, 0, 0);
             }
@@ -1828,7 +1834,7 @@ namespace SmartQuant.Charting
                 double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
                 double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    ((TIntradayTransformation) this.fTransformation).FirstSessionTick = value.Ticks;
+                    ((TIntradayTransformation)this.fTransformation).FirstSessionTick = value.Ticks;
                 this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
                 this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
                 this.Update();
@@ -1842,7 +1848,7 @@ namespace SmartQuant.Charting
             get
             {
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    return new TimeSpan(((TIntradayTransformation) this.fTransformation).LastSessionTick);
+                    return new TimeSpan(((TIntradayTransformation)this.fTransformation).LastSessionTick);
                 else
                     return new TimeSpan(0, 24, 0, 0);
             }
@@ -1851,7 +1857,7 @@ namespace SmartQuant.Charting
                 double Y1 = this.fXMin + this.CalculateRealQuantityOfTicks_Right(this.fXMin, this.fXMax);
                 double Y2 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
                 if (this.fTransformationType == ETransformationType.Intraday)
-                    ((TIntradayTransformation) this.fTransformation).LastSessionTick = value.Ticks;
+                    ((TIntradayTransformation)this.fTransformation).LastSessionTick = value.Ticks;
                 this.fXMax = Y1 - this.CalculateNotInSessionTicks(this.fXMin, Y1);
                 this.fAxisBottom.Max = Y2 - this.CalculateNotInSessionTicks(this.fAxisBottom.Min, Y2);
                 this.Update();
@@ -1929,14 +1935,14 @@ namespace SmartQuant.Charting
         private Viewer GetViewer(object obj)
         {
             System.Type key = obj.GetType();
-            Viewer viewer = (Viewer) null;
-            for (; key != (System.Type) null; key = key.BaseType)
+            Viewer viewer = (Viewer)null;
+            for (; key != (System.Type)null; key = key.BaseType)
             {
                 if (this.viewers.TryGetValue(key, out viewer))
                     return Activator.CreateInstance(viewer.GetType()) as Viewer;
             }
-            Console.WriteLine("No viewer exists for object with type " + (object) obj.GetType());
-            return (Viewer) null;
+            Console.WriteLine("No viewer exists for object with type " + (object)obj.GetType());
+            return (Viewer)null;
         }
 
         public void RegisterViewer(Viewer viewer)
@@ -1968,8 +1974,8 @@ namespace SmartQuant.Charting
             this.fPrimitives = new ArrayList();
             Chart.Pad = this;
             this.Features3D = new TFeatures3D(this);
-            this.fBackColor = Color.LightGray;
-            this.fForeColor = Color.White;
+            BackColor = Color.LightGray;
+            ForeColor = Color.White;
             this.fX1 = 0;
             this.fX2 = 1;
             this.fY1 = 0;
@@ -1988,9 +1994,9 @@ namespace SmartQuant.Charting
             this.fTitleEnabled = true;
             this.fTitleOffsetX = 5;
             this.fTitleOffsetY = 5;
-            this.fTransformation =  new TIntradayTransformation();
+            this.fTransformation = new TIntradayTransformation();
             this.fTransformationType = ETransformationType.Empty;
-            this.fSessionGridColor = Color.Blue;
+            SessionGridColor = Color.Blue;
             this.fAxisLeft = new Axis(this, EAxisPosition.Left);
             this.fAxisRight = new Axis(this, EAxisPosition.Right);
             this.fAxisTop = new Axis(this, EAxisPosition.Top);
@@ -2007,8 +2013,8 @@ namespace SmartQuant.Charting
             this.fBorderEnabled = true;
             this.fBorderColor = Color.Black;
             this.fBorderWidth = 1;
-            this.SetRange(0.0, 100.0, 0.0, 100.0);
-            this.fGraphics =  null;
+            SetRange(0.0, 100.0, 0.0, 100.0);
+            this.fGraphics = null;
             this.fOnAxis = false;
             this.fOnPrimitive = false;
             this.fMouseDown = false;
@@ -2041,106 +2047,107 @@ namespace SmartQuant.Charting
         private void InitContextMenu()
         {
             #if GTK
-            #else
-            if (this.PrimitiveContextMenu != null)
+            if (this.primitiveContextMenu != null)
                 return;
-            this.PrimitiveContextMenu = new ContextMenu();
-            this.DeleteMenuItem = new MenuItem();
-            this.PropertiesMenuItem = new MenuItem();
+            this.primitiveContextMenu = new Menu();
+            this.deleteMenuItem = new MenuItem("Delete");
+            this.deleteMenuItem.Activated += OnDeleteMenuItemClick;
+            this.propertiesMenuItem = new MenuItem("Properties");
+            this.deleteMenuItem.Activated += OnPropertiesMenuItemClick;
+            this.primitiveContextMenu.Append(this.deleteMenuItem);
+            this.primitiveContextMenu.Append(new SeparatorMenuItem());
+            this.primitiveContextMenu.Append(this.propertiesMenuItem);
+            this.primitiveContextMenu.ShowAll();
+            #else
+            if (this.primitiveContextMenu != null)
+                return;
+            this.primitiveContextMenu = new ContextMenu();
+            this.deleteMenuItem = new MenuItem();
+            this.propertiesMenuItem = new MenuItem();
             MenuItem menuItem = new MenuItem();
-            this.PrimitiveContextMenu.MenuItems.AddRange(new MenuItem[3]
+            this.primitiveContextMenu.MenuItems.AddRange(new MenuItem[3]
             {
-                this.DeleteMenuItem,
+                this.deleteMenuItem,
                 menuItem,
-                this.PropertiesMenuItem
+                this.propertiesMenuItem
             });
-            this.DeleteMenuItem.Index = 0;
-            this.DeleteMenuItem.Text = "Delete";
-            this.DeleteMenuItem.Click += new EventHandler(this.DeleteMenuItem_Click);
+            this.deleteMenuItem.Index = 0;
+            this.deleteMenuItem.Text = "Delete";
+            this.deleteMenuItem.Click += new EventHandler(this.OnDeleteMenuItemClick);
             menuItem.Index = 1;
             menuItem.Text = "-";
-            this.PropertiesMenuItem.Index = 2;
-            this.PropertiesMenuItem.Text = "Properties";
-            this.PropertiesMenuItem.Click += new EventHandler(this.PropertiesMenuItem_Click);
+            this.propertiesMenuItem.Index = 2;
+            this.propertiesMenuItem.Text = "Properties";
+            this.propertiesMenuItem.Click += new EventHandler(this.OnPropertiesMenuItemClick);
             #endif
         }
 
-        public virtual void SetCanvas(double X1, double Y1, double X2, double Y2, int Width, int Height)
+        public virtual void SetCanvas(double x1, double y1, double x2, double y2, int width, int height)
         {
-            this.fCanvasX1 = X1;
-            this.fCanvasX2 = X2;
-            this.fCanvasY1 = Y1;
-            this.fCanvasY2 = Y2;
-            this.SetCanvas(Width, Height);
+            SetCanvas(x1, y1, x2, y2);
+            SetCanvas(width, height);
         }
 
-        public virtual void SetCanvas(double X1, double Y1, double X2, double Y2)
+        public virtual void SetCanvas(double x1, double y1, double x2, double y2)
         {
-            this.fCanvasX1 = X1;
-            this.fCanvasX2 = X2;
-            this.fCanvasY1 = Y1;
-            this.fCanvasY2 = Y2;
+            this.fCanvasX1 = x1;
+            this.fCanvasX2 = x2;
+            this.fCanvasY1 = y1;
+            this.fCanvasY2 = y2;
         }
 
-        public virtual void SetCanvas(int Width, int Height)
+        public virtual void SetCanvas(int width, int height)
         {
-            this.fX1 = (int) ((double) Width * this.fCanvasX1);
-            this.fX2 = (int) ((double) Width * this.fCanvasX2);
-            this.fY1 = (int) ((double) Height * this.fCanvasY1);
-            this.fY2 = (int) ((double) Height * this.fCanvasY2);
+            this.fX1 = (int)(width * this.fCanvasX1);
+            this.fX2 = (int)(width * this.fCanvasX2);
+            this.fY1 = (int)(height * this.fCanvasY1);
+            this.fY2 = (int)(height * this.fCanvasY2);
             this.fWidth = this.fX2 - this.fX1;
             this.fHeight = this.fY2 - this.fY1;
         }
 
-        public void SetRangeX(double XMin, double XMax)
+        public void SetRangeX(double xMin, double xMax)
         {
-            this.fXMin = XMin;
-            this.fXMax = XMax - this.CalculateNotInSessionTicks(XMin, XMax);
+            this.fXMin = xMin;
+            this.fXMax = xMax - CalculateNotInSessionTicks(xMin, xMax);
             this.fAxisBottom.SetRange(this.fXMin, this.fXMax);
             this.fAxisTop.SetRange(this.fXMin, this.fXMax);
             this.Features3D.SetRangeX(this.fXMin, this.fXMax);
         }
 
-        public void SetRangeX(DateTime XMin, DateTime XMax)
+        public void SetRangeX(DateTime xMin, DateTime xMax)
         {
-            this.SetRangeX((double) XMin.Ticks, (double) XMax.Ticks);
+            SetRangeX(xMin.Ticks, xMax.Ticks);
         }
 
-        public void SetRangeY(double YMin, double YMax)
+        public void SetRangeY(double yMin, double yMax)
         {
-            this.fYMin = YMin;
-            this.fYMax = YMax;
+            this.fYMin = yMin;
+            this.fYMax = yMax;
             this.fAxisLeft.SetRange(this.fYMin, this.fYMax);
             this.fAxisRight.SetRange(this.fYMin, this.fYMax);
             this.Features3D.SetRangeY(this.fYMin, this.fYMax);
         }
 
-        public void SetRange(double XMin, double XMax, double YMin, double YMax)
+        public void SetRange(double xMin, double xMax, double yMin, double yMax)
         {
-            this.fXMin = XMin;
-            this.fXMax = XMax - this.CalculateNotInSessionTicks(XMin, XMax);
-            this.fYMin = YMin;
-            this.fYMax = YMax;
-            this.fAxisBottom.SetRange(this.fXMin, this.fXMax);
-            this.fAxisTop.SetRange(this.fXMin, this.fXMax);
-            this.fAxisLeft.SetRange(this.fYMin, this.fYMax);
-            this.fAxisRight.SetRange(this.fYMin, this.fYMax);
-            this.Features3D.SetRange(this.fXMin, this.fXMax, this.fYMin, this.fYMax);
+            SetRangeX(xMin, xMax);
+            SetRangeY(yMin, yMax);
         }
 
-        public void SetRange(DateTime XMin, DateTime XMax, double YMin, double YMax)
+        public void SetRange(DateTime xMin, DateTime xMax, double yMin, double yMax)
         {
-            this.SetRange((double) XMin.Ticks, (double) XMax.Ticks, YMin, YMax);
+            SetRange(xMin.Ticks, xMax.Ticks, yMin, yMax);
         }
 
-        public void SetRange(string XMin, string XMax, double YMin, double YMax)
+        public void SetRange(string xMin, string xMax, double yMin, double yMax)
         {
-            this.SetRange((double) DateTime.Parse(XMin).Ticks, (double) DateTime.Parse(XMax).Ticks, YMin, YMax);
+            SetRange(DateTime.Parse(xMin).Ticks, DateTime.Parse(xMax).Ticks, yMin, yMax);
         }
 
-        public bool IsInRange(double X, double Y)
+        public bool IsInRange(double x, double y)
         {
-            return X >= this.XMin && X <= this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax) && (Y >= this.YMin && Y <= this.YMax);
+            return XMin <= x && x <= XMin + CalculateRealQuantityOfTicks_Right(XMin, XMax) && YMin <= y && y <= YMax;
         }
 
         public void UnZoomX()
@@ -2167,42 +2174,42 @@ namespace SmartQuant.Charting
             this.fAxisRight.Zoomed = false;
             if (this.fChart.GroupZoomEnabled)
                 return;
-            this.Update();
+            Update();
         }
 
-        public double GetNextGridDivision(double FirstTick, double PrevMajor, int MajorCount, EGridSize GridSize)
+        public double GetNextGridDivision(double firstTick, double prevMajor, int majorCount, EGridSize gridSize)
         {
-            return this.fTransformation.GetNextGridDivision(FirstTick, PrevMajor, MajorCount, GridSize);
+            return this.fTransformation.GetNextGridDivision(firstTick, prevMajor, majorCount, gridSize);
         }
 
-        public double CalculateRealQuantityOfTicks_Right(double X, double Y)
+        public double CalculateRealQuantityOfTicks_Right(double x, double y)
         {
-            return this.fTransformation.CalculateRealQuantityOfTicks_Right(X, Y);
+            return this.fTransformation.CalculateRealQuantityOfTicks_Right(x, y);
         }
 
-        public double CalculateRealQuantityOfTicks_Left(double X, double Y)
+        public double CalculateRealQuantityOfTicks_Left(double x, double y)
         {
-            return this.fTransformation.CalculateRealQuantityOfTicks_Left(X, Y);
+            return this.fTransformation.CalculateRealQuantityOfTicks_Left(x, y);
         }
 
-        public void GetFirstGridDivision(ref EGridSize GridSize, ref double Min, ref double Max, ref DateTime FirstDateTime)
+        public void GetFirstGridDivision(ref EGridSize gridSize, ref double min, ref double max, ref DateTime firstDateTime)
         {
-            this.fTransformation.GetFirstGridDivision(ref GridSize, ref Min, ref Max, ref FirstDateTime);
+            this.fTransformation.GetFirstGridDivision(ref gridSize, ref min, ref max, ref firstDateTime);
         }
 
-        public double CalculateNotInSessionTicks(double X, double Y)
+        public double CalculateNotInSessionTicks(double x, double y)
         {
-            return this.fTransformation.CalculateNotInSessionTicks(X, Y);
+            return this.fTransformation.CalculateNotInSessionTicks(x, y);
         }
 
-        public int ClientX(double WorldX)
+        public int ClientX(double worldX)
         {
-            return (int) ((double) this.fClientX + (WorldX - this.XMin - this.CalculateNotInSessionTicks(this.XMin, WorldX)) * ((double) this.fClientWidth / (this.XMax - this.XMin)));
+            return (int)((double)this.fClientX + (worldX - XMin - CalculateNotInSessionTicks(XMin, worldX)) * (this.fClientWidth / (XMax - XMin)));
         }
 
-        public int ClientY(double WorldY)
+        public int ClientY(double worldY)
         {
-            return (int) ((double) this.fClientY + (double) this.fClientHeight * (1.0 - (WorldY - this.YMin) / (this.YMax - this.YMin)));
+            return (int)((double)this.fClientY + (double)this.fClientHeight * (1.0 - (worldY - YMin) / (YMax - YMin)));
         }
 
         public int ClientX()
@@ -2225,29 +2232,29 @@ namespace SmartQuant.Charting
             return this.fClientWidth;
         }
 
-        public double WorldX(int ClientX)
+        public double WorldX(int clientX)
         {
-            return this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.XMin + (double) (ClientX - this.fClientX) / (double) this.fClientWidth * (this.XMax - this.XMin));
+            return this.fAxisBottom.Min + CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, XMin + (double)(clientX - this.fClientX) / (double)this.fClientWidth * (XMax - XMin));
         }
 
-        public double WorldY(int ClientY)
+        public double WorldY(int clientY)
         {
-            return this.YMin + (1.0 - (double) (ClientY - this.fClientY) / (double) this.fClientHeight) * (this.YMax - this.YMin);
+            return this.YMin + (1.0 - (double)(clientY - this.fClientY) / (double)this.fClientHeight) * (YMax - YMin);
         }
 
         public Viewer Add(object obj)
         {
             if (obj is IDrawable)
             {
-                this.fPrimitives.Add((object) (obj as IDrawable));
-                return (Viewer) null;
+                this.fPrimitives.Add(obj as IDrawable);
+                return null;
             }
             else
             {
-                Viewer viewer = this.GetViewer(obj);
+                var viewer = GetViewer(obj);
                 if (viewer == null)
-                    throw new Exception("There is no viewer for " + (object) obj.GetType());
-                this.objectViewers.Add(new Pad.ObjectViewer(obj, viewer));
+                    throw new Exception("There is no viewer for " + obj.GetType());
+                this.objectViewers.Add(new ObjectViewer(obj, viewer));
                 return viewer;
             }
         }
@@ -2256,15 +2263,15 @@ namespace SmartQuant.Charting
         {
             if (obj is IDrawable)
             {
-                this.fPrimitives.Add((object) (obj as IDrawable));
-                return (Viewer) null;
+                this.fPrimitives.Add(obj as IDrawable);
+                return null;
             }
             else
             {
-                Viewer viewer = this.GetViewer(obj);
+                var viewer = GetViewer(obj);
                 if (viewer == null)
-                    throw new Exception("There is no viewer for " + (object) obj.GetType());
-                this.objectViewers.Insert(index, new Pad.ObjectViewer(obj, viewer));
+                    throw new Exception("There is no viewer for " + obj.GetType());
+                this.objectViewers.Insert(index, new ObjectViewer(obj, viewer));
                 return viewer;
             }
         }
@@ -2277,7 +2284,7 @@ namespace SmartQuant.Charting
             }
             else
             {
-                foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+                foreach (var objectViewer in this.objectViewers)
                 {
                     if (objectViewer.Object == obj)
                     {
@@ -2297,10 +2304,7 @@ namespace SmartQuant.Charting
 
         public static Graphics GetGraphics()
         {
-            if (Chart.Pad != null)
-                return Chart.Pad.Graphics;
-            else
-                return (Graphics) null;
+            return Chart.Pad != null ? Chart.Pad.Graphics : null;
         }
 
         public virtual void Update()
@@ -2312,7 +2316,7 @@ namespace SmartQuant.Charting
             this.fUpdating = false;
         }
 
-        public virtual void Update(Graphics Graphics)
+        public virtual void Update(Graphics graphics)
         {
             double val1_1 = double.MaxValue;
             double val1_2 = double.MinValue;
@@ -2329,10 +2333,10 @@ namespace SmartQuant.Charting
                         flag3 = true;
                     if (drawable is IZoomable)
                     {
-                        IZoomable zoomable = (IZoomable) drawable;
+                        var zoomable = (IZoomable)drawable;
                         if (zoomable.IsPadRangeX())
                         {
-                            PadRange padRangeX = zoomable.GetPadRangeX(this);
+                            var padRangeX = zoomable.GetPadRangeX(this);
                             if (padRangeX.IsValid)
                             {
                                 val1_1 = Math.Min(val1_1, padRangeX.Min);
@@ -2346,7 +2350,7 @@ namespace SmartQuant.Charting
                             double num = this.fXMax;
                             this.fAxisBottom.Max = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
                             this.fXMax = this.fAxisBottom.Max;
-                            PadRange padRangeY = zoomable.GetPadRangeY(this);
+                            var padRangeY = zoomable.GetPadRangeY(this);
                             if (padRangeY.IsValid)
                             {
                                 val1_3 = Math.Min(val1_3, padRangeY.Min);
@@ -2358,18 +2362,18 @@ namespace SmartQuant.Charting
                         }
                     }
                 }
-                foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+                foreach (var objectViewer in this.objectViewers)
                 {
                     if (objectViewer.Viewer.IsZoomable)
                     {
-                        PadRange padRangeX = objectViewer.Viewer.GetPadRangeX(objectViewer.Object, this);
+                        var padRangeX = objectViewer.Viewer.GetPadRangeX(objectViewer.Object, this);
                         if (padRangeX != null && padRangeX.IsValid)
                         {
                             val1_1 = Math.Min(val1_1, padRangeX.Min);
                             val1_2 = Math.Max(val1_2, padRangeX.Max);
                             flag1 = true;
                         }
-                        PadRange padRangeY = objectViewer.Viewer.GetPadRangeY(objectViewer.Object, this);
+                        var padRangeY = objectViewer.Viewer.GetPadRangeY(objectViewer.Object, this);
                         if (padRangeY != null)
                         {
                             double max = this.fAxisBottom.Max;
@@ -2403,10 +2407,10 @@ namespace SmartQuant.Charting
                 val1_3 = -1.0;
             }
             if (flag1)
-                this.SetRangeX(val1_1 - (val1_2 - val1_1) / 20.0, val1_2 + (val1_2 - val1_1) / 20.0);
+                SetRangeX(val1_1 - (val1_2 - val1_1) / 20.0, val1_2 + (val1_2 - val1_1) / 20.0);
             if (flag2)
-                this.SetRangeY(val1_3 - (val1_4 - val1_3) / 20.0, val1_4 + (val1_4 - val1_3) / 20.0);
-            this.fGraphics = Graphics;
+                SetRangeY(val1_3 - (val1_4 - val1_3) / 20.0, val1_4 + (val1_4 - val1_3) / 20.0);
+            this.fGraphics = graphics;
             this.titleHeight = 0;
             this.axisBottomHeight = 0;
             this.axisTopHeight = 0;
@@ -2444,14 +2448,14 @@ namespace SmartQuant.Charting
                 this.axisRightWidth = this.fAxisRight.Width;
             if (this.fAxisLeft.Enabled)
                 this.axisLeftWidth = this.fAxisLeft.Width;
-            this.PaintAll(Graphics);
+            PaintAll(graphics);
         }
 
-        public void PaintAll(Graphics Graphics)
+        public void PaintAll(Graphics graphics)
         {
-            this.fGraphics = Graphics;
+            this.fGraphics = graphics;
             this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth + 1, this.fHeight + 1));
-            this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fBackColor), this.fX1, this.fY1, this.fWidth, this.fHeight);
+            this.fGraphics.FillRectangle(new SolidBrush(BackColor), this.fX1, this.fY1, this.fWidth, this.fHeight);
             if (this.fBorderEnabled)
             {
                 int height = this.fHeight;
@@ -2464,7 +2468,7 @@ namespace SmartQuant.Charting
                     width = num2;
                 this.fGraphics.DrawRectangle(new Pen(this.fBorderColor)
                 {
-                    Width = (float) this.fBorderWidth
+                    Width = (float)this.fBorderWidth
                 }, this.fX1, this.fY1, width, height);
             }
             this.fClientX = this.fX1 + this.axisLeftWidth + this.fMarginLeft;
@@ -2472,38 +2476,38 @@ namespace SmartQuant.Charting
             this.fClientWidth = this.fWidth - this.axisLeftWidth - this.axisRightWidth - this.fMarginLeft - this.fMarginRight;
             this.fClientHeight = this.fHeight - this.titleHeight - this.axisTopHeight - this.axisBottomHeight - this.fMarginTop - this.fMarginBottom;
             if (this.fClientWidth != 0 && this.fClientHeight != 0)
-                this.fGraphics.FillRectangle((Brush) new LinearGradientBrush(new RectangleF((float) this.fClientX, (float) this.fClientY, (float) this.fClientWidth, (float) this.fClientHeight), Color.FromArgb((int) byte.MaxValue, (int) byte.MaxValue, (int) byte.MaxValue), Color.FromArgb(200, 200, 200), LinearGradientMode.Vertical), this.fClientX, this.fClientY, this.fClientWidth, this.fClientHeight);
+                this.fGraphics.FillRectangle(new LinearGradientBrush(new RectangleF(this.fClientX, this.fClientY, this.fClientWidth, this.fClientHeight), Color.FromArgb((int)byte.MaxValue, (int)byte.MaxValue, (int)byte.MaxValue), Color.FromArgb(200, 200, 200), LinearGradientMode.Vertical), this.fClientX, this.fClientY, this.fClientWidth, this.fClientHeight);
             if (this.fAxisBottom.Enabled)
             {
-                this.fAxisBottom.SetLocation((double) this.fClientX, (double) (this.fClientY + this.fClientHeight), (double) (this.fClientX + this.fClientWidth), (double) (this.fClientY + this.fClientHeight));
+                this.fAxisBottom.SetLocation(this.fClientX, this.fClientY + this.fClientHeight, this.fClientX + this.fClientWidth, this.fClientY + this.fClientHeight);
                 this.fAxisBottom.Paint();
             }
             if (this.fAxisLeft.Enabled)
             {
                 this.fGraphics.Clip = new Region(new Rectangle(this.fX1, this.fY1, this.fWidth, this.fHeight));
-                this.fAxisLeft.SetLocation((double) this.fClientX, (double) this.fClientY, (double) this.fClientX, (double) (this.fClientY + this.fClientHeight));
+                this.fAxisLeft.SetLocation(this.fClientX, this.fClientY, this.fClientX, this.fClientY + this.fClientHeight);
                 this.fAxisLeft.Paint();
             }
             if (this.fAxisTop.Enabled)
             {
-                this.fAxisTop.SetLocation((double) this.fClientX, (double) this.fClientY, (double) (this.fClientX + this.fClientWidth), (double) this.fClientY);
+                this.fAxisTop.SetLocation(this.fClientX, this.fClientY, this.fClientX + this.fClientWidth, this.fClientY);
                 this.fAxisTop.Paint();
             }
             if (this.fAxisRight.Enabled)
             {
-                this.fAxisRight.SetLocation((double) (this.fClientX + this.fClientWidth), (double) this.fClientY, (double) (this.fClientX + this.fClientWidth), (double) (this.fClientY + this.fClientHeight));
+                this.fAxisRight.SetLocation(this.fClientX + this.fClientWidth, this.fClientY, this.fClientX + this.fClientWidth, this.fClientY + this.fClientHeight);
                 this.fAxisRight.Paint();
             }
             this.fGraphics.Clip = new Region(new Rectangle(this.fClientX + 1, this.fClientY + 1, this.fClientWidth - 1, this.fClientHeight - 1));
             try
             {
                 foreach (IDrawable drawable in this.fPrimitives)
-                    drawable.Paint(this, this.XMin, this.XMin + this.CalculateRealQuantityOfTicks_Right(this.XMin, this.XMax), this.YMin, this.YMax);
+                    drawable.Paint(this, XMin, XMin + CalculateRealQuantityOfTicks_Right(XMin, XMax), YMin, YMax);
             }
             catch
             {
             }
-            foreach (Pad.ObjectViewer objectViewer in this.objectViewers)
+            foreach (var objectViewer in this.objectViewers)
                 objectViewer.Viewer.Paint(objectViewer.Object, this);
             if (this.fOutlineEnabled)
                 this.fGraphics.DrawRectangle(new Pen(Color.Green), this.fOutlineRectangle);
@@ -2529,17 +2533,17 @@ namespace SmartQuant.Charting
                     case ETitlePosition.InsideLeft:
                         this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
                         this.fTitle.X = this.fClientX + this.fTitleOffsetX;
-                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        this.fGraphics.FillRectangle((Brush)new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
                         break;
                     case ETitlePosition.InsideRight:
                         this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
                         this.fTitle.X = this.fClientX + this.fClientWidth - this.fTitle.Width - this.fTitleOffsetX;
-                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        this.fGraphics.FillRectangle((Brush)new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
                         break;
                     case ETitlePosition.InsideCentre:
                         this.fTitle.Y = this.fClientY + this.fTitleOffsetY;
                         this.fTitle.X = this.fClientX + this.fClientWidth / 2 - this.fTitle.Width / 2 + this.fTitleOffsetX;
-                        this.fGraphics.FillRectangle((Brush) new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
+                        this.fGraphics.FillRectangle((Brush)new SolidBrush(this.fForeColor), this.fTitle.X, this.fTitle.Y, this.fTitle.Width, this.fTitle.Height);
                         break;
                 }
                 this.fTitle.Paint();
@@ -2568,79 +2572,70 @@ namespace SmartQuant.Charting
             this.fLegend.Paint();
         }
 
-        public void DrawLine(Pen Pen, double X1, double Y1, double X2, double Y2, bool DoTransform)
+        public void DrawLine(Pen pen, double x1, double y1, double x2, double y2, bool doTransform)
         {
-            if (DoTransform)
-                this.fGraphics.DrawLine(Pen, this.ClientX(X1), this.ClientY(Y1), this.ClientX(X2), this.ClientY(Y2));
+            if (doTransform)
+                this.fGraphics.DrawLine(pen, ClientX(x1), ClientY(y1), ClientX(x2), ClientY(y2));
             else
-                this.fGraphics.DrawLine(Pen, (int) X1, (int) Y1, (int) X2, (int) Y2);
+                this.fGraphics.DrawLine(pen, (int)x1, (int)y1, (int)x2, (int)y2);
         }
 
-        public void DrawVerticalTick(Pen Pen, double X, double Y, int Length)
+        public void DrawVerticalTick(Pen pen, double x, double y, int length)
         {
         }
 
-        public void DrawHorizontalTick(Pen Pen, double X, double Y, int Length)
+        public void DrawHorizontalTick(Pen pen, double x, double y, int length)
         {
-            try
+            this.fGraphics.DrawLine(pen, (int)x, ClientY(y), (int)x + length, ClientY(y));
+        }
+
+        public void DrawVerticalGrid(Pen pen, double x)
+        {
+            this.fGraphics.DrawLine(pen, ClientX(x), this.fClientY, ClientX(x), this.fClientY + this.fClientHeight);
+        }
+
+        public void DrawHorizontalGrid(Pen pen, double y)
+        {
+            this.fGraphics.DrawLine(pen, this.fClientX, ClientY(y), this.fClientX + this.fClientWidth, ClientY(y));
+        }
+
+        public void DrawLine(Pen pen, double x1, double y1, double x2, double y2)
+        {
+            DrawLine(pen, x1, y1, x2, y2, true);
+        }
+
+        public void DrawRectangle(Pen pen, double x, double y, int width, int height)
+        {
+            this.fGraphics.DrawRectangle(pen, ClientX(x), ClientY(y), width, height);
+        }
+
+        public void DrawEllipse(Pen pen, double x, double y, int width, int height)
+        {
+            this.fGraphics.DrawEllipse(pen, ClientX(x), ClientY(y), width, height);
+        }
+
+        public void DrawBeziers(Pen pen, PointF[] pts)
+        {
+            var points = new Point[pts.Length];
+            for (int i = 0; i < pts.Length; ++i)
             {
-                this.fGraphics.DrawLine(Pen, (int) X, this.ClientY(Y), (int) X + Length, this.ClientY(Y));
+                var p = pts[i];
+                points[i] = new Point(this.ClientX(p.X), this.ClientY(p.Y));
             }
-            catch
-            {
-            }
+            this.fGraphics.DrawBeziers(pen, points);
         }
 
-        public void DrawVerticalGrid(Pen Pen, double X)
+        public void DrawText(string text, Font font, Brush brush, int x, int y)
         {
-            this.fGraphics.DrawLine(Pen, this.ClientX(X), this.fClientY, this.ClientX(X), this.fClientY + this.fClientHeight);
+            this.fGraphics.DrawString(text, font, brush, x, y);
         }
 
-        public void DrawHorizontalGrid(Pen Pen, double Y)
+        private bool IsInsideClient(int x, int y)
         {
-            this.fGraphics.DrawLine(Pen, this.fClientX, this.ClientY(Y), this.fClientX + this.fClientWidth, this.ClientY(Y));
+            return this.fClientX < x && x < this.fClientX + this.fClientWidth && this.fClientY < y && y < this.fClientY + this.fClientHeight;
         }
 
-        public void DrawLine(Pen Pen, double X1, double Y1, double X2, double Y2)
-        {
-            this.DrawLine(Pen, X1, Y1, X2, Y2, true);
-        }
-
-        public void DrawRectangle(Pen Pen, double X, double Y, int Width, int Height)
-        {
-            this.fGraphics.DrawRectangle(Pen, this.ClientX(X), this.ClientY(Y), Width, Height);
-        }
-
-        public void DrawEllipse(Pen Pen, double X, double Y, int Width, int Height)
-        {
-            this.fGraphics.DrawEllipse(Pen, this.ClientX(X), this.ClientY(Y), Width, Height);
-        }
-
-        public void DrawBeziers(Pen Pen, PointF[] Points)
-        {
-            Point[] points = new Point[Points.Length];
-            for (int index = 0; index < Points.Length; ++index)
-            {
-                PointF pointF = Points[index];
-                points[index] = new Point(this.ClientX((double) pointF.X), this.ClientY((double) pointF.Y));
-            }
-            this.fGraphics.DrawBeziers(Pen, points);
-        }
-
-        public void DrawText(string Text, Font Font, Brush Brush, int X, int Y)
-        {
-            this.fGraphics.DrawString(Text, Font, Brush, (float) X, (float) Y);
-        }
-
-        private bool IsInsideClient(int X, int Y)
-        {
-            if (X > this.fClientX && X < this.fClientX + this.fClientWidth && Y > this.fClientY)
-                return Y < this.fClientY + this.fClientHeight;
-            else
-                return false;
-        }
-
-        public virtual void MouseMove(MouseEventArgs Event)
+        public virtual void MouseMove(MouseEventArgs evnt)
         {
             try
             {
@@ -2648,11 +2643,11 @@ namespace SmartQuant.Charting
                 {
                     double num1 = (this.fXMax - this.fXMin) / 100.0;
                     double num2 = (this.fYMax - this.fYMin) / 100.0;
-                    double X = this.WorldX(Event.X);
-                    double Y = this.WorldY(Event.Y);
+                    double X = this.WorldX(evnt.X);
+                    double Y = this.WorldY(evnt.Y);
                     string str = "";
-                    this.fSelectedPrimitive = (IDrawable) null;
-                    this.fSelectedPrimitiveDistance = (TDistance) null;
+                    this.fSelectedPrimitive = (IDrawable)null;
+                    this.fSelectedPrimitiveDistance = (TDistance)null;
                     this.fOnPrimitive = false;
                     foreach (IDrawable drawable in this.fPrimitives)
                     {
@@ -2673,9 +2668,9 @@ namespace SmartQuant.Charting
                 }
                 if (this.fMouseMovePrimitiveEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && this.fOnPrimitive) && this.fSelectedPrimitive is IMovable)
                 {
-                    double num1 = this.WorldX(Event.X);
-                    double num2 = this.WorldY(Event.Y);
-                    ((IMovable) this.fSelectedPrimitive).Move(this.fSelectedPrimitiveDistance.X, this.fSelectedPrimitiveDistance.Y, num1 - this.fSelectedPrimitiveDistance.X, num2 - this.fSelectedPrimitiveDistance.Y);
+                    double num1 = this.WorldX(evnt.X);
+                    double num2 = this.WorldY(evnt.Y);
+                    ((IMovable)this.fSelectedPrimitive).Move(this.fSelectedPrimitiveDistance.X, this.fSelectedPrimitiveDistance.Y, num1 - this.fSelectedPrimitiveDistance.X, num2 - this.fSelectedPrimitiveDistance.Y);
                     this.fSelectedPrimitiveDistance.X = num1;
                     this.fSelectedPrimitiveDistance.Y = num2;
                     this.fOnPrimitive = true;
@@ -2683,23 +2678,23 @@ namespace SmartQuant.Charting
                 }
                 if (this.fMouseZoomEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && !this.fOnPrimitive))
                 {
-                    int num1 = Math.Abs(this.fMouseDownX - Event.X);
-                    int num2 = Math.Abs(this.fMouseDownY - Event.Y);
-                    int num3 = this.fMouseDownX >= Event.X ? Event.X : this.fMouseDownX;
-                    int num4 = this.fMouseDownY >= Event.Y ? Event.Y : this.fMouseDownY;
+                    int num1 = Math.Abs(this.fMouseDownX - evnt.X);
+                    int num2 = Math.Abs(this.fMouseDownY - evnt.Y);
+                    int num3 = this.fMouseDownX >= evnt.X ? evnt.X : this.fMouseDownX;
+                    int num4 = this.fMouseDownY >= evnt.Y ? evnt.Y : this.fMouseDownY;
                     this.fOutlineRectangle.X = num3;
                     this.fOutlineRectangle.Y = num4;
                     this.fOutlineRectangle.Width = num1;
                     this.fOutlineRectangle.Height = num2;
-                    this.Update();
+                    Update();
                 }
                 if (this.fMouseMoveContentEnabled && this.fMouseDown && this.fMouseDownButton == MouseButtons.Right)
                 {
-                    double num1 = (double) (this.fMouseDownX - Event.X) / (double) this.fClientWidth * (this.XMax - this.XMin);
-                    double num2 = this.WorldY(this.fMouseDownY) - this.WorldY(Event.Y);
+                    double num1 = (double)(this.fMouseDownX - evnt.X) / (double)this.fClientWidth * (this.XMax - this.XMin);
+                    double num2 = this.WorldY(this.fMouseDownY) - this.WorldY(evnt.Y);
                     double num3 = num1 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num1) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num1);
-                    this.fMouseDownX = Event.X;
-                    this.fMouseDownY = Event.Y;
+                    this.fMouseDownX = evnt.X;
+                    this.fMouseDownY = evnt.Y;
                     this.fAxisBottom.SetRange(this.fAxisBottom.Min + num3, this.fAxisBottom.Max + num3);
                     this.fAxisTop.SetRange(this.fAxisTop.Min + num3, this.fAxisTop.Max + num3);
                     this.fAxisLeft.SetRange(this.fAxisLeft.Min + num2, this.fAxisLeft.Max + num2);
@@ -2715,27 +2710,29 @@ namespace SmartQuant.Charting
                 else
                 {
                     this.fOnAxis = false;
-                    this.fAxisLeft.MouseMove(Event);
-                    this.fAxisBottom.MouseMove(Event);
-                    if (this.fAxisLeft.X1 - 10.0 <= (double) Event.X && this.fAxisLeft.X1 >= (double) Event.X && (this.fAxisLeft.Y1 <= (double) Event.Y && this.fAxisLeft.Y2 >= (double) Event.Y))
+                    this.fAxisLeft.MouseMove(evnt);
+                    this.fAxisBottom.MouseMove(evnt);
+                    if (this.fAxisLeft.X1 - 10.0 <= (double)evnt.X && this.fAxisLeft.X1 >= (double)evnt.X && (this.fAxisLeft.Y1 <= (double)evnt.Y && this.fAxisLeft.Y2 >= (double)evnt.Y))
                         this.fOnAxis = true;
-                    if (this.fAxisBottom.X1 <= (double) Event.X && this.fAxisBottom.X2 >= (double) Event.X && (this.fAxisBottom.Y1 <= (double) Event.Y && this.fAxisBottom.Y1 + 10.0 >= (double) Event.Y))
+                    if (this.fAxisBottom.X1 <= (double)evnt.X && this.fAxisBottom.X2 >= (double)evnt.X && (this.fAxisBottom.Y1 <= (double)evnt.Y && this.fAxisBottom.Y1 + 10.0 >= (double)evnt.Y))
                         this.fOnAxis = true;
                     if (this.fOnAxis || this.fOnPrimitive)
                     {
                         #if GTK
+                        this.fChart.GdkWindow.Cursor = new Gdk.Cursor(Gdk.CursorType.Hand1);
                         #else
-                        if (!(Cursor.Current != Cursors.Hand))
-                            return;
+//                        if (Cursor.Current == Cursors.Hand)
+//                            return;
                         Cursor.Current = Cursors.Hand;
                         #endif
                     }
                     else
                     {
                         #if GTK
+                        this.fChart.GdkWindow.Cursor = null;
                         #else
-                        if (!(Cursor.Current != Cursors.Default))
-                            return;
+//                        if (Cursor.Current == Cursors.Default)
+//                            return;
                         Cursor.Current = Cursors.Default;
                         #endif
                     }
@@ -2746,7 +2743,7 @@ namespace SmartQuant.Charting
             }
         }
 
-        public virtual void MouseWheel(MouseEventArgs Event)
+        public virtual void MouseWheel(MouseEventArgs evnt)
         {
             if (!this.fMouseWheelEnabled)
                 return;
@@ -2755,46 +2752,46 @@ namespace SmartQuant.Charting
             switch (this.fMouseWheelMode)
             {
                 case EMouseWheelMode.MoveX:
-                    double num1 = (double) Event.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num1 = (double)evnt.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
                     double num2 = num1 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num1) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num1);
                     this.fAxisBottom.SetRange(this.fAxisBottom.Min + num2, this.fAxisBottom.Max + num2);
                     this.fAxisTop.SetRange(this.fAxisTop.Min + num2, this.fAxisTop.Max + num2);
                     this.fAxisBottom.Zoomed = true;
                     this.fAxisTop.Zoomed = true;
-                    this.EmitZoom(true);
+                    EmitZoom(true);
                     break;
                 case EMouseWheelMode.MoveY:
-                    double num3 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    double num3 = (double)evnt.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
                     this.fAxisLeft.SetRange(this.fAxisLeft.Min + num3, this.fAxisLeft.Max + num3);
                     this.fAxisRight.SetRange(this.fAxisRight.Min + num3, this.fAxisRight.Max + num3);
                     this.fAxisLeft.Zoomed = true;
                     this.fAxisRight.Zoomed = true;
-                    this.EmitZoom(true);
+                    EmitZoom(true);
                     break;
                 case EMouseWheelMode.ZoomX:
-                    double num4 = (double) Event.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num4 = (double)evnt.Delta / 120.0 * (this.fAxisBottom.Max - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
                     double num5 = num4 <= 0.0 ? this.CalculateRealQuantityOfTicks_Left(this.fAxisBottom.Min, this.fAxisBottom.Min + num4) : this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Min + num4);
                     double num6 = num5 - num4;
                     this.fAxisBottom.SetRange(this.fAxisBottom.Min + num5, this.fAxisBottom.Max + num6);
                     this.fAxisTop.SetRange(this.fAxisTop.Min + num5, this.fAxisTop.Max + num6);
                     this.fAxisBottom.Zoomed = true;
                     this.fAxisTop.Zoomed = true;
-                    this.EmitZoom(true);
+                    EmitZoom(true);
                     break;
                 case EMouseWheelMode.ZoomY:
-                    double num7 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    double num7 = (double)evnt.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
                     this.fAxisLeft.SetRange(this.fAxisLeft.Min + num7, this.fAxisLeft.Max);
                     this.fAxisRight.SetRange(this.fAxisRight.Min + num7, this.fAxisRight.Max);
                     this.fAxisLeft.Zoomed = true;
                     this.fAxisRight.Zoomed = true;
-                    this.EmitZoom(true);
+                    EmitZoom(true);
                     break;
                 case EMouseWheelMode.Zoom:
                     double num8 = this.fAxisBottom.Min + this.CalculateRealQuantityOfTicks_Right(this.fAxisBottom.Min, this.fAxisBottom.Max);
-                    double num9 = (double) Event.Delta / 120.0 * (num8 - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
-                    double num10 = (double) Event.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
-                    double num11 = this.WorldX(Event.X);
-                    double num12 = this.WorldY(Event.Y);
+                    double num9 = (double)evnt.Delta / 120.0 * (num8 - this.fAxisBottom.Min) * this.fMouseWheelSensitivity;
+                    double num10 = (double)evnt.Delta / 120.0 * (this.fYMax - this.fYMin) * this.fMouseWheelSensitivity;
+                    double num11 = this.WorldX(evnt.X);
+                    double num12 = this.WorldY(evnt.Y);
                     double num13 = (num11 - this.fAxisBottom.Min) / (num8 - this.fAxisBottom.Min) * num9;
                     double num14 = (num8 - num11) / (num8 - this.fAxisBottom.Min) * num9;
                     double num15 = (num12 - this.fYMin) / (this.fYMax - this.fYMin) * num10;
@@ -2809,47 +2806,47 @@ namespace SmartQuant.Charting
                     this.fAxisTop.Zoomed = true;
                     this.fAxisLeft.Zoomed = true;
                     this.fAxisRight.Zoomed = true;
-                    this.EmitZoom(true);
+                    EmitZoom(true);
                     break;
             }
             if (this.fChart.GroupZoomEnabled)
                 return;
-            this.Update();
+            Update();
         }
 
-        public virtual void MouseDown(MouseEventArgs Event)
+        public virtual void MouseDown(MouseEventArgs evnt)
         {
-            if (this.IsInsideClient(Event.X, Event.Y))
+            if (IsInsideClient(evnt.X, evnt.Y))
             {
                 this.fMouseDown = true;
-                this.fMouseDownX = Event.X;
-                this.fMouseDownY = Event.Y;
-                this.fMouseDownButton = Event.Button;
+                this.fMouseDownX = evnt.X;
+                this.fMouseDownY = evnt.Y;
+                this.fMouseDownButton = evnt.Button;
                 if (this.fMouseZoomEnabled && this.fMouseDownButton == MouseButtons.Left && this.fSelectedPrimitive == null)
                     this.fOutlineEnabled = true;
                 if (this.fMouseContextMenuEnabled && this.fMouseDownButton == MouseButtons.Right && this.fOnPrimitive)
                 {
-                    this.InitContextMenu();
+                    InitContextMenu();
                     #if !GTK
-                    this.DeleteMenuItem.Text = "Delete " + this.fSelectedPrimitive.GetType().Name;
+                    this.deleteMenuItem.Text = "Delete " + this.fSelectedPrimitive.GetType().Name;
                     #endif
                 }
             }
-            this.fAxisLeft.MouseDown(Event);
-            this.fAxisBottom.MouseDown(Event);
+            this.fAxisLeft.MouseDown(evnt);
+            this.fAxisBottom.MouseDown(evnt);
         }
 
-        public virtual void MouseUp(MouseEventArgs Event)
+        public virtual void MouseUp(MouseEventArgs evnt)
         {
-            if (this.fMouseZoomEnabled && this.fMouseDown && (this.fMouseDownButton == MouseButtons.Left && !this.fOnPrimitive))
+            if (this.fMouseZoomEnabled && this.fMouseDown && this.fMouseDownButton == MouseButtons.Left && !this.fOnPrimitive)
             {
                 this.fOutlineEnabled = false;
-                if (Math.Abs(this.fMouseDownX - Event.X) > 2 && Math.Abs(this.fMouseDownY - Event.Y) > 2)
+                if (Math.Abs(this.fMouseDownX - evnt.X) > 2 && Math.Abs(this.fMouseDownY - evnt.Y) > 2)
                 {
                     double num1 = this.WorldX(this.fMouseDownX);
-                    double num2 = this.WorldX(Event.X);
+                    double num2 = this.WorldX(evnt.X);
                     double num3 = this.WorldY(this.fMouseDownY);
-                    double num4 = this.WorldY(Event.Y);
+                    double num4 = this.WorldY(evnt.Y);
                     double num5;
                     double Y;
                     if (num1 < num2)
@@ -2891,15 +2888,15 @@ namespace SmartQuant.Charting
             }
             else
             {
-                this.fAxisLeft.MouseUp(Event);
-                this.fAxisBottom.MouseUp(Event);
+                this.fAxisLeft.MouseUp(evnt);
+                this.fAxisBottom.MouseUp(evnt);
                 this.fMouseDown = false;
             }
         }
 
-        public virtual void DoubleClick(int X, int Y)
+        public virtual void DoubleClick(int x, int y)
         {
-            if (this.IsInsideClient(X, Y))
+            if (IsInsideClient(x, y))
             {
                 if (this.fOnPrimitive)
                 {
@@ -2919,35 +2916,33 @@ namespace SmartQuant.Charting
             }
             else
             {
-                if (!this.fMousePadPropertiesEnabled)
-                    return;
-                new PadProperyForm(this, this).ShowDialog();
+                if (this.fMousePadPropertiesEnabled)
+                    new PadProperyForm(this, this).ShowDialog();
             }
         }
 
         public static void EmitNewTick(DateTime datetime)
         {
-            if (Pad.NewTick == null)
-                return;
-            Pad.NewTick((object) null, new NewTickEventArgs(datetime));
+            if (Pad.NewTick != null)
+                Pad.NewTick(null, new NewTickEventArgs(datetime));
         }
 
-        private void OnNewTick(object sender, NewTickEventArgs EventArgs)
+        private void OnNewTick(object sender, NewTickEventArgs args)
         {
             if (!this.fMonitored)
                 return;
-            int num1 = EventArgs.DateTime.Hour * 60 * 60 + EventArgs.DateTime.Minute * 60 + EventArgs.DateTime.Second;
+            int num1 = args.DateTime.Hour * 60 * 60 + args.DateTime.Minute * 60 + args.DateTime.Second;
             if (num1 - this.fLastTickTime < this.fUpdateInterval)
                 return;
-            DateTime dateTime = EventArgs.DateTime;
-            double XMin = (double) dateTime.AddSeconds((double) -this.fWindowSize).Ticks;
-            double num2 = (double) dateTime.Ticks;
+            DateTime dateTime = args.DateTime;
+            double XMin = (double)dateTime.AddSeconds((double)-this.fWindowSize).Ticks;
+            double num2 = (double)dateTime.Ticks;
             this.SetRangeX(XMin, num2 + (num2 - XMin) / 20.0);
-            if ((DateTime.Now.Ticks - this.fLastUpdateDateTime.Ticks) / 1000000L > 1L)
+            if ((DateTime.Now.Ticks - this.fLastUpdateDateTime.Ticks) / 1000000L > 1)
             {
                 if (!this.fChart.GroupZoomEnabled)
                     this.Update();
-                this.EmitZoom(true);
+                EmitZoom(true);
                 this.fLastUpdateDateTime = DateTime.Now;
             }
             this.fLastTickTime = num1;
@@ -2955,20 +2950,19 @@ namespace SmartQuant.Charting
 
         public void EmitZoom(bool zoom)
         {
-            if (this.Zoom == null)
-                return;
-            this.Zoom((object) null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
+            if (Zoom != null)
+                Zoom(null, new ZoomEventArgs(this.XMin, this.XMax, this.YMin, this.YMax, zoom));
         }
 
-        private void DeleteMenuItem_Click(object sender, EventArgs e)
+        private void OnDeleteMenuItemClick(object sender, EventArgs e)
         {
-            this.fPrimitives.Remove((object) this.fSelectedPrimitive);
+            this.fPrimitives.Remove(this.fSelectedPrimitive);
             this.Update();
         }
 
-        private void PropertiesMenuItem_Click(object sender, EventArgs e)
+        private void OnPropertiesMenuItemClick(object sender, EventArgs e)
         {
-             new PadProperyForm(this.fSelectedPrimitive, this).ShowDialog();
+            new PadProperyForm(this.fSelectedPrimitive, this).ShowDialog();
         }
 
         private class ObjectViewer
@@ -2987,68 +2981,63 @@ namespace SmartQuant.Charting
         [Serializable]
         private class TFeatures3D
         {
-            private Pad Pad;
-            private TAxes2D Axes2D;
+            private Pad pad;
+            private TAxes2D axes2D;
             public Axis[] Axes;
-            private bool fActive;
+            private bool active;
             public object View;
 
             public bool Active
             {
                 get
                 {
-                    return this.fActive;
+                    return this.active;
                 }
                 set
                 {
-                    this.fActive = value;
+                    this.active = value;
                     if (value)
                     {
-                        this.Axes2D.SetFor3D();
-                        this.Pad.ForeColor = this.Pad.BackColor;
-                        this.Pad.AntiAliasingEnabled = true;
+                        this.axes2D.SetFor3D();
+                        this.pad.ForeColor = this.pad.BackColor;
+                        this.pad.AntiAliasingEnabled = true;
                     }
                     else
-                        this.Axes2D.Restore();
+                        this.axes2D.Restore();
                 }
             }
 
-            public TFeatures3D(Pad Pad)
+            public TFeatures3D(Pad pad)
             {
-                this.Pad = Pad;
-                this.Axes2D = new Pad.TFeatures3D.TAxes2D(Pad);
-                this.Axes = new Axis[3]
+                this.pad = pad;
+                this.axes2D = new Pad.TFeatures3D.TAxes2D(pad);
+                this.Axes = new Axis[] { new Axis(pad), new Axis(pad), new Axis(pad) };
+                for (int i = 0; i < this.Axes.Length; ++i)
                 {
-                    new Axis(Pad),
-                    new Axis(Pad),
-                    new Axis(Pad)
-                };
-                for (int index = 0; index < this.Axes.Length; ++index)
-                {
-                    this.Axes[index].Max = 1.0;
-                    this.Axes[index].Min = 0.0;
+                    this.Axes[i].Max = 1;
+                    this.Axes[i].Min = 0;
                 }
             }
 
-            public void SetRangeX(double XMin, double XMax)
+            public void SetRangeX(double xMin, double xMax)
             {
-                this.Axes[0].SetRange(XMin, XMax);
+                this.Axes[0].SetRange(xMin, xMax);
             }
 
-            public void SetRangeY(double YMin, double YMax)
+            public void SetRangeY(double yMin, double yMax)
             {
-                this.Axes[1].SetRange(YMin, YMax);
+                this.Axes[1].SetRange(yMin, yMax);
             }
 
-            public void SetRangeZ(double ZMin, double ZMax)
+            public void SetRangeZ(double zMin, double zMax)
             {
-                this.Axes[2].SetRange(ZMin, ZMax);
+                this.Axes[2].SetRange(zMin, zMax);
             }
 
-            public void SetRange(double XMin, double XMax, double YMin, double YMax)
+            public void SetRange(double xMin, double xMax, double yMin, double yMax)
             {
-                this.SetRangeX(XMin, XMax);
-                this.SetRangeY(YMin, YMax);
+                SetRangeX(xMin, xMax);
+                SetRangeY(yMin, yMax);
             }
 
             [Serializable]

@@ -102,7 +102,7 @@ Global
 		{80254F20-5A67-44DA-9824-0FE2A55588BA} = {5AF9DAA0-BE52-42B5-85DE-743C8DF4889D}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj
+		StartupItem = Tests\Demo\Demo.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

@@ -24,7 +24,7 @@ namespace DemoGtk
             this.barChart = new SmartQuant.Controls.BarChart.BarChart();
             this.barChart2 = new SmartQuant.Controls.BarChart.BarChart2();
             this.chart3 = new SmartQuant.FinChart.Chart();
-
+            this.chart3.ActionType = ChartActionType.Cross;
             var nb = new Notebook();
             nb.Add(barChart);
             nb.SetTabLabelText(barChart, "Chart");
