@@ -30,9 +30,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Reference Include="SmartQuant">
-      <HintPath>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\SmartQuant.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DrawStyle.cs" />
@@ -49,6 +46,10 @@
     <ProjectReference Include="..\SmartQuant.Charting.WinForm\SmartQuant.Charting.WinForm.csproj">
       <Project>{DC33D65A-4031-4891-9DC3-18B2EBFB74AB}</Project>
       <Name>SmartQuant.Charting.WinForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SmartQuant.dll\src\SmartQuant\SmartQuant.csproj">
+      <Project>{4A09B376-7AFA-40CE-AFBD-448984BC4514}</Project>
+      <Name>SmartQuant</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

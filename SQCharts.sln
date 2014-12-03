@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.ChartViewers.Gtk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant.Controls.Gtk", "SmartQuant.Controls.Gtk\SmartQuant.Controls.Gtk.csproj", "{26692FBA-DC22-41DA-838A-7DF6D1420637}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartQuant", "..\SmartQuant.dll\src\SmartQuant\SmartQuant.csproj", "{4A09B376-7AFA-40CE-AFBD-448984BC4514}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{470E0CC8-20D6-496E-A84F-3E8A5F454F1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A09B376-7AFA-40CE-AFBD-448984BC4514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A09B376-7AFA-40CE-AFBD-448984BC4514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A09B376-7AFA-40CE-AFBD-448984BC4514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A09B376-7AFA-40CE-AFBD-448984BC4514}.Release|Any CPU.Build.0 = Release|Any CPU
 		{80254F20-5A67-44DA-9824-0FE2A55588BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{80254F20-5A67-44DA-9824-0FE2A55588BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80254F20-5A67-44DA-9824-0FE2A55588BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
