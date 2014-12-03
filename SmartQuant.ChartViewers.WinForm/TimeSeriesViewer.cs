@@ -126,14 +126,14 @@ namespace SmartQuant.ChartViewers
                 if (this.DrawStyle == DrawStyle.Bar)
                 {
                     if (num15 > 0.0)
-                        pad.Graphics.FillRectangle((Brush)new SolidBrush(this.Color), pad.ClientX(num14) - (this.DrawWidth + 1) / 2, pad.ClientY(num15), this.DrawWidth + 1, pad.ClientY(0.0) - pad.ClientY(num15));
+                        pad.Graphics.FillRectangle(new SolidBrush(Color), pad.ClientX(num14) - (this.DrawWidth + 1) / 2, pad.ClientY(num15), this.DrawWidth + 1, pad.ClientY(0.0) - pad.ClientY(num15));
                     else
-                        pad.Graphics.FillRectangle((Brush)new SolidBrush(this.Color), pad.ClientX(num14) - (this.DrawWidth + 1) / 2, pad.ClientY(0.0), this.DrawWidth + 1, pad.ClientY(num15) - pad.ClientY(0.0));
+                        pad.Graphics.FillRectangle(new SolidBrush(Color), pad.ClientX(num14) - (this.DrawWidth + 1) / 2, pad.ClientY(0.0), this.DrawWidth + 1, pad.ClientY(num15) - pad.ClientY(0.0));
                 }
                 if (this.DrawStyle == DrawStyle.Circle)
                 {
-                    SolidBrush solidBrush = new SolidBrush(this.Color);
-                    pad.Graphics.FillEllipse((Brush)solidBrush, pad.ClientX(num14) - this.DrawWidth / 2, pad.ClientY(num15) - this.DrawWidth / 2, this.DrawWidth, this.DrawWidth);
+                    var solidBrush = new SolidBrush(Color);
+                    pad.Graphics.FillEllipse(solidBrush, pad.ClientX(num14) - this.DrawWidth / 2, pad.ClientY(num15) - this.DrawWidth / 2, this.DrawWidth, this.DrawWidth);
                 }
             }
         }

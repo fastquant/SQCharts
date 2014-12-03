@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 #if GTK
 using Compatibility.Gtk;
@@ -316,150 +317,150 @@ namespace SmartQuant.Charting
             Pen2.DashStyle = GridDashStyle;
             Pen3.Width = MinorGridWidth;
             Pen3.DashStyle = MinorGridDashStyle;
-            DateTime FirstDateTime = new DateTime();
+            DateTime firstDateTime = new DateTime();
             double min = Min;
             double max = Max;
-            FirstDateTime = new DateTime(Math.Max(0, (long)min));
+            firstDateTime = new DateTime(Math.Max(0, (long)min));
             DateTime dateTime1 = new DateTime((long)max);
-            EGridSize GridSize = EGridSize.min1;
-            this.pad.GetFirstGridDivision(ref GridSize, ref min, ref max, ref FirstDateTime);
+            EGridSize gridSize = EGridSize.min1;
+            this.pad.GetFirstGridDivision(ref gridSize, ref min, ref max, ref firstDateTime);
             double num1 = 5.0;
             double num2;
             DateTime dateTime2;
-            switch (GridSize)
+            switch (gridSize)
             {
                 case EGridSize.year10:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (9 - FirstDateTime.Year % 10));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (9 - firstDateTime.Year % 10));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.year20:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (19 - FirstDateTime.Year % 20));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (19 - firstDateTime.Year % 20));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.year4:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (3 - FirstDateTime.Year % 4));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (3 - firstDateTime.Year % 4));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.year5:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (4 - FirstDateTime.Year % 5));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (4 - firstDateTime.Year % 5));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.year2:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (1 - FirstDateTime.Year % 2));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (1 - firstDateTime.Year % 2));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.year3:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
-                    dateTime2 = dateTime2.AddYears(1 + (2 - FirstDateTime.Year % 3));
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
+                    dateTime2 = dateTime2.AddYears(1 + (2 - firstDateTime.Year % 3));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.month6:
-                    DateTime dateTime3 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, 1);
-                    dateTime3 = dateTime3.AddMonths(1 + (12 - FirstDateTime.Month) % 6);
+                    DateTime dateTime3 = new DateTime(firstDateTime.Year, firstDateTime.Month, 1);
+                    dateTime3 = dateTime3.AddMonths(1 + (12 - firstDateTime.Month) % 6);
                     num2 = (double)dateTime3.Ticks;
                     break;
                 case EGridSize.year1:
-                    dateTime2 = new DateTime(FirstDateTime.Year, 1, 1);
+                    dateTime2 = new DateTime(firstDateTime.Year, 1, 1);
                     dateTime2 = dateTime2.AddYears(1);
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.month3:
-                    DateTime dateTime4 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, 1);
-                    dateTime4 = dateTime4.AddMonths(1 + (12 - FirstDateTime.Month) % 3);
+                    DateTime dateTime4 = new DateTime(firstDateTime.Year, firstDateTime.Month, 1);
+                    dateTime4 = dateTime4.AddMonths(1 + (12 - firstDateTime.Month) % 3);
                     num2 = (double)dateTime4.Ticks;
                     break;
                 case EGridSize.month4:
-                    DateTime dateTime5 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, 1);
-                    dateTime5 = dateTime5.AddMonths(1 + (12 - FirstDateTime.Month) % 4);
+                    DateTime dateTime5 = new DateTime(firstDateTime.Year, firstDateTime.Month, 1);
+                    dateTime5 = dateTime5.AddMonths(1 + (12 - firstDateTime.Month) % 4);
                     num2 = (double)dateTime5.Ticks;
                     break;
                 case EGridSize.month1:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, 1);
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, 1);
                     dateTime2 = dateTime2.AddMonths(1);
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.month2:
-                    DateTime dateTime6 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, 1);
-                    dateTime6 = dateTime6.AddMonths(1 + FirstDateTime.Month % 2);
+                    DateTime dateTime6 = new DateTime(firstDateTime.Year, firstDateTime.Month, 1);
+                    dateTime6 = dateTime6.AddMonths(1 + firstDateTime.Month % 2);
                     num2 = (double)dateTime6.Ticks;
                     break;
                 case EGridSize.week1:
-                    DateTime dateTime7 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day);
-                    dateTime7 = dateTime7.AddDays(8.0 - (double)FirstDateTime.DayOfWeek);
+                    DateTime dateTime7 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day);
+                    dateTime7 = dateTime7.AddDays(8.0 - (double)firstDateTime.DayOfWeek);
                     num2 = (double)dateTime7.Ticks;
                     break;
                 case EGridSize.week2:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day).AddDays(8.0 - (double)FirstDateTime.DayOfWeek + (double)(7 * (1 - (int)Math.Floor(new TimeSpan(FirstDateTime.AddDays(8.0 - (double)FirstDateTime.DayOfWeek).Ticks).TotalDays) / 7 % 2))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day).AddDays(8.0 - (double)firstDateTime.DayOfWeek + (double)(7 * (1 - (int)Math.Floor(new TimeSpan(firstDateTime.AddDays(8.0 - (double)firstDateTime.DayOfWeek).Ticks).TotalDays) / 7 % 2))).Ticks;
                     break;
                 case EGridSize.day3:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day).AddDays((double)(1 + (2 - (int)new TimeSpan(FirstDateTime.Ticks).TotalDays % 3)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day).AddDays((double)(1 + (2 - (int)new TimeSpan(firstDateTime.Ticks).TotalDays % 3)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.day5:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day).AddDays((double)(1 + (4 - (int)new TimeSpan(FirstDateTime.Ticks).TotalDays % 5)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day).AddDays((double)(1 + (4 - (int)new TimeSpan(firstDateTime.Ticks).TotalDays % 5)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.day1:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day);
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day);
                     dateTime2 = dateTime2.AddDays(1.0);
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.day2:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day).AddDays((double)(1 + (int)new TimeSpan(FirstDateTime.Ticks).TotalDays % 2)).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day).AddDays((double)(1 + (int)new TimeSpan(firstDateTime.Ticks).TotalDays % 2)).Ticks;
                     break;
                 case EGridSize.hour6:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0).AddHours((double)(1 + (5 - (int)new TimeSpan(FirstDateTime.Ticks).TotalHours % 6)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0).AddHours((double)(1 + (5 - (int)new TimeSpan(firstDateTime.Ticks).TotalHours % 6)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.hour12:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0).AddHours((double)(1 + (11 - (int)new TimeSpan(FirstDateTime.Ticks).TotalHours % 12)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0).AddHours((double)(1 + (11 - (int)new TimeSpan(firstDateTime.Ticks).TotalHours % 12)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.hour3:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0).AddHours((double)(1 + (2 - (int)new TimeSpan(FirstDateTime.Ticks).TotalHours % 3)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0).AddHours((double)(1 + (2 - (int)new TimeSpan(firstDateTime.Ticks).TotalHours % 3)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.hour4:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0).AddHours((double)(1 + (3 - (int)new TimeSpan(FirstDateTime.Ticks).TotalHours % 4)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0).AddHours((double)(1 + (3 - (int)new TimeSpan(firstDateTime.Ticks).TotalHours % 4)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.hour1:
-                    DateTime dateTime8 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0);
+                    DateTime dateTime8 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0);
                     dateTime8 = dateTime8.AddHours(1.0);
                     num2 = (double)dateTime8.Ticks;
                     break;
                 case EGridSize.hour2:
-                    dateTime2 = new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, 0, 0).AddHours((double)(1 + (1 - (int)new TimeSpan(FirstDateTime.Ticks).TotalHours % 2)));
+                    dateTime2 = new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, 0, 0).AddHours((double)(1 + (1 - (int)new TimeSpan(firstDateTime.Ticks).TotalHours % 2)));
                     num2 = (double)dateTime2.Ticks;
                     break;
                 case EGridSize.min20:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (19 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 20))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (19 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 20))).Ticks;
                     break;
                 case EGridSize.min30:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (29 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 30))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (29 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 30))).Ticks;
                     break;
                 case EGridSize.min10:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (9 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 10))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (9 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 10))).Ticks;
                     break;
                 case EGridSize.min15:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (14 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 15))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (14 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 15))).Ticks;
                     break;
                 case EGridSize.min1:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes(1.0).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes(1.0).Ticks;
                     break;
                 case EGridSize.min2:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (1 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 2))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (1 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 2))).Ticks;
                     break;
                 case EGridSize.min5:
-                    num2 = (double)new DateTime(FirstDateTime.Year, FirstDateTime.Month, FirstDateTime.Day, FirstDateTime.Hour, FirstDateTime.Minute, 0).AddMinutes((double)(1 + (4 - (int)new TimeSpan(FirstDateTime.Ticks).TotalMinutes % 5))).Ticks;
+                    num2 = (double)new DateTime(firstDateTime.Year, firstDateTime.Month, firstDateTime.Day, firstDateTime.Hour, firstDateTime.Minute, 0).AddMinutes((double)(1 + (4 - (int)new TimeSpan(firstDateTime.Ticks).TotalMinutes % 5))).Ticks;
                     break;
                 default:
-                    num2 = (double)(FirstDateTime.Ticks + GridSize);
+                    num2 = (double)(firstDateTime.Ticks + gridSize);
                     break;
             }
             int num3 = 0;
@@ -468,13 +469,13 @@ namespace SmartQuant.Charting
             double num6 = 0.0;
             double num7 = 0.0;
             string str = "";
-            int MajorCount = 0;
+            int majorCount = 0;
             double num8 = max;
-            FirstDateTime = new DateTime((long)num2);
+            firstDateTime = new DateTime((long)num2);
             DateTime dateTime9 = new DateTime((long)num8);
             while (num5 < num8)
             {
-                num5 = this.pad.GetNextGridDivision(num2, num6, MajorCount, GridSize);
+                num5 = this.pad.GetNextGridDivision(num2, num6, majorCount, gridSize);
                 if (num5 < num8)
                 {
                     if (Type == EAxisType.DateTime)
@@ -537,7 +538,7 @@ namespace SmartQuant.Charting
                             {
                                 int num11 = this.pad.ClientX(num5) - num9 / 2;
                                 int num12 = (int)(Y2 + (double)LabelOffset);
-                                if (MajorCount == 0 || num11 - num3 >= 1)
+                                if (majorCount == 0 || num11 - num3 >= 1)
                                 {
                                     this.pad.Graphics.DrawString(str, LabelFont, (Brush)solidBrush2, (float)num11, (float)num12);
                                     num3 = num11 + num9;
@@ -560,7 +561,7 @@ namespace SmartQuant.Charting
                             {
                                 int num11 = (int)(X1 - (double)num9);
                                 int num12 = this.pad.ClientY(num5) - num10 / 2;
-                                if (MajorCount == 0 || num4 - (num12 + num10) >= 1)
+                                if (majorCount == 0 || num4 - (num12 + num10) >= 1)
                                 {
                                     this.pad.Graphics.DrawString(str, LabelFont, solidBrush2, (float)num11, (float)num12);
                                     num4 = num12;
@@ -569,9 +570,9 @@ namespace SmartQuant.Charting
                         }
                     }
                 }
-                if (MajorCount != 0)
+                if (majorCount != 0)
                 {
-                    if (MajorCount == 1)
+                    if (majorCount == 1)
                         num7 = (num5 - num6 - this.pad.Transformation.CalculateNotInSessionTicks(num6, num5)) / num1;
                     for (int index = 1; (double)index <= num1; ++index)
                     {
@@ -605,7 +606,7 @@ namespace SmartQuant.Charting
                 else
                     num2 = num5;
                 num6 = num5;
-                ++MajorCount;
+                ++majorCount;
             }
             for (int index = 0; (double)index <= num1; ++index)
             {
@@ -628,7 +629,7 @@ namespace SmartQuant.Charting
                     }
                 }
             }
-            if (this.pad.SessionGridEnabled && ((TIntradayTransformation)this.pad.Transformation).Session >= 2L * (long)GridSize)
+            if (this.pad.SessionGridEnabled && ((TIntradayTransformation)this.pad.Transformation).Session >= 2L * (long)gridSize)
             {
                 int num9 = 0;
                 double x1;
@@ -657,15 +658,15 @@ namespace SmartQuant.Charting
             if (Position == EAxisPosition.Bottom)
             {
                 if (TitlePosition == EAxisTitlePosition.Left)
-                    this.pad.Graphics.DrawString(Title, TitleFont, (Brush)solidBrush1, (float)(int)X1, (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
+                    this.pad.Graphics.DrawString(Title, TitleFont, solidBrush1, (float)(int)X1, (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
                 if (TitlePosition == EAxisTitlePosition.Right)
-                    this.pad.Graphics.DrawString(Title, TitleFont, (Brush)solidBrush1, (float)((int)X2 - num16), (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
+                    this.pad.Graphics.DrawString(Title, TitleFont, solidBrush1, (float)((int)X2 - num16), (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
                 if (TitlePosition == EAxisTitlePosition.Centre)
-                    this.pad.Graphics.DrawString(Title, TitleFont, (Brush)solidBrush1, (float)(int)(X1 + (X2 - X1 - (double)num16) / 2.0), (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
+                    this.pad.Graphics.DrawString(Title, TitleFont, solidBrush1, (float)(int)(X1 + (X2 - X1 - (double)num16) / 2.0), (float)(int)(Y2 + (double)LabelOffset + (double)num13 + (double)TitleOffset));
             }
             if (Position != EAxisPosition.Left || TitlePosition != EAxisTitlePosition.Centre)
                 return;
-            this.pad.Graphics.DrawString(Title, TitleFont, (Brush)solidBrush1, (float)(int)(X1 - (double)LabelOffset - (double)num14 - (double)TitleOffset - (double)num15), (float)(int)(Y1 + (Y2 - Y1 - (double)num16) / 2.0), new StringFormat()
+            this.pad.Graphics.DrawString(Title, TitleFont, solidBrush1, (float)(int)(X1 - (double)LabelOffset - (double)num14 - (double)TitleOffset - (double)num15), (float)(int)(Y1 + (Y2 - Y1 - (double)num16) / 2.0), new StringFormat()
             {
                 FormatFlags = StringFormatFlags.DirectionRightToLeft | StringFormatFlags.DirectionVertical
             });
@@ -978,7 +979,7 @@ namespace SmartQuant.Charting
                 switch (Position)
                 {
                     case EAxisPosition.Left:
-                        if (X1 - 10.0 <= (double)Event.X && X1 >= (double)Event.X && (Y1 <= (double)Event.Y && Y2 >= (double)Event.Y))
+                        if (X1 - 10 <= Event.X && X1 >= (double)Event.X && (Y1 <= (double)Event.Y && Y2 >= (double)Event.Y))
                         {
                             this.UnZoom();
                             break;

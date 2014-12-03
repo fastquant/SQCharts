@@ -50,7 +50,7 @@ namespace SmartQuant.Charting.Draw3D
         {
             get
             {
-                return Math.Sqrt(this.Sqr);
+                return Math.Sqrt(Sqr);
             }
         }
 

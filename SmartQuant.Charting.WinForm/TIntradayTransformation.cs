@@ -68,7 +68,7 @@ namespace SmartQuant.Charting
             if ((max - min) / (double)Session <= 10.0)
             {
                 gridSize = Axis.CalculateSize(max - min);
-                max = min + this.CalculateRealQuantityOfTicks_Right(min, max);
+                max = min + CalculateRealQuantityOfTicks_Right(min, max);
             }
             else
             {

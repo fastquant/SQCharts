@@ -80,11 +80,11 @@ namespace SmartQuant.ChartViewers
                 {
                     case OrderSide.Buy:
                         Color buyColor = this.BuyColor;
-                        PointF[] points1 = new PointF[3]
+                        PointF[] points1 = new PointF[]
                         {
-                            (PointF)new Point(x, y),
-                            (PointF)new Point((int)((double)x - (double)num3 / 2.0), (int)((double)y + (double)num3 / 2.0)),
-                            (PointF)new Point((int)((double)x + (double)num3 / 2.0), (int)((double)y + (double)num3 / 2.0))
+                            new Point(x, y),
+                            new Point((int)((double)x - (double)num3 / 2.0), (int)((double)y + (double)num3 / 2.0)),
+                            new Point((int)((double)x + (double)num3 / 2.0), (int)((double)y + (double)num3 / 2.0))
                         };
                         pad.Graphics.DrawPolygon(new Pen(Color.Black), points1);
                         pad.Graphics.DrawRectangle(new Pen(Color.Black), (float)x - num3 / 4f, (float)y + num3 / 2f, num3 / 2f, num3 / 2f);
@@ -92,8 +92,8 @@ namespace SmartQuant.ChartViewers
                         pad.Graphics.FillRectangle((Brush)new SolidBrush(buyColor), (float)x - num3 / 4f, (float)((double)y + (double)num3 / 2.0 - 1.0), num3 / 2f, (float)((double)num3 / 2.0 + 1.0));
                         break;
                     case OrderSide.Sell:
-                        Color sellColor = this.SellColor;
-                        Point[] points2 = new Point[3]
+                        Color sellColor = SellColor;
+                        var points2 = new Point[]
                         {
                             new Point(x, y),
                             new Point((int)((double)x - (double)num3 / 2.0), (int)((double)y - (double)num3 / 2.0)),
@@ -101,11 +101,11 @@ namespace SmartQuant.ChartViewers
                         };
                         pad.Graphics.DrawPolygon(new Pen(Color.Black), points2);
                         pad.Graphics.DrawRectangle(new Pen(Color.Black), (float)x - num3 / 4f, (float)y - num3, num3 / 2f, (float)((double)num3 / 2.0 + 1.0));
-                        pad.Graphics.FillPolygon((Brush)new SolidBrush(sellColor), points2);
-                        pad.Graphics.FillRectangle((Brush)new SolidBrush(sellColor), (float)x - num3 / 4f, (float)y - num3, num3 / 2f, (float)((double)num3 / 2.0 + 1.0));
+                        pad.Graphics.FillPolygon(new SolidBrush(sellColor), points2);
+                        pad.Graphics.FillRectangle(new SolidBrush(sellColor), (float)x - num3 / 4f, (float)y - num3, num3 / 2f, (float)((double)num3 / 2.0 + 1.0));
                         break;
                 }
-                if (this.TextEnabled)
+                if (TextEnabled)
                 {
                     int num4 = (int)pad.Graphics.MeasureString(str, font).Width;
                     int num5 = (int)pad.Graphics.MeasureString(str, font).Height;
